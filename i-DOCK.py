@@ -1080,9 +1080,8 @@ _t2 = f"  Ligand Prep{f'  ({_n_prep_lig} ✅)' if _n_prep_lig else f'  ({_n_raw_
 _t3 = f"  Docking{f'  ({_n_docked} poses)' if _n_docked else ''}"
 _t4 = f"  Results{f'  ({_n_results} logs)' if _n_results else ''}"
 
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     _t1, _t2, _t3, _t4,
-    "  Validation",
     "  Pose Viewer",
     "  About & Cite",
 ])
@@ -1954,283 +1953,11 @@ with tab4:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 5 — VALIDATION (RMSD)
-# ══════════════════════════════════════════════════════════════════════════════
-
-def _check_reference_coords(heavy_lines: list) -> tuple:
-    """
-    Return (centroid_norm, is_near_origin).
-    A reference near origin (norm < 5 Å) almost certainly came from
-    prepared_ligands/ and has been centered by Open Babel — not a crystal pose.
-    """
-    pts = []
-    for line in heavy_lines:
-        if not line.startswith(("ATOM", "HETATM")):
-            continue
-        try:
-            pts.append([float(line[30:38]), float(line[38:46]), float(line[46:54])])
-        except (ValueError, IndexError):
-            continue
-    if not pts:
-        return 0.0, False
-    centroid = np.mean(pts, axis=0)
-    norm = float(np.linalg.norm(centroid))
-    return norm, norm < 5.0
-
-with tab5:
-    st.markdown("###  Redocking Validation")
-    st.caption(
-        "Compare docked poses against the co-crystallised reference ligand. "
-        "RMSD < 2 Å = successful redocking · ≥ 2 Å = failed (field standard threshold)."
-    )
-
-    ref_heavy                = None
-    ref_source_label         = None
-    ref_label_is_ligand_only = True  # always True — manual upload only
-
-    st.markdown("####  Upload Reference Ligand (crystal pose PDBQT)")
-    st.caption(
-        "Upload the co-crystallised ligand **at its crystal coordinates** — "
-        "extracted from the original PDB and converted with "
-        "`obabel ... -xr` (no `--gen3d`). "
-        "Do **not** use files from `prepared_ligands/` — those are centered at the origin."
-    )
-    ref_file = st.file_uploader(
-        "Reference ligand (.pdbqt)", type=["pdbqt"], key="val_ref",
-        help="Crystal-pose PDBQT — used as ground truth for RMSD.",
-    )
-    if ref_file:
-        upload_text  = ref_file.read().decode(errors="replace")
-        upload_heavy = parse_pdbqt_heavy_atoms(upload_text)
-        if upload_heavy:
-            ref_heavy        = upload_heavy
-            ref_source_label = Path(ref_file.name).stem
-            _norm, _near_origin = _check_reference_coords(upload_heavy)
-            if _near_origin:
-                st.warning(
-                    f"⚠️ **This file looks like it came from `prepared_ligands/`** — "
-                    f"its centroid is only {_norm:.1f} Å from the origin, meaning it has "
-                    f"been repositioned by Open Babel and is NOT at crystal coordinates. "
-                    f"RMSD will be meaningless (~40–60 Å). "
-                    f"Upload the ligand extracted from the crystal PDB instead "
-                    f"(convert with `obabel ... -xr`, without `--gen3d`)."
-                )
-            else:
-                st.success(
-                    f"✅ **{ref_file.name}** — {len(upload_heavy)} heavy atoms · "
-                    f"centroid {_norm:.1f} Å from origin ✔"
-                )
-        else:
-            st.error(
-                "❌ No heavy atoms found in uploaded file. "
-                "Ensure it is a valid PDBQT with ATOM or HETATM records."
-            )
-
-    st.markdown("")
-    v_opt1, v_opt2 = st.columns(2)
-    with v_opt1:
-        ligand_filter = st.text_input(
-            "Filter by ligand name (optional)", placeholder="e.g. Imatinib", key="val_filter",
-        )
-    with v_opt2:
-        val_all_modes = st.toggle(
-            "Evaluate all binding modes", value=True, key="val_all_modes",
-            help="When on, checks all 9 Vina poses and reports the best RMSD.",
-        )
-    st.markdown("")
-
-    if st.button("▶ Calculate RMSD", type="primary", key="run_val"):
-        if ref_heavy is None:
-            st.error(
-                "❌ No reference ligand selected. "
-                "Run Protein Prep first (ligands are auto-extracted), or upload a PDBQT manually."
-            )
-            st.stop()
-
-        if not ref_heavy:
-            st.error("❌ Reference ligand has no heavy atoms — check the PDBQT file.")
-            st.stop()
-
-        st.caption(f" Reference: **{ref_source_label}** · {len(ref_heavy)} heavy atoms")
-
-        vina_logs = {p.stem: parse_vina_log(p) for p in result_dir.glob("*.txt")}
-        pose_files = list(dock_dir.glob("*.pdbqt"))
-
-        # Only evaluate poses for the same protein as the reference ligand.
-        # The reference is one specific co-crystallised ligand from one protein;
-        # comparing it against poses from a different protein will always give an
-        # atom-count mismatch (different ligands) or a meaningless RMSD.
-        # MGLTools appends "_receptor" to the receptor stem, so docked files may
-        # be named either "{protein}_{ligand}.pdbqt" or
-        # "{protein}_receptor_{ligand}.pdbqt" — both are matched here.
-        #
-        # When the user uploads a bare ligand PDBQT (no protein context), we skip
-        # the protein-prefix filter and instead match by ligand name suffix so that
-        # poses like "6GGH_Abietic acid.pdbqt" are found for ref "Abietic acid".
-        if ref_source_label and not ref_label_is_ligand_only:
-            label_variants = (
-                ref_source_label + "_",
-                ref_source_label + "_receptor_",
-            )
-            pose_files = [p for p in pose_files
-                          if p.stem == ref_source_label or
-                          any(p.stem.startswith(v) for v in label_variants)]
-        elif ref_source_label and ref_label_is_ligand_only:
-            # Match any pose whose stem ends with the ligand name
-            # e.g. ref="Abietic acid" matches "6GGH_Abietic acid"
-            pose_files = [p for p in pose_files
-                          if p.stem == ref_source_label or
-                          p.stem.endswith("_" + ref_source_label)]
-
-        if ligand_filter.strip():
-            pose_files = [p for p in pose_files if ligand_filter.strip().lower() in p.stem.lower()]
-
-        if not pose_files:
-            st.warning(
-                f"⚠️ No docked poses found for **{ref_source_label}**. "
-                f"Run docking first, or check that the protein name matches."
-            )
-            st.stop()
-
-        rmsd_rows, skipped = [], []
-        prog = st.progress(0, text="Evaluating poses…")
-
-        for i, pf in enumerate(pose_files, 1):
-            protein, ligand = _split_stem(pf.stem)
-            raw_aff = vina_logs.get(pf.stem)
-
-            if val_all_modes:
-                modes = parse_vina_all_modes(result_dir / f"{pf.stem}.txt") or [(1, raw_aff)]
-                best_rmsd, best_mode, details = None, None, []
-                for mode_num, mode_aff in modes:
-                    pose_lines = extract_vina_pose_by_mode(str(pf), mode_num)
-                    rmsd_val, err = compute_rmsd_from_lines(ref_heavy, pose_lines)
-                    if err:
-                        skipped.append(f"{protein}/{ligand} mode {mode_num}: {err}")
-                        continue
-                    details.append((mode_num, mode_aff, rmsd_val))
-                    if best_rmsd is None or rmsd_val < best_rmsd:
-                        best_rmsd, best_mode = rmsd_val, mode_num
-                if best_rmsd is not None:
-                    grade = ("✅ Success (< 2 Å)" if best_rmsd < 2 else "❌ Failed (≥ 2 Å)")
-                    mode1_rmsd = next((r for m, _, r in details if m == 1), None)
-                    rmsd_rows.append({
-                        "Protein": protein, "Ligand": ligand,
-                        "Best RMSD (Å)": best_rmsd, "Mode 1 RMSD (Å)": mode1_rmsd,
-                        "Best mode": best_mode, "Total modes": len(details),
-                        "Affinity (kcal/mol)": raw_aff, "Grade": grade,
-                    })
-            else:
-                pose_lines = extract_vina_pose_by_mode(str(pf), 1)
-                rmsd_val, err = compute_rmsd_from_lines(ref_heavy, pose_lines)
-                if err:
-                    skipped.append(f"{protein}/{ligand}: {err}")
-                    rmsd_val = None
-                grade = ("✅ Success (< 2 Å)" if rmsd_val and rmsd_val < 2 else
-                         "❌ Failed (≥ 2 Å)" if rmsd_val else "—")
-                rmsd_rows.append({
-                    "Protein": protein, "Ligand": ligand,
-                    "Best RMSD (Å)": rmsd_val, "Mode 1 RMSD (Å)": rmsd_val,
-                    "Best mode": 1, "Total modes": 1,
-                    "Affinity (kcal/mol)": raw_aff, "Grade": grade,
-                })
-
-            prog.progress(i / max(len(pose_files), 1), text=f"Evaluated {i}/{len(pose_files)}…")
-
-        prog.progress(1.0, text="Done.")
-
-        if skipped:
-            with st.expander(f"⚠️ {len(skipped)} pose(s) skipped"):
-                for s in skipped:
-                    st.caption(s)
-
-        if not rmsd_rows:
-            st.warning("No RMSD values could be computed. Ensure docking has been run "
-                       "and the reference ligand has the same heavy atoms as the docked poses.")
-            st.stop()
-
-        rmsd_df = pd.DataFrame(rmsd_rows).sort_values("Best RMSD (Å)", na_position="last")
-
-        # ── Metrics ────────────────────────────────────────────────────────
-        valid_r = rmsd_df["Best RMSD (Å)"].dropna()
-        r1, r2, r3, r4, r5 = st.columns(5)
-        r1.metric("Evaluated",         len(rmsd_df))
-        r2.metric("Median RMSD (Å)",   f"{valid_r.median():.3f}" if len(valid_r) else "—")
-        r3.metric("✅ Success (< 2 Å)",   int((valid_r < 2).sum()))
-        r4.metric("❌ Failed (≥ 2 Å)",    int((valid_r >= 2).sum()))
-        r5.metric("Success rate",         f"{100*( valid_r < 2).mean():.1f}%" if len(valid_r) else "—")
-        st.markdown("")
-
-        if val_all_modes:
-            improved = rmsd_df[
-                rmsd_df["Best RMSD (Å)"].notna() &
-                rmsd_df["Mode 1 RMSD (Å)"].notna() &
-                (rmsd_df["Best RMSD (Å)"] < rmsd_df["Mode 1 RMSD (Å)"] - 0.05)
-            ]
-            if len(improved):
-                st.info(
-                    f"💡 **{len(improved)} ligand(s)** have a better pose in a non-top-ranked "
-                    "mode — the correct conformation was found but not scored first."
-                )
-
-        # ── Table ──────────────────────────────────────────────────────────
-        st.subheader(" RMSD Results")
-        st.dataframe(rmsd_df, use_container_width=True, hide_index=True)
-        st.download_button(
-            "⬇ Download RMSD CSV",
-            data=rmsd_df.to_csv(index=False),
-            file_name="rmsd_validation.csv",
-            mime="text/csv",
-        )
-
-        # ── Distribution plot ──────────────────────────────────────────────
-        if len(valid_r) >= 2:
-            st.subheader(" RMSD Distribution")
-            fig, ax = plt.subplots(figsize=(7, 3.5))
-            ax.hist(valid_r, bins=min(20, len(valid_r)), color="#0066cc",
-                    edgecolor="white", linewidth=0.5)
-            ax.axvline(2, color="#e24b4a", linewidth=1.5, linestyle="--", label="2 Å threshold")
-            ax.axvline(4, color="#ef9f27", linewidth=1.5, linestyle="--", label="4 Å threshold")
-            ax.set_xlabel("Best RMSD (Å)", fontsize=10)
-            ax.set_ylabel("Count", fontsize=10)
-            ax.legend(fontsize=9)
-            ax.spines[["top", "right"]].set_visible(False)
-            plt.tight_layout()
-            st.pyplot(fig)
-            plt.close(fig)
-
-        # ── RMSD vs affinity scatter ───────────────────────────────────────
-        scatter_df = rmsd_df[rmsd_df["Best RMSD (Å)"].notna() &
-                             rmsd_df["Affinity (kcal/mol)"].notna()]
-        if len(scatter_df) >= 3:
-            st.subheader("🔵 RMSD vs Affinity")
-            fig2, ax2 = plt.subplots(figsize=(7, 4))
-            sc = ax2.scatter(
-                scatter_df["Best RMSD (Å)"], scatter_df["Affinity (kcal/mol)"],
-                c=scatter_df["Best RMSD (Å)"], cmap="RdYlGn_r",
-                s=70, edgecolors="white", linewidth=0.4,
-            )
-            plt.colorbar(sc, ax=ax2, label="RMSD (Å)")
-            ax2.axvline(2, color="#e24b4a", linewidth=1, linestyle="--", alpha=0.6)
-            ax2.set_xlabel("Best RMSD (Å)", fontsize=10)
-            ax2.set_ylabel("Affinity (kcal/mol)", fontsize=10)
-            ax2.spines[["top", "right"]].set_visible(False)
-            for _, row in scatter_df.iterrows():
-                ax2.annotate(row["Ligand"],
-                             (row["Best RMSD (Å)"], row["Affinity (kcal/mol)"]),
-                             fontsize=7, alpha=0.7, xytext=(3, 3), textcoords="offset points")
-            plt.tight_layout()
-            st.pyplot(fig2)
-            plt.close(fig2)
-            st.caption("Ideal region: bottom-left (low RMSD = correct pose, low affinity = strong binding)")
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# TAB 6 — 3D POSE VIEWER
+# TAB 5 — 3D POSE VIEWER
 # ══════════════════════════════════════════════════════════════════════════════
 import streamlit.components.v1 as _components
 
-with tab6:
+with tab5:
     st.markdown("###  3D Pose Viewer")
     st.caption("Interactive 3D visualisation of docked poses.")
 
@@ -2334,9 +2061,9 @@ with tab6:
                 )
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 7 — ABOUT & CITATION
+# TAB 6 — ABOUT & CITATION
 # ══════════════════════════════════════════════════════════════════════════════
-with tab7:
+with tab6:
     st.markdown("###  About 𝒊-Dock")
     st.caption("Citation information, tool credits, and version details.")
 
