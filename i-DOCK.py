@@ -1014,7 +1014,7 @@ if not project_dir.exists() or str(project_dir) == ".":
     </div>
     <div class="info-card">
       <h4>Step 3 — Run the Pipeline</h4>
-      <p>Work through the tabs: Protein Prep → Ligand Prep → Docking → Results → validation → pose viewer .</p>
+      <p>Work through the tabs: Protein Prep → Ligand Prep → Docking → Results → pose viewer .</p>
     </div>
   </div>
 
@@ -1110,7 +1110,7 @@ with tab1:
             preserve_metals    = st.checkbox("Preserve metal ions (Zn, Mg, Fe, Ca)", True,  key="prot_metals")
 
     with st.expander(" Grid box settings", expanded=True):
-        st.markdown("** Grid centre detection method**")
+        st.markdown(" Grid centre detection method ")
         grid_centre_method = st.radio(
             "Grid centre detection method",
             [
@@ -1136,7 +1136,7 @@ with tab1:
         with c1:
             padding = st.slider(
                 "Grid padding per face (Å)",
-                min_value=2.0, max_value=16.0, value=8.0, step=0.5, key="prot_padding",
+                min_value=2.0, max_value=16.0, value=5.0, step=0.5, key="prot_padding",
                 help="Applied to ligand-based grids. Box = ligand extent + 2× padding. "
                      "8 Å is recommended for virtual screening.",
             )
@@ -1465,7 +1465,7 @@ with tab3:
     _pf_prep_lig  = len(list(prep_lig_dir.glob("*.pdbqt")))
     _pf_all_ready = (_pf_prep_rec > 0 and _pf_prep_lig > 0)
 
-    with st.expander("✈️ Pre-docking Checklist", expanded=not _pf_all_ready):
+    with st.expander(" Pre-docking Checklist", expanded=not _pf_all_ready):
         _checks = [
             (
                 _pf_raw_prot > 0,
@@ -1760,7 +1760,7 @@ with tab4:
         _display_cols = [c for c in _display_cols if c in df.columns]
 
         # ── Interactive filters ────────────────────────────────────────────
-        with st.expander("🔎 Filter & sort", expanded=False):
+        with st.expander(" Filter & sort", expanded=False):
             fc1, fc2, fc3 = st.columns(3)
             with fc1:
                 _prot_opts = ["All proteins"] + sorted(df["Protein"].unique().tolist())
@@ -2161,14 +2161,14 @@ Pocket detection (P2Rank, fpocket) requires WSL on Windows.
     st.markdown("""
 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-top:0.5rem;">
   <div class="info-card">
-    <h4>🔧 Software Stack</h4>
+    <h4> Software Stack</h4>
     <p>
       Python 3.x · Streamlit · NumPy · Pandas<br>
       Matplotlib · Seaborn · py3Dmol (3D viewer)
     </p>
   </div>
   <div class="info-card">
-    <h4>📋 License</h4>
+    <h4> License</h4>
     <p>
       𝒊-Dock is open-source software.<br>
       AutoDock Vina, MGLTools, Open Babel, P2Rank, and fpocket
@@ -2176,7 +2176,7 @@ Pocket detection (P2Rank, fpocket) requires WSL on Windows.
     </p>
   </div>
   <div class="info-card">
-    <h4>⚠️ Disclaimer</h4>
+    <h4> Disclaimer</h4>
     <p>
       Docking scores are approximations. Results should be interpreted
       in the context of experimental validation and expert knowledge.
