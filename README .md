@@ -1,151 +1,173 @@
-# 𝒊-Dock — Batch Molecular Docking with AutoDock Vina
+# IBDock
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.8%2B-blue?logo=python" />
-  <img src="https://img.shields.io/badge/Streamlit-1.31%2B-FF4B4B?logo=streamlit" />
-  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" />
-  <img src="https://img.shields.io/badge/License-MIT-green" />
-</p>
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 
-**𝒊-Dock** is a zero-command-line, browser-based GUI for **batch virtual screening** using [AutoDock Vina](https://vina.scripps.edu/). It covers the full pipeline — protein preparation, ligand preparation, grid box definition, parallel docking, results analysis, and interactive 3D pose viewing — in a single Streamlit application.
+IBDock is a browser-based GUI for running AutoDock Vina docking jobs without touching the command line. It handles everything in one place — protein and ligand preparation, grid box generation, batch docking across multiple receptor–ligand pairs, 3D pose visualisation, and re-docking RMSD validation — and exports a PDF report when you are done.
+
+It was built because setting up Vina manually is fragmented across too many tools, and because existing GUIs either cap you at one ligand at a time or break silently on real-world IUPAC chemical names.
+
+![IBDock Results tab showing docking scores, affinity heatmap, and per-ligand distributions for six protein-ligand pairs](docs/screenshots/tab4_results.png)
 
 ---
 
 ## Features
 
-| Step | What it does |
-|------|-------------|
-| **1 · Project Setup** | Create or load a project folder; all files are stored locally |
-| **2 · Protein Prep** | Upload PDB files → prepare PDBQT with MGLTools |
-| **3 · Ligand Prep** | Upload SDF / MOL2 / PDB → convert & prepare PDBQT with Open Babel + MGLTools |
-| **4 · Grid Box** | Manual entry or auto-detect from pocket tools (P2Rank / fpocket) |
-| **5 · Docking** | Parallel AutoDock Vina jobs with live progress log |
-| **6 · Results** | Ranked table, heatmap, box plots, scatter, per-ligand bar chart, CSV export |
-| **7 · Pose Viewer** | Interactive 3D viewer (py3Dmol) — receptor + best ligand pose |
-| **8 · About** | Citation references for all underlying tools |
+- **Batch docking** — dock any number of ligands against one or more receptors in a single session, running all jobs in parallel via `concurrent.futures`
+- **Automated grid box derivation** — five selectable modes covering co-crystallised ligand extraction, P2Rank, fpocket, blind docking, and manual entry; the Auto mode cascades through them automatically
+- **Built-in RMSD validation** — symmetric heavy-atom RMSD against crystal reference poses, with Excellent / Pass / Borderline / Fail classification following Warren et al. (2006)
+- **Interactive 3D pose viewer** — powered by 3Dmol.js, embedded directly in the browser; no PyMOL or external viewer required
+- **PDF report export** — formatted multi-page validation report generated automatically from your results
+- **Cross-platform** — runs on Windows, macOS, and Linux
+- **No command-line required** — the entire workflow is GUI-driven from a browser tab
 
 ---
 
-## ️ Prerequisites
+## Requirements
 
-Install the following **external tools** before running 𝒊-Dock. The app lets you configure their paths in the sidebar.
-
-| Tool | Purpose | Download |
-|------|---------|----------|
-| **MGLTools 1.5.7** | Protein & ligand preparation | [scripps.edu](https://ccsb.scripps.edu/mgltools/downloads/) |
-| **AutoDock Vina 1.2+** | Docking engine | [vina.scripps.edu](https://vina.scripps.edu/downloads/) |
-| **Open Babel 3.x** | Ligand format conversion | [openbabel.org](https://openbabel.org/wiki/Get_Open_Babel) |
-| **P2Rank** *(optional)* | ML-based pocket prediction | [github.com/rdk/p2rank](https://github.com/rdk/p2rank) |
-| **fpocket** *(optional)* | Geometry-based pocket detection | [github.com/Discngine/fpocket](https://github.com/Discngine/fpocket) |
-
-> **Windows users:** P2Rank and fpocket require WSL (Windows Subsystem for Linux).
-
----
-
-##  Installation
+**Python 3.9 or later.**
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/i-dock.git
-cd i-dock
-
-# 2. Create and activate a virtual environment (recommended)
-python -m venv venv
-# Windows:
-venv\Scripts\activate
-# macOS / Linux:
-source venv/bin/activate
-
-# 3. Install Python dependencies
 pip install -r requirements.txt
-
-# 4. Launch the app
-streamlit run i-DOCK.py
 ```
 
-The app will open at **http://localhost:8501** in your default browser.
+Four external tools must be installed separately:
+
+| Tool | Version | Download |
+|------|---------|----------|
+| MGLTools | 1.5.7 | https://ccsb.scripps.edu/mgltools/downloads/ |
+| AutoDock Vina | ≥ 1.2.0 | https://github.com/ccsb-scripps/AutoDock-Vina/releases |
+| Open Babel | ≥ 3.1.0 | https://openbabel.org/wiki/Category:Installation |
+| P2Rank | 2.4 | https://github.com/rdk/p2rank/releases *(optional)* |
+| fpocket | ≥ 4.0 | https://github.com/Discngine/fpocket *(optional)* |
+
+P2Rank and fpocket are only needed if you want automated pocket prediction. On Windows,
+both must be run through WSL — IBDock handles this automatically if you prefix the
+executable paths with `wsl` in the Settings panel.
 
 ---
 
-##  Configuration
+## Installation
 
-On first run, open the **sidebar** and set the paths to your local tool installations:
-
-| Setting | Default (Windows) |
-|---------|------------------|
-| MGLTools python | `C:\MGLTools-1.5.7\python.exe` |
-| prepare_receptor4.py | `C:\MGLTools-1.5.7\AutoDockTools\Utilities24\prepare_receptor4.py` |
-| prepare_ligand4.py | `C:\MGLTools-1.5.7\AutoDockTools\Utilities24\prepare_ligand4.py` |
-| AutoDock Vina | `C:\vina\vina.exe` |
-| Open Babel | `C:\Program Files\OpenBabel-3.1.1\obabel.exe` |
-
-Paths are saved automatically to `<project_dir>/idock_config.json` and reloaded on next launch.
-
----
-
-## 📁 Project Structure
-
-```
-i-dock/
-├── i-DOCK.py            ← Main Streamlit application
-├── requirements.txt     ← Python dependencies
-├── .gitignore
-└── README.md
-
-# Created automatically when you run a project:
-<your_project>/
-├── idock_config.json    ← Saved tool paths
-├── prep_receptors/      ← Prepared receptor PDBQT files
-├── prep_ligands/        ← Prepared ligand PDBQT files
-├── results_vina/        ← Docking output (PDBQT poses + log TXT)
-└── ...
+```bash
+git clone https://github.com/BilalSiddiqui/ibdock.git
+cd ibdock
+pip install -r requirements.txt
+streamlit run IBDock.py
 ```
 
----
-
-##  Results & Analysis
-
-After docking completes, the **Results** tab shows:
-
-- **Ranked table** — all protein × ligand affinities (kcal/mol), sortable and downloadable as CSV
-- **Heatmap** — protein vs ligand affinity matrix
-- **Box plot** — affinity distribution per protein
-- **Scatter plot** — affinity rank vs score with -7 kcal/mol threshold line
-- **Bar chart** — per-ligand comparison across proteins
+This opens IBDock in your browser at `http://localhost:8501`. On first launch, open
+the **⚙ Settings** panel in the sidebar and point IBDock at your MGLTools, Vina, and
+Open Babel executables. Paths are saved to `IBDock_config.json` and remembered across
+sessions.
 
 ---
 
-##  Citations
+## Quick Start
 
-If you use 𝒊-Dock in published research, please cite the underlying tools:
+The `example/` folder contains a prepared 3OCB system (AKT1 kinase) ready to dock:
 
-**AutoDock Vina 1.2:**
-> Eberhardt J, Santos-Martins D, Tillack AF, Forli S. (2021). AutoDock Vina 1.2.0: New Docking Methods, Expanded Force Field, and Python Bindings. *J Chem Inf Model.* 61(8):3891–3898. DOI: 10.1021/acs.jcim.1c00203
+```
+example/
+├── receptor/   3OCB.pdb                  raw PDB file as downloaded from RCSB
+├── ligand/     3OCB_ligand.sdf           co-crystallised ligand in SDF format
+└── reference/  crystal_pose_3OCB.pdb     crystal pose for RMSD validation
+```
 
-**AutoDock Vina (original):**
-> Trott O, Olson AJ. (2010). AutoDock Vina: Improving the speed and accuracy of docking with a new scoring function, efficient optimization, and multithreading. *J Comput Chem.* 31(2):455–461. DOI: 10.1002/jcc.21334
+1. Upload `3OCB.pdb` in **Protein Prep** — the grid box is detected automatically
+2. Upload `3OCB_ligand.sdf` in **Ligand Prep**
+3. Click **Run Docking** in the Docking tab
+4. Upload `crystal_pose_3OCB.pdb` in **Validation** and compute RMSD
 
-**MGLTools / AutoDockTools:**
-> Morris GM et al. (2009). AutoDock4 and AutoDockTools4: Automated docking with selective receptor flexibility. *J Comput Chem.* 30(16):2785–2791. DOI: 10.1002/jcc.21256
-
-**Open Babel:**
-> O'Boyle NM et al. (2011). Open Babel: An open chemical toolbox. *J Cheminform.* 3:33. DOI: 10.1186/1758-2946-3-33
-
-**P2Rank:**
-> Krivák R, Hoksza D. (2018). P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure. *J Cheminform.* 10:39. DOI: 10.1186/s13321-018-0285-8
-
-**fpocket:**
-> Le Guilloux V, Schmidtke P, Tuffery P. (2009). Fpocket: An open source platform for ligand pocket detection. *BMC Bioinformatics.* 10:168. DOI: 10.1186/1471-2105-10-168
+**Expected result:** affinity ≈ −9.2 kcal/mol · RMSD ≈ 0.648 Å (Excellent)
 
 ---
 
-## ⚠️ Disclaimer
+## Workflow
 
-Docking scores are computational approximations. Results should be interpreted alongside experimental validation and domain expertise. 𝒊-Dock is not intended for clinical decision-making.
+IBDock is organised around seven sequential tabs:
+
+| Tab | What it does |
+|-----|-------------|
+| **Protein Prep** | Upload PDB, remove waters/HETATM, compute grid box, generate PDBQT |
+| **Ligand Prep** | Convert SDF / MOL2 / PDB to PDBQT with Gasteiger charges |
+| **Docking** | Run all receptor–ligand pairs in parallel via AutoDock Vina |
+| **Results** | Sortable results table with affinity, ΔE, ligand efficiency; heatmap; CSV export |
+| **Pose Viewer** | Interactive 3D viewer; download receptor / ligand / complex as PDB |
+| **Validation** | Symmetric RMSD vs crystal poses; colour-coded classification; PDF export |
+| **About & Cite** | Version info, dependency list, formatted citation |
+
+Annotated screenshots of every tab are in [`docs/screenshots/`](docs/screenshots/).
 
 ---
 
-## 📄 License
+## Grid Box Modes
 
-This project is released under the **MIT License**. See [LICENSE](LICENSE) for details.
-AutoDock Vina, MGLTools, Open Babel, P2Rank, and fpocket are subject to their respective licences.
+IBDock offers five modes for defining the Vina search space, selectable from the
+radio button in the Protein Prep tab:
+
+| Mode | When to use |
+|------|-------------|
+| **Auto (recommended)** | Default — cascades through co-crystallised ligand → P2Rank → fpocket → blind docking, with a warning at each fallback |
+| **Co-crystallised ligand** | Crystal structure with a known drug-like co-crystallised ligand |
+| **P2Rank pocket prediction** | Apo structure or when no co-crystallised ligand is present |
+| **fpocket pocket prediction** | Geometry-based alternative to P2Rank |
+| **Blind docking** | Unknown binding site; covers the full protein extent |
+
+All modes write the final grid parameters to `grid_config.txt` alongside your results
+for full reproducibility.
+
+---
+
+## Validation
+
+Re-docking was performed across six structurally diverse protein–ligand complexes
+(AutoDock Vina 1.2.3, exhaustiveness = 16, MGLTools 1.5.7, Open Babel 3.1.1).
+All six systems passed the 2.0 Å acceptance criterion (Warren et al., 2006).
+
+| PDB | Protein | Family | RMSD (Å) | Result |
+|-----|---------|--------|----------|--------|
+| 3OCB | AKT1 | Kinase (AGC family) | 0.648 | ✅ Excellent |
+| 6C9H | AMPK | Kinase (CAMK family) | 0.948 | ✅ Excellent |
+| 6SFO | MAPK14 | Kinase (CMGC family) | 0.646 | ✅ Excellent |
+| 1ERR | Oestrogen Receptor α | Nuclear Receptor | 0.811 | ✅ Excellent |
+| 4H3X | MMP-9 | Matrix Metalloprotease | 1.408 | ✅ Pass |
+| 1HPX | HIV-1 Protease | Aspartic Protease | 1.735 | ✅ Pass |
+
+**Mean RMSD: 1.033 ± 0.445 Å across all six systems. Zero Borderline. Zero Fail.**
+
+Classification: Excellent < 1.0 Å · Pass 1.0–2.0 Å · Borderline 2.0–3.0 Å · Fail ≥ 3.0 Å
+
+---
+
+## Tests
+
+```bash
+pip install pytest
+pytest Tests/test_ibdock.py -v
+```
+
+## Contributing
+
+Bug reports, feature requests, and pull requests are welcome.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting.
+
+---
+
+
+
+Please cite the tools IBDock depends on:
+
+- **AutoDock Vina:** Trott & Olson (2010) *J. Comput. Chem.* 31:455–461 · Eberhardt et al. (2021) *J. Chem. Inf. Model.* 61:3891–3898
+- **MGLTools:** Morris et al. (2009) *J. Comput. Chem.* 30:2785–2791
+- **Open Babel:** O'Boyle et al. (2011) *J. Cheminform.* 3:33
+- **P2Rank:** Krivak & Hoksza (2018) *J. Cheminform.* 10:39
+- **fpocket:** Le Guilloux et al. (2009) *BMC Bioinformatics* 10:168
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
