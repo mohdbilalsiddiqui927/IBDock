@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to 𝒊-Dock are documented here.  
+All notable changes to IBDock are documented here.  
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
@@ -19,4 +19,4 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Tab 7 — Pose Viewer:** interactive 3D viewer (py3Dmol) for receptor + ligand poses
 - **Tab 8 — About:** tool credits and citation references
 - Cross-platform defaults for Windows, macOS, and Linux
-- Config auto-save to `idock_config.json` in project directory
+- Config auto-save to `IBdock_config.json` in project directory
