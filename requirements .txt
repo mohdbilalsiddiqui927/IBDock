@@ -1,5 +1,27 @@
-streamlit>=1.31.0
+# IBDock — Python Dependencies
+# Install with: pip install -r requirements.txt
+# Requires Python >= 3.9
+
+# ── Core application ──────────────────────────────────────────────────────────
+streamlit>=1.32.0
+
+# ── Numerical / data ──────────────────────────────────────────────────────────
 numpy>=1.24.0
 pandas>=2.0.0
+
+# ── Visualisation ─────────────────────────────────────────────────────────────
 matplotlib>=3.7.0
 seaborn>=0.12.0
+
+# ── Notes ─────────────────────────────────────────────────────────────────────
+# The following are NOT pip-installable and must be installed separately.
+# Platform-specific download links are provided in the README.
+#
+#   MGLTools 1.5.7       https://ccsb.scripps.edu/mgltools/downloads/
+#   Open Babel 3.1.x     https://openbabel.org/wiki/Category:Installation
+#   AutoDock Vina 1.2.x  https://github.com/ccsb-scripps/AutoDock-Vina/releases
+#   P2Rank 2.4           https://github.com/rdk/p2rank/releases       (optional)
+#   fpocket 4.0          https://github.com/Discngine/fpocket         (optional)
+#
+# On Windows, P2Rank and fpocket must be run via WSL.
+# See README.md for full installation instructions per platform.
