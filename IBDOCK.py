@@ -1,5 +1,5 @@
 # =============================================================================
-#  𝒊-dock — Batch Molecular Docking with AutoDock Vina
+# IBDock — Batch Molecular Docking with AutoDock Vina
 #  A user-friendly Streamlit application for virtual screening
 #
 #  Requirements:
@@ -29,7 +29,7 @@ import seaborn as sns
 import streamlit as st
 
 # ──────────────────────────────────────────────────────────────────────────────
-# CONFIG PERSISTENCE  (saved per-project in project_dir/idock_config.json)
+# CONFIG PERSISTENCE  (saved per-project in project_dir/IBDock_config.json)
 # ──────────────────────────────────────────────────────────────────────────────
 import platform as _platform
 _os = _platform.system()
@@ -65,7 +65,7 @@ else:
     )
 
 def _load_config(project_dir: Path) -> dict:
-    cfg_file = project_dir / "idock_config.json"
+    cfg_file = project_dir / "IBDock_config.json"
     if cfg_file.exists():
         try:
             return {**_DEF, **json.loads(cfg_file.read_text())}
@@ -75,7 +75,7 @@ def _load_config(project_dir: Path) -> dict:
 
 def _save_config(project_dir: Path, cfg: dict):
     try:
-        (project_dir / "idock_config.json").write_text(json.dumps(cfg, indent=2))
+        (project_dir / "IBDock_config.json").write_text(json.dumps(cfg, indent=2))
     except Exception:
         pass
 
@@ -83,157 +83,208 @@ def _save_config(project_dir: Path, cfg: dict):
 # PAGE CONFIG
 # ──────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="𝒊-Dock — Molecular Docking",
+    page_title="IBDock — Molecular Docking",
     page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # ──────────────────────────────────────────────────────────────────────────────
-# GLOBAL STYLE
+# GLOBAL STYLE  — JOSS-aligned academic design
 # ──────────────────────────────────────────────────────────────────────────────
-# Inject CSS via st.html (Streamlit 1.31+) or fallback markdown
 _CSS = """
 <style>
+/* ── Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap');
+
 /* ── Base ── */
 html, body, [class*="css"] {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    color: #1a1a1a;
 }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background: #0f1923;
-    border-right: 1px solid #1e3048;
+    background: #f7f7f5;
+    border-right: 1px solid #ddd;
 }
-[data-testid="stSidebar"] * { color: #c8d8e8 !important; }
+[data-testid="stSidebar"] * { color: #2c2c2c !important; }
 [data-testid="stSidebar"] input {
-    background: #1a2a3a !important;
-    border: 1px solid #2a4060 !important;
-    color: #e0eaf4 !important;
-    border-radius: 6px !important;
-    font-family: 'Space Mono', monospace !important;
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    color: #1a1a1a !important;
+    border-radius: 3px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.72rem !important;
 }
 [data-testid="stSidebar"] .stButton button {
-    background: #0a3d62 !important;
-    color: #7ecfff !important;
-    border: 1px solid #1a6aa0 !important;
-    border-radius: 6px !important;
-    font-weight: 600 !important;
+    background: #1a4a7a !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 3px !important;
+    font-weight: 500 !important;
+    font-size: 0.82rem !important;
+    letter-spacing: 0.01em !important;
 }
 [data-testid="stSidebar"] .stButton button:hover {
-    background: #0d5080 !important;
+    background: #0f3560 !important;
+    color: #ffffff !important;
+}
+[data-testid="stSidebar"] .stButton button p,
+[data-testid="stSidebar"] .stButton button span,
+[data-testid="stSidebar"] .stButton button div {
+    color: #ffffff !important;
 }
 
 /* ── Main area ── */
-.main .block-container { padding-top: 1.2rem; max-width: 1200px; }
+.main .block-container { padding-top: 1rem; max-width: 1180px; }
 
 /* ── Primary buttons ── */
 .stButton > button[kind="primary"] {
-    background: linear-gradient(135deg, #0066cc, #0099ff) !important;
-    color: white !important;
+    background: #1a4a7a !important;
+    color: #fff !important;
     border: none !important;
-    border-radius: 8px !important;
-    font-weight: 700 !important;
-    font-size: 0.95rem !important;
-    padding: 0.55rem 2rem !important;
-    letter-spacing: 0.03em !important;
-    box-shadow: 0 4px 14px rgba(0,102,204,0.35) !important;
-    transition: all 0.2s !important;
+    border-radius: 3px !important;
+    font-weight: 500 !important;
+    font-size: 0.88rem !important;
+    padding: 0.5rem 1.8rem !important;
+    letter-spacing: 0.01em !important;
+    transition: background 0.15s !important;
 }
 .stButton > button[kind="primary"]:hover {
-    box-shadow: 0 6px 20px rgba(0,102,204,0.5) !important;
-    transform: translateY(-1px) !important;
+    background: #0f3560 !important;
 }
 
-/* ── Tabs ── */
+/* ── Tabs — compact, academic ── */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 4px;
-    border-bottom: 2px solid #e0eaf4;
+    gap: 0;
+    border-bottom: 2px solid #ccc;
+    background: transparent;
 }
 .stTabs [data-baseweb="tab"] {
-    font-family: 'Outfit', sans-serif !important;
-    font-weight: 600 !important;
-    font-size: 0.88rem !important;
-    color: #5a7a99 !important;
-    padding: 0.5rem 1.2rem !important;
-    border-radius: 8px 8px 0 0 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 0.80rem !important;
+    color: #555 !important;
+    padding: 0.45rem 0.9rem !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
 }
 .stTabs [aria-selected="true"] {
-    background: #e8f4ff !important;
-    color: #0066cc !important;
-    border-bottom: 2px solid #0066cc !important;
+    color: #1a4a7a !important;
+    border-bottom: 2px solid #1a4a7a !important;
+    margin-bottom: -2px;
+    background: transparent !important;
+}
+.stTabs [data-baseweb="tab"]:hover {
+    color: #1a4a7a !important;
+    background: #f0f4f8 !important;
 }
 
 /* ── Metrics ── */
 [data-testid="stMetric"] {
-    background: #f4f8fd;
-    border: 1px solid #d0e4f4;
-    border-radius: 10px;
-    padding: 0.8rem 1rem;
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    padding: 0.7rem 1rem;
 }
-[data-testid="stMetricLabel"] { font-size: 0.75rem !important; color: #5a7a99 !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 0.05em; }
-[data-testid="stMetricValue"] { font-family: 'Space Mono', monospace !important; font-size: 1.5rem !important; color: #0a2540 !important; }
+[data-testid="stMetricLabel"] { font-size: 0.72rem !important; color: #666 !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 0.06em; }
+[data-testid="stMetricValue"] { font-family: 'IBM Plex Mono', monospace !important; font-size: 1.35rem !important; color: #1a1a1a !important; }
 
 /* ── Expander ── */
 .streamlit-expanderHeader {
-    font-weight: 600 !important;
-    color: #0a2540 !important;
-    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    color: #1a1a1a !important;
+    font-size: 0.88rem !important;
 }
 
-/* ── Progress bar ── */
-.stProgress > div > div > div { background: linear-gradient(90deg, #f8fbff, #e6f0fa) !important; border-radius: 4px; }
-
 /* ── Dataframe ── */
-[data-testid="stDataFrame"] { border: 1px solid #d0e4f4; border-radius: 8px; overflow: hidden; }
+[data-testid="stDataFrame"] { border: 1px solid #ddd; border-radius: 3px; overflow: hidden; }
 
 /* ── Step indicator ── */
-.step-bar { display:flex; gap:0; margin-bottom:1.6rem; border-radius:10px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.07); }
-.step-item { flex:1; padding:0.65rem 0.5rem; text-align:center; font-family:"Outfit",sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.02em; border-right:1px solid rgba(255,255,255,0.15); transition:all 0.2s; cursor:default; }
+.step-bar { display:flex; gap:0; margin-bottom:1.4rem; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; }
+.step-item { flex:1; padding:0.5rem 0.4rem; text-align:center; font-family:'Inter',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; border-right:1px solid #ddd; cursor:default; }
 .step-item:last-child { border-right:none; }
-.step-done  { background:#1a9e75; color:#fff; }
-.step-done .step-num { background:rgba(255,255,255,0.25); }
-.step-active{ background:linear-gradient(135deg,#0066cc,#0099ff); color:#fff; box-shadow:inset 0 -3px 0 rgba(0,0,0,0.15); }
-.step-active .step-num { background:rgba(255,255,255,0.25); }
-.step-idle  { background:#f0f4f8; color:#7a9abf; }
-.step-idle .step-num { background:#dde8f4; color:#5a7a99; }
-.step-num   { display:inline-block; width:20px; height:20px; border-radius:50%; font-size:0.68rem; line-height:20px; margin-right:6px; font-weight:800; }
+.step-done  { background:#e8f4ee; color:#1a6640; }
+.step-active{ background:#e8eef6; color:#1a4a7a; border-bottom: 2px solid #1a4a7a; }
+.step-idle  { background:#fafafa; color:#999; }
+.step-num   { display:inline-block; width:18px; height:18px; border-radius:50%; font-size:0.65rem; line-height:18px; margin-right:5px; background:#ddd; color:#555; vertical-align:middle; }
+.step-active .step-num { background:#1a4a7a; color:#fff; }
+.step-done .step-num   { background:#1a6640; color:#fff; }
 .step-label { vertical-align:middle; }
 
 /* ── Info cards (landing / guide) ── */
-.info-card { background:#f4f8fd; border:1px solid #d0e4f4; border-radius:12px; padding:1.1rem 1.3rem; margin-bottom:0.8rem; }
-.info-card h4 { margin:0 0 0.4rem; font-size:0.95rem; color:#0a2540; font-weight:700; }
-.info-card p  { margin:0; font-size:0.83rem; color:#4a6a8a; line-height:1.55; }
+.info-card { background:#fafafa; border:1px solid #e0e0e0; border-radius:3px; padding:1rem 1.2rem; margin-bottom:0.7rem; }
+.info-card h4 { margin:0 0 0.35rem; font-size:0.88rem; color:#1a1a1a; font-weight:600; font-family:'Inter',sans-serif; }
+.info-card p  { margin:0; font-size:0.82rem; color:#555; line-height:1.6; }
 
 /* ── Preflight checklist ── */
-.pf-row { display:flex; align-items:center; gap:10px; padding:0.45rem 0.7rem; border-radius:8px; margin-bottom:6px; font-size:0.85rem; font-weight:600; }
-.pf-ok  { background:#edfaf5; border:1px solid #b6ead8; color:#14714f; }
-.pf-warn{ background:#fff8e6; border:1px solid #f5d87a; color:#8a6000; }
-.pf-err { background:#fef0f0; border:1px solid #f5b8b8; color:#a01010; }
+.pf-row { display:flex; align-items:center; gap:10px; padding:0.4rem 0.7rem; border-radius:3px; margin-bottom:5px; font-size:0.83rem; font-weight:500; }
+.pf-ok  { background:#f0f8f4; border:1px solid #b8dfc8; color:#1a5c38; }
+.pf-warn{ background:#fdf8ed; border:1px solid #e8d49a; color:#7a5800; }
+.pf-err { background:#fdf2f2; border:1px solid #e8b8b8; color:#8a1010; }
 
 /* ── Guide accordion ── */
-.guide-param { background:#f9fbff; border-left:3px solid #0066cc; border-radius:0 8px 8px 0; padding:0.6rem 0.9rem; margin-bottom:0.5rem; font-size:0.82rem; }
-.guide-param strong { color:#0a2540; display:block; margin-bottom:2px; }
-.guide-param span   { color:#4a6a8a; line-height:1.5; }
-.guide-tag { display:inline-block; background:#e8f4ff; color:#0066cc; border:1px solid #c0d8f0; border-radius:20px; font-size:0.68rem; font-weight:700; padding:1px 8px; margin-left:6px; vertical-align:middle; }
-.guide-tag.adv { background:#fff3e8; color:#b05000; border-color:#f0c898; }
+.guide-param { background:#fafafa; border-left:3px solid #1a4a7a; border-radius:0 3px 3px 0; padding:0.55rem 0.85rem; margin-bottom:0.45rem; font-size:0.82rem; }
+.guide-param strong { color:#1a1a1a; display:block; margin-bottom:2px; font-family:'Inter',sans-serif; }
+.guide-param span   { color:#555; line-height:1.55; }
+.guide-tag { display:inline-block; background:#e8eef6; color:#1a4a7a; border:1px solid #b8cce4; border-radius:2px; font-size:0.66rem; font-weight:600; padding:1px 7px; margin-left:6px; vertical-align:middle; text-transform:uppercase; letter-spacing:0.04em; }
+.guide-tag.adv { background:#fdf5ec; color:#8a4800; border-color:#e8c898; }
+
+/* ── Section headings ── */
+h3 { font-family: 'Source Serif 4', Georgia, serif !important; font-size: 1.25rem !important; font-weight: 600 !important; color: #1a1a1a !important; letter-spacing: -0.01em !important; }
+h4 { font-family: 'Inter', sans-serif !important; font-size: 0.95rem !important; font-weight: 600 !important; color: #333 !important; }
+
+/* ── Code / mono ── */
+code { font-family: 'IBM Plex Mono', monospace !important; font-size: 0.82em; background: #f0f0ee; padding: 1px 5px; border-radius: 2px; }
 </style>
 """
-_FONTS = '<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">'
 
 # Inject CSS — try st.html (Streamlit 1.31+), fall back to components
 try:
-    st.html(_FONTS + _CSS)
+    st.html(_CSS)
 except AttributeError:
     import streamlit.components.v1 as _comp_css
-    _comp_css.html(_FONTS + _CSS, height=0, scrolling=False)
+    _comp_css.html(_CSS, height=0, scrolling=False)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # CONSTANTS
 # ──────────────────────────────────────────────────────────────────────────────
-EXCLUDE_RESNAMES = {"HOH", "WAT"}
-METAL_IONS = {"ZN", "MG", "FE", "CA", "MN", "CU", "K", "NA"}
+METAL_IONS = {"ZN", "MG", "FE", "CA", "MN", "CU", "K", "NA", "NI", "CO",
+              "CD", "HG", "PT", "AU", "AG", "BA", "SR", "LI", "RB", "CS"}
+
+# Residue names that are NEVER a drug-like co-crystallised ligand.
+# These are crystallographic additives, buffer components, solvents, ions,
+# and cryoprotectants that appear as HETATM records in PDB files.
+# When computing the grid box centre from co-crystallised ligands, all of
+# these are excluded so only the true drug-like ligand(s) are used.
+EXCLUDE_RESNAMES = {
+    # Water
+    "HOH", "WAT", "H2O", "DOD",
+    # Ions — monatomic
+    "NA",  "MG",  "K",   "CA",  "MN",  "FE",  "CO",  "NI",  "CU",  "ZN",
+    "SE",  "BR",  "CD",  "I",   "CS",  "BA",  "HG",  "PT",  "AU",  "AG",
+    "LI",  "RB",  "SR",  "PB",  "TL",  "IN",  "YB",  "SM",  "TB",  "GD",
+    "CL",  "F",   "IOD",
+    # Common polyatomic ions / buffer salts
+    "SO4", "PO4", "NO3", "ACT", "ACY", "FMT", "SUC", "TRS", "MES",
+    "HEP", "EPE", "BIS", "CIT", "TAR", "OXL", "MLT", "PHO",
+    # Cryoprotectants and precipitants
+    "GOL", "GLY", "PG4", "PGE", "PG6", "PEG", "PE4", "P6G", "1PE", "2PE",
+    "EDO", "EGL", "MPD", "IPA", "EOH", "ACE", "ACN", "DMS", "MSO",
+    "DMF", "DMU", "IMD",
+    # Detergents common in membrane protein crystals
+    "BOG", "DDM", "OG",  "NG",  "LMT", "LDA",
+    # Polyamines / crystallisation additives
+    "SPD", "SPM", "PUT",
+    # Monosaccharides often added to buffers
+    "XYL", "FRU", "GAL", "MAN", "FUC",
+}
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -361,18 +412,45 @@ def _win_to_wsl(path) -> str:
 # STRUCTURE HELPERS
 # ──────────────────────────────────────────────────────────────────────────────
 
-def extract_ligand_atoms(lines: list):
-    """Return (coords_array, resnames_set) for all HETATM non-water atoms."""
-    coords, resnames = [], set()
+def extract_ligand_atoms(lines: list, min_heavy_atoms: int = 7):
+    """Return (coords_array, resnames_set) for drug-like co-crystallised ligand atoms.
+
+    Filtering strategy (in order):
+    1. Skip any residue name in EXCLUDE_RESNAMES (ions, solvents, buffers,
+       cryoprotectants).
+    2. Group remaining HETATM records by residue name and count heavy atoms.
+    3. Skip any residue whose heavy atom count is below min_heavy_atoms (default 7).
+       This catches small crystallographic additives not in EXCLUDE_RESNAMES such as
+       glycerol fragments, acetate, formate, and single-atom ions.
+
+    Returns a numpy array of (x, y, z) coords and a set of surviving residue names.
+    """
+    from collections import defaultdict
+
+    groups = defaultdict(list)   # resname -> list of (x, y, z) for heavy atoms
     for line in lines:
-        if line.startswith("HETATM"):
-            rn = line[17:20].strip()
-            if rn not in EXCLUDE_RESNAMES:
-                try:
-                    coords.append([float(line[30:38]), float(line[38:46]), float(line[46:54])])
-                    resnames.add(rn)
-                except ValueError:
-                    continue
+        if not line.startswith("HETATM"):
+            continue
+        rn = line[17:20].strip()
+        if rn in EXCLUDE_RESNAMES:
+            continue
+        atom_name = line[12:16].strip()
+        if atom_name.upper().startswith(("H", "D")):
+            continue                       # skip hydrogens / deuteriums
+        try:
+            xyz = (float(line[30:38]), float(line[38:46]), float(line[46:54]))
+            groups[rn].append(xyz)
+        except ValueError:
+            continue
+
+    # Apply minimum size filter — drop anything too small to be a drug ligand
+    coords, resnames = [], set()
+    for rn, xyzs in groups.items():
+        if len(xyzs) < min_heavy_atoms:
+            continue
+        coords.extend(xyzs)
+        resnames.add(rn)
+
     return (np.array(coords) if coords else np.array([])), resnames
 
 
@@ -640,6 +718,67 @@ def pdbqt_to_pdb_text(pdbqt_path, first_pose_only: bool = True) -> str:
     return "".join(out)
 
 
+def pdbqt_to_sdf_text(pdbqt_path, obabel_path: str, first_pose_only: bool = True) -> str:
+    """
+    Convert a PDBQT ligand pose to SDF format using Open Babel.
+    SDF preserves explicit bond tables (bond orders, ring perception),
+    which py3Dmol needs to render complex ligands correctly.
+    Falls back to empty string on failure (caller should use PDB fallback).
+    """
+    import tempfile
+    pdbqt_path = str(pdbqt_path)
+
+    # If we only want the first pose, write a temp PDBQT with just MODEL 1
+    if first_pose_only:
+        lines = Path(pdbqt_path).read_text(errors="replace").splitlines(keepends=True)
+        has_models = any(l.startswith("MODEL") for l in lines)
+        if has_models:
+            first_block, in_model, done = [], False, False
+            for line in lines:
+                if done:
+                    break
+                if line.startswith("MODEL"):
+                    in_model = True
+                    first_block.append(line)
+                elif line.startswith("ENDMDL"):
+                    first_block.append(line)
+                    done = True
+                elif in_model:
+                    first_block.append(line)
+            tmp_pdbqt = tempfile.NamedTemporaryFile(suffix=".pdbqt", delete=False, mode="w")
+            tmp_pdbqt.writelines(first_block)
+            tmp_pdbqt.flush()
+            tmp_pdbqt.close()
+            pdbqt_path = tmp_pdbqt.name
+
+    try:
+        tmp_sdf = tempfile.NamedTemporaryFile(suffix=".sdf", delete=False)
+        tmp_sdf.close()
+        result = subprocess.run(
+            [obabel_path, pdbqt_path, "-O", tmp_sdf.name, "-h"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30,
+        )
+        if result.returncode == 0 and Path(tmp_sdf.name).exists():
+            sdf_content = Path(tmp_sdf.name).read_text(errors="replace")
+            if sdf_content.strip():
+                return sdf_content
+        return ""
+    except Exception:
+        return ""
+    finally:
+        try:
+            import os
+            os.unlink(tmp_sdf.name)
+        except Exception:
+            pass
+        if first_pose_only:
+            try:
+                import os
+                os.unlink(pdbqt_path)
+            except Exception:
+                pass
+
+
 def extract_vina_pose_by_mode(pdbqt_path: str, mode_number: int) -> list:
     """Return ATOM/HETATM lines for a specific Vina mode."""
     lines = Path(pdbqt_path).read_text(errors="replace").splitlines(keepends=True)
@@ -732,54 +871,59 @@ def compute_rmsd_from_lines(ref_lines: list, pose_lines: list):
 
 def build_viewer_html(receptor_pdb: str, ligand_pdb: str,
                       protein_name: str, ligand_name: str,
-                      affinity: float | None) -> str:
-    """Build a self-contained py3Dmol HTML viewer."""
+                      affinity: float | None,
+                      lig_format: str = "pdb") -> str:
+    """Build a self-contained py3Dmol HTML viewer.
+
+    lig_format should be 'sdf' when ligand string was converted via Open Babel
+    (preserves bond orders so py3Dmol renders the correct structure).
+    Falls back to 'pdb' if SDF conversion was unavailable.
+    """
     aff_str  = f"{affinity:.2f} kcal/mol" if affinity is not None else "N/A"
-    rec_js   = receptor_pdb.replace("\\","\\\\").replace("'","\\'").replace("\n","\\n")
-    lig_js   = ligand_pdb.replace("\\","\\\\").replace("'","\\'").replace("\n","\\n")
+    rec_js      = receptor_pdb.replace("\\","\\\\").replace("'","\\'").replace("\n","\\n")
+    lig_js      = ligand_pdb.replace("\\","\\\\").replace("'","\\'").replace("\n","\\n")
+    lig_fmt_js  = lig_format  # 'sdf' or 'pdb'
 
     return f"""<!DOCTYPE html><html>
 <head>
 <meta charset="utf-8">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://3dmol.org/build/3Dmol-min.js"></script>
 <style>
   * {{ box-sizing:border-box; margin:0; padding:0; }}
-  body {{ background:#0f1923; font-family:'Outfit',sans-serif; color:#e0eaf4; }}
-  #viewer {{ width:100%; height:440px; position:relative; border-radius:8px 8px 0 0; overflow:hidden; }}
+  body {{ background:#f7f7f5; font-family:'Inter',sans-serif; color:#1a1a1a; }}
+  #viewer {{ width:100%; height:440px; position:relative; border:1px solid #ddd; border-bottom:none; overflow:hidden; }}
   #controls {{
-    padding:10px 16px; background:#1a2a3a;
-    border:1px solid #2a4060; border-top:none;
-    display:flex; gap:12px; flex-wrap:wrap; align-items:center; font-size:12px;
+    padding:8px 14px; background:#fafafa;
+    border:1px solid #ddd; border-top:none;
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center; font-size:12px;
   }}
   #info {{
-    padding:8px 16px; background:#151f2b;
-    border:1px solid #2a4060; border-top:1px solid #1a3050;
-    font-size:11.5px; color:#7a9abf;
+    padding:7px 14px; background:#f3f3f1;
+    border:1px solid #ddd; border-top:none;
+    font-size:11px; color:#555;
     display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-    border-radius:0 0 8px 8px;
   }}
-  #info b {{ color:#4fb3ff; }}
-  .ctrl-label {{ color:#4a6a8a; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; white-space:nowrap; }}
+  #info b {{ color:#1a4a7a; }}
+  .ctrl-label {{ color:#666; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; white-space:nowrap; }}
   select {{
-    background:#0f1923; color:#c8d8e8;
-    border:1px solid #2a4060; border-radius:5px;
-    padding:4px 8px; font-size:12px; font-family:'Outfit',sans-serif; cursor:pointer;
+    background:#fff; color:#1a1a1a;
+    border:1px solid #ccc; border-radius:2px;
+    padding:3px 7px; font-size:11.5px; font-family:'Inter',sans-serif; cursor:pointer;
   }}
-  select:focus {{ outline:none; border-color:#0066cc; }}
+  select:focus {{ outline:none; border-color:#1a4a7a; }}
   button {{
-    background:#1a2a3a; color:#7ecfff;
-    border:1px solid #2a4060; border-radius:5px;
-    padding:5px 12px; cursor:pointer; font-size:12px; font-weight:600;
-    transition:all 0.15s;
+    background:#fff; color:#1a4a7a;
+    border:1px solid #ccc; border-radius:2px;
+    padding:4px 11px; cursor:pointer; font-size:11.5px; font-weight:500;
+    transition:all 0.12s;
   }}
-  button:hover {{ background:#0a3d62; border-color:#0066cc; }}
+  button:hover {{ background:#e8eef6; border-color:#1a4a7a; }}
   .badge {{
-    margin-left:auto; background:rgba(0,102,204,0.15);
-    border:1px solid rgba(0,102,204,0.4); color:#4fb3ff;
-    font-family:'Space Mono',monospace; font-size:11px;
-    padding:3px 10px; border-radius:20px; white-space:nowrap;
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    color:#444; border:1px solid #ccc; padding:2px 9px; border-radius:2px;
+    background:#fff; white-space:nowrap;
   }}
 </style>
 </head>
@@ -795,34 +939,34 @@ def build_viewer_html(receptor_pdb: str, ligand_pdb: str,
     <option value="sphere">Spheres</option>
     <option value="hidden">Hidden</option>
   </select>
-  <div class="ctrl-label" style="margin-left:8px">Ligand</div>
+  <div class="ctrl-label" style="margin-left:6px">Ligand</div>
   <select id="lig_style">
     <option value="stick">Sticks</option>
     <option value="sphere">Spheres</option>
     <option value="ball_stick">Ball+Stick</option>
     <option value="line">Lines</option>
   </select>
-  <div class="ctrl-label" style="margin-left:8px">Colour</div>
+  <div class="ctrl-label" style="margin-left:6px">Colour</div>
   <select id="rec_color">
     <option value="spectrum">Spectrum</option>
     <option value="chain">By Chain</option>
     <option value="ss">Secondary Structure</option>
     <option value="white">White</option>
   </select>
-  <button onclick="viewer.zoomTo();">⊕ Reset View</button>
-  <button onclick="viewer.spin(!spinning); spinning=!spinning; this.textContent=spinning?'⏸ Stop Spin':'▶ Spin';">▶ Spin</button>
-  <span class="badge">🔵 Vina  ·  {aff_str}</span>
+  <button onclick="viewer.zoomTo();">Reset View</button>
+  <button onclick="viewer.spin(!spinning); spinning=!spinning; this.textContent=spinning?'Stop':'Spin';">Spin</button>
+  <span class="badge">AutoDock Vina &nbsp;&middot;&nbsp; {aff_str}</span>
 </div>
 <div id="info">
-  <b>Protein:</b> {protein_name} &nbsp;·&nbsp; <b>Ligand:</b> {ligand_name}
-  &nbsp;·&nbsp; <b>Best affinity:</b> {aff_str}
-  &nbsp;·&nbsp; <span style="color:#3a5a7a;font-size:10px;">Drag to rotate · Scroll to zoom · Right-drag to translate</span>
+  <b>Protein:</b> {protein_name} &nbsp;&middot;&nbsp; <b>Ligand:</b> {ligand_name}
+  &nbsp;&middot;&nbsp; <b>Best affinity:</b> {aff_str}
+  &nbsp;&middot;&nbsp; <span style="color:#999;font-size:10px;">Drag to rotate &middot; Scroll to zoom &middot; Right-drag to translate</span>
 </div>
 <script>
-var viewer = $3Dmol.createViewer("viewer", {{backgroundColor:"#0d1520"}});
+var viewer = $3Dmol.createViewer("viewer", {{backgroundColor:"#1a1f2e"}});
 var spinning = false;
 viewer.addModel('{rec_js}', 'pdb');
-viewer.addModel('{lig_js}', 'pdb');
+viewer.addModel('{lig_js}', '{lig_fmt_js}');
 var models = viewer.getModelList();
 var recModel = models[0];
 var ligModel = models[1];
@@ -865,41 +1009,37 @@ viewer.render();
 # ──────────────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div style="
-    display:flex; align-items:center; justify-content:space-between;
-    padding: 1rem 0 1.4rem;
-    border-bottom: 2px solid #e0eaf4;
-    margin-bottom: 1.4rem;
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding: 0.8rem 0 0.9rem;
+    border-bottom: 2px solid #1a1a1a;
+    margin-bottom: 1.2rem;
 ">
     <div>
-        <div style="font-family:'Outfit',sans-serif; font-size:2rem; font-weight:800;
-                    color:#0a2540; letter-spacing:-0.03em; line-height:1;">
-             𝒊-Dock
-        </div>
-        <div style="font-family:'Space Mono',monospace; font-size:0.72rem;
-                    color:#5a7a99; margin-top:5px; letter-spacing:0.1em; text-transform:uppercase;">
-            Batch Virtual Screening · AutoDock Vina · Zero Command Line
-        </div>
-    </div>
-    <div style="display:flex; gap:8px; align-items:center;">
-        <span style="background:#e8f4ff; border:1px solid #c0d8f0; color:#0066cc;
-                     font-family:'Space Mono',monospace; font-size:0.7rem;
-                     padding:4px 12px; border-radius:20px; font-weight:700;">
-            AutoDock Vina
+        <span style="font-family:'Source Serif 4',Georgia,serif; font-size:1.7rem; font-weight:600;
+                    color:#1a1a1a; letter-spacing:-0.02em; line-height:1;">IBDock</span>
+        <span style="font-family:'Inter',sans-serif; font-size:0.78rem;
+                    color:#777; margin-left:14px; letter-spacing:0.02em;">
+            Batch Molecular Docking &nbsp;&middot;&nbsp; AutoDock Vina &nbsp;&middot;&nbsp; Zero Command Line
         </span>
     </div>
+    <span style="font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:#555;
+                 border:1px solid #ccc; padding:2px 10px; border-radius:2px;">
+        v1.0.0
+    </span>
+</div>
 """, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # SIDEBAR — CONFIGURATION
 # ──────────────────────────────────────────────────────────────────────────────
 st.sidebar.markdown("""
-<div style="padding:0.8rem 0 0.6rem; border-bottom:1px solid #1e3048; margin-bottom:0.8rem;">
-    <div style="font-family:'Outfit',sans-serif; font-size:1.1rem; font-weight:800;
-                color:#7ecfff; letter-spacing:-0.02em;">⚙️ Configuration</div>
+<div style="padding:0.6rem 0 0.5rem; border-bottom:1px solid #ccc; margin-bottom:0.7rem;">
+    <div style="font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:600;
+                color:#333; letter-spacing:0.06em; text-transform:uppercase;">Configuration</div>
 </div>
 """, unsafe_allow_html=True)
 
-st.sidebar.markdown("### 📁 Project Directory")
+st.sidebar.markdown("**Project Directory**")
 _proj_input = st.sidebar.text_input(
     "Project path",
     value=st.session_state.get("_last_project_dir", ""),
@@ -921,7 +1061,7 @@ if _proj_input.strip():
 _cfg = _load_config(project_dir) if project_dir.exists() else dict(_DEF)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("###  Tool Paths")
+st.sidebar.markdown("**Tool Paths**")
 
 mgl_python = st.sidebar.text_input(
     "MGLTools pythonsh / python.exe", _cfg["mgl_python"],
@@ -933,7 +1073,7 @@ vina_path   = st.sidebar.text_input("AutoDock Vina executable", _cfg["vina_path"
 obabel_path = st.sidebar.text_input("Open Babel (obabel)",      _cfg["obabel_path"])
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 🔍 Pocket Detection (optional)")
+st.sidebar.markdown("**Pocket Detection** *(optional)*")
 fpocket_path = st.sidebar.text_input(
     "fpocket  (WSL prefix required)", _cfg["fpocket_path"],
     help="Used when pocket detection is selected in Protein Prep.",
@@ -953,7 +1093,7 @@ if project_dir.exists():
         fpocket_path=fpocket_path, p2rank_path=p2rank_path,
     ))
 
-if st.sidebar.button("🔍 Validate All Tools", use_container_width=True):
+if st.sidebar.button("Validate All Tools", use_container_width=True):
     tools = [
         (mgl_python,   "MGLTools python.exe",    False),
         (prep_rec,     "prepare_receptor4.py",   False),
@@ -991,44 +1131,42 @@ if st.sidebar.button("🔍 Validate All Tools", use_container_width=True):
 # ──────────────────────────────────────────────────────────────────────────────
 if not project_dir.exists() or str(project_dir) == ".":
     st.markdown("""
-<div style="max-width:760px; margin:2rem auto 0;">
+<div style="max-width:720px; margin:2rem auto 0;">
 
-  <div style="text-align:center; margin-bottom:2.5rem;">
-    <div style="font-size:3.5rem; margin-bottom:0.4rem;"></div>
-    <div style="font-family:'Outfit',sans-serif; font-size:1.9rem; font-weight:800;
-                color:#0a2540; letter-spacing:-0.04em;">Welcome </div>
-    <div style="font-family:'Space Mono',monospace; font-size:0.75rem; color:#5a7a99;
-                margin-top:6px; letter-spacing:0.08em; text-transform:uppercase;">
-                   Virtual Screening, Simplified
+  <div style="margin-bottom:2rem; border-bottom:1px solid #e0e0e0; padding-bottom:1.2rem;">
+    <div style="font-family:'Source Serif 4',Georgia,serif; font-size:1.5rem; font-weight:600;
+                color:#1a1a1a; letter-spacing:-0.02em;">Welcome to IBDock</div>
+    <div style="font-family:'Inter',sans-serif; font-size:0.83rem; color:#666;
+                margin-top:4px;">
+        A graphical interface for batch virtual screening with AutoDock Vina.
+        Set your project directory in the sidebar to begin.
     </div>
   </div>
 
-  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-bottom:2rem;">
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8rem; margin-bottom:1.8rem;">
     <div class="info-card">
-      <h4>Step 1 — Set Project Folder</h4>
-      <p>Enter your project directory path in the sidebar. 𝒊-Dock will create all subfolders automatically.</p>
+      <h4>1 &mdash; Set Project Folder</h4>
+      <p>Enter your project directory path in the sidebar. IBDock will create all subfolders automatically.</p>
     </div>
     <div class="info-card">
-      <h4>Step 2 — Add Your Files</h4>
+      <h4>2 &mdash; Add Input Files</h4>
       <p>Place <code>.pdb</code> proteins in <code>raw_proteins/</code> and ligands (<code>.sdf</code> / <code>.mol2</code>) in <code>raw_ligands/</code>.</p>
     </div>
     <div class="info-card">
-      <h4>Step 3 — Run the Pipeline</h4>
-      <p>Work through the tabs: Protein Prep → Ligand Prep → Docking → Results → pose viewer .</p>
+      <h4>3 &mdash; Run the Pipeline</h4>
+      <p>Work through the tabs in order: Protein Prep &rarr; Ligand Prep &rarr; Docking &rarr; Results.</p>
     </div>
   </div>
 
-  <div style="background:#f4f8fd; border:1px solid #d0e4f4; border-radius:12px; padding:1.2rem 1.5rem; margin-bottom:1.5rem;">
-    <div style="font-weight:700; color:#0a2540; font-size:0.9rem; margin-bottom:0.6rem;">📁 Expected folder structure</div>
-    <code style="font-size:0.8rem; color:#2a5080; line-height:1.8;">
+  <div style="background:#fafafa; border:1px solid #e0e0e0; border-radius:3px; padding:1.1rem 1.4rem; margin-bottom:1.2rem;">
+    <div style="font-weight:600; color:#1a1a1a; font-size:0.85rem; margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:0.05em; font-family:'Inter',sans-serif;">Expected folder structure</div>
+    <code style="font-size:0.78rem; color:#333; line-height:1.9; display:block;">
       my_project/<br>
-      ├── raw_proteins/&nbsp;&nbsp;&nbsp;← your .pdb files<br>
-      └── raw_ligands/&nbsp;&nbsp;&nbsp;&nbsp;← your .sdf / .mol2 / .pdb files
+      &nbsp;&nbsp;&nbsp;&nbsp;raw_proteins/&nbsp;&nbsp;&nbsp;&nbsp;&larr; .pdb files<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;raw_ligands/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr; .sdf / .mol2 / .pdb files
     </code>
-    <div style="margin-top:0.6rem; font-size:0.78rem; color:#6a8aaa;">All other folders (prepared_receptors/, docking/, results/, …) are created automatically.</div>
+    <div style="margin-top:0.5rem; font-size:0.77rem; color:#777; font-family:'Inter',sans-serif;">All other folders (prepared_receptors/, docking/, results/, &hellip;) are created automatically.</div>
   </div>
-
-  
 
 </div>
     """, unsafe_allow_html=True)
@@ -1040,14 +1178,14 @@ raw_lig  = project_dir / "raw_ligands"
 if not raw_prot.exists() or not raw_lig.exists():
     st.error("❌  Project directory must contain `raw_proteins/` and `raw_ligands/` subfolders.")
     st.markdown("""
-    Create them manually or let 𝒊-Dock create them for you:
+    Create them manually or let IBDock create them for you:
     ```
     my_project/
     ├── raw_proteins/
     └── raw_ligands/
     ```
     """)
-    if st.button("📁 Create subfolders now"):
+    if st.button("Create subfolders now"):
         raw_prot.mkdir(parents=True, exist_ok=True)
         raw_lig.mkdir(parents=True, exist_ok=True)
         st.success("✅ Subfolders created — add your files and refresh.")
@@ -1074,16 +1212,17 @@ _n_results   = len(list(result_dir.glob("*.txt")))
 # ──────────────────────────────────────────────────────────────────────────────
 # TABS
 # ──────────────────────────────────────────────────────────────────────────────
-# Tab labels with live file counts
-_t1 = f"  Protein Prep{f'  ({_n_prep_rec} ✅)' if _n_prep_rec else f'  ({_n_raw_prot} PDB)' if _n_raw_prot else ''}"
-_t2 = f"  Ligand Prep{f'  ({_n_prep_lig} ✅)' if _n_prep_lig else f'  ({_n_raw_lig} files)' if _n_raw_lig else ''}"
-_t3 = f"  Docking{f'  ({_n_docked} poses)' if _n_docked else ''}"
-_t4 = f"  Results{f'  ({_n_results} logs)' if _n_results else ''}"
+# Tab labels — concise, no emoji clutter
+_t1 = f"Protein Prep{f' ({_n_prep_rec})' if _n_prep_rec else f' ({_n_raw_prot} PDB)' if _n_raw_prot else ''}"
+_t2 = f"Ligand Prep{f' ({_n_prep_lig})' if _n_prep_lig else f' ({_n_raw_lig})' if _n_raw_lig else ''}"
+_t3 = f"Docking{f' ({_n_docked})' if _n_docked else ''}"
+_t4 = f"Results{f' ({_n_results})' if _n_results else ''}"
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     _t1, _t2, _t3, _t4,
-    "  Pose Viewer",
-    "  About & Cite",
+    "Pose Viewer",
+    "Validation",
+    "About & Cite",
 ])
 
 
@@ -1091,7 +1230,7 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 # TAB 1 — PROTEIN PREPARATION
 # ══════════════════════════════════════════════════════════════════════════════
 with tab1:
-    st.markdown("###  Protein Preparation")
+    st.markdown("### Protein Preparation")
     st.caption(
         "Cleans PDB files, auto-detects the binding site, computes a grid box, "
         "and converts to PDBQT format using MGLTools."
@@ -1157,7 +1296,6 @@ with tab1:
 
         prepared, failed = [], []
         progress = st.progress(0)
-        status   = st.empty()
         timer    = st.empty()
         t0       = time.time()
 
@@ -1165,7 +1303,6 @@ with tab1:
             name = pdb.stem
             # Update progress at START of each item so bar moves immediately
             progress.progress((i - 1) / len(proteins), text=f"Processing {name} ({i}/{len(proteins)})…")
-            status.info(f"Processing **{name}** ({i}/{len(proteins)})…")
 
             try:
                 lines    = pdb.read_text().splitlines(keepends=True)
@@ -1330,7 +1467,7 @@ with tab1:
             timer.caption(f"⏱ Estimated remaining: {int(remaining)}s")
 
         progress.progress(1.0, text="Complete!")
-        status.success("✅ Protein preparation complete")
+        st.success("✅ Protein preparation complete")
         timer.empty()
         st.divider()
         c1, c2 = st.columns(2)
@@ -1344,7 +1481,7 @@ with tab1:
 # TAB 2 — LIGAND PREPARATION
 # ══════════════════════════════════════════════════════════════════════════════
 with tab2:
-    st.markdown("###  Ligand Preparation")
+    st.markdown("### Ligand Preparation")
     st.caption("Converts SDF / MOL2 / PDB ligands to PDBQT using Open Babel and MGLTools.")
 
     with st.expander(" Chemistry settings", expanded=True):
@@ -1370,13 +1507,11 @@ with tab2:
 
         prepared, failed = [], []
         progress = st.progress(0)
-        status   = st.empty()
         timer    = st.empty()
         t0       = time.time()
 
         for i, lig_file in enumerate(ligands, 1):
             progress.progress((i - 1) / len(ligands), text=f"Processing {lig_file.name} ({i}/{len(ligands)})…")
-            status.info(f"Processing **{lig_file.name}** ({i}/{len(ligands)})…")
             try:
                 pdb_file  = prep_lig_dir / f"{lig_file.stem}.pdb"
                 pdbqt_out = prep_lig_dir / f"{lig_file.stem}.pdbqt"
@@ -1433,7 +1568,7 @@ with tab2:
             timer.caption(f"⏱ Estimated remaining: {int(remaining)}s")
 
         progress.progress(1.0, text="Complete!")
-        status.success("✅ Ligand preparation complete")
+        st.success("✅ Ligand preparation complete")
         timer.empty()
         st.divider()
         c1, c2 = st.columns(2)
@@ -1450,7 +1585,7 @@ with tab2:
 # TAB 3 — DOCKING
 # ══════════════════════════════════════════════════════════════════════════════
 with tab3:
-    st.markdown("###  Batch Docking")
+    st.markdown("### Batch Docking")
     st.caption(
         "Runs AutoDock Vina on all receptor–ligand pairs in parallel. "
         "Grid boxes are read from the configs generated in Protein Prep."
@@ -1538,7 +1673,7 @@ with tab3:
 
     with col2:
         total_cores = os.cpu_count() or 4
-        with st.expander("⚙️ Vina parameters", expanded=True):
+        with st.expander("Vina parameters", expanded=True):
             exhaustiveness = st.number_input(
                 "Exhaustiveness", 1, 64, 16, key="vina_exhaust",
                 help="Higher = more thorough search. 8 is standard; 16–32 for publication-quality results.",
@@ -1563,6 +1698,206 @@ with tab3:
                 f"**{int(cpu_workers)} jobs × {int(cores_per_job)} cores "
                 f"= {int(cpu_workers)*int(cores_per_job)} / {total_cores} cores used**"
             )
+    st.markdown("")
+
+    # ── Grid Box 3D Visualizer (both Auto and Custom modes) ──────────────────
+    st.markdown("---")
+    _show_gridbox = st.checkbox(
+        "🔲 Preview grid box in 3D",
+        value=False,
+        key="gridbox_show",
+        help="Load an interactive 3D viewer showing the docking search space overlaid on the receptor.",
+    )
+    if not _show_gridbox:
+        st.caption("Enable the checkbox above to visualize the grid box on the receptor structure.")
+
+    _rec_files = sorted(prep_rec_dir.glob("*_receptor.pdbqt")) if _show_gridbox else []
+
+    if _show_gridbox and not _rec_files:
+        st.info("⚠️ No prepared receptors found — run Protein Prep first to preview the grid box.")
+    elif _show_gridbox:
+        # ── Receptor selector (always shown — applies to both modes) ──────
+        _rec_names = [f.stem.replace("_receptor", "") for f in _rec_files]
+        _auto_caption = (
+            "Each receptor has its own auto-computed grid box from Protein Prep."
+            if docking_mode == "Auto (from Protein Prep)"
+            else "Select which receptor to display the custom grid box on."
+        )
+        if len(_rec_files) > 1:
+            _rec_sel_name = st.selectbox(
+                "Receptor to preview",
+                _rec_names,
+                key="gridbox_rec_sel",
+                help=_auto_caption,
+            )
+        else:
+            _rec_sel_name = _rec_names[0]
+            st.caption(f"Receptor: **{_rec_sel_name}**")
+
+        _rec_pdbqt_path = prep_rec_dir / f"{_rec_sel_name}_receptor.pdbqt"
+
+        # ── Resolve grid parameters depending on mode ─────────────────────
+        _grid_params_ok   = False
+        _grid_source_note = ""
+
+        if docking_mode == "Auto (from Protein Prep)":
+            _auto_cfg = grid_dir / _rec_sel_name / "grid_config.txt"
+            if _auto_cfg.exists():
+                _params = {}
+                for _line in _auto_cfg.read_text().splitlines():
+                    if "=" in _line:
+                        _k, _v = _line.split("=", 1)
+                        _params[_k.strip()] = float(_v.strip())
+                _cx  = _params.get("center_x", 0.0)
+                _cy  = _params.get("center_y", 0.0)
+                _cz  = _params.get("center_z", 0.0)
+                _sx  = _params.get("size_x",  20.0)
+                _sy  = _params.get("size_y",  20.0)
+                _sz  = _params.get("size_z",  20.0)
+                _grid_params_ok   = True
+                _grid_source_note = f"Grid from: `{_auto_cfg}`"
+            else:
+                st.warning(
+                    f"⚠️ No grid config found for **{_rec_sel_name}** "
+                    f"(`grid/{_rec_sel_name}/grid_config.txt` missing). "
+                    "Re-run Protein Prep to generate it."
+                )
+        else:
+            # Custom mode — use the live widget values
+            _cx = float(center_x)
+            _cy = float(center_y)
+            _cz = float(center_z)
+            _sx = float(size_x)
+            _sy = float(size_y)
+            _sz = float(size_z)
+            _grid_params_ok   = True
+            _grid_source_note = "Grid from: custom input above"
+
+        if _grid_params_ok:
+            # ── Style controls ────────────────────────────────────────────
+            _gv_c1, _gv_c2, _gv_c3 = st.columns(3)
+            with _gv_c1:
+                _box_color = st.selectbox(
+                    "Box colour", ["cyan", "magenta", "yellow", "lime", "orange", "white"],
+                    key="gridbox_color",
+                )
+            with _gv_c2:
+                _rec_style = st.selectbox(
+                    "Receptor style", ["cartoon", "surface", "line", "stick"],
+                    key="gridbox_rec_style",
+                )
+            with _gv_c3:
+                _box_opacity = st.slider(
+                    "Box fill opacity", 0.0, 0.5, 0.15, 0.05,
+                    key="gridbox_opacity",
+                )
+
+            # ── Show parsed grid values for Auto mode ─────────────────────
+            if docking_mode == "Auto (from Protein Prep)":
+                _pi_c1, _pi_c2, _pi_c3, _pi_c4, _pi_c5, _pi_c6 = st.columns(6)
+                _pi_c1.metric("center_x", f"{_cx:.2f}")
+                _pi_c2.metric("center_y", f"{_cy:.2f}")
+                _pi_c3.metric("center_z", f"{_cz:.2f}")
+                _pi_c4.metric("size_x",   f"{_sx:.0f}")
+                _pi_c5.metric("size_y",   f"{_sy:.0f}")
+                _pi_c6.metric("size_z",   f"{_sz:.0f}")
+
+            try:
+                _rec_text    = _rec_pdbqt_path.read_text(errors="replace")
+                _rec_text_js = _rec_text.replace("\\", "\\\\").replace("`", "\\`")
+
+                _style_js = {
+                    "cartoon": '{"cartoon": {"color": "spectrum"}}',
+                    "surface": '{"surface": {"opacity": 0.7, "color": "white"}}',
+                    "line":    '{"line": {"colorscheme": "greenCarbon"}}',
+                    "stick":   '{"stick": {"colorscheme": "greenCarbon"}}',
+                }[_rec_style]
+
+                _hx  = _sx / 2
+                _hy  = _sy / 2
+                _hz  = _sz / 2
+                _vol = _sx * _sy * _sz
+
+                _corners_js = "[" + ",".join(
+                    f"[{_cx+dx:.3f},{_cy+dy:.3f},{_cz+dz:.3f}]"
+                    for dx in (-_hx, _hx)
+                    for dy in (-_hy, _hy)
+                    for dz in (-_hz, _hz)
+                ) + "]"
+
+                _mode_label = "Auto" if docking_mode == "Auto (from Protein Prep)" else "Custom"
+
+                _gridbox_html = f"""<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {{ margin:0; background:#1a1a2e; }}
+  #viewer {{ width:100%; height:460px; position:relative; }}
+  #overlay {{
+    position:absolute; top:10px; left:10px; z-index:100;
+    background:rgba(0,0,0,0.65); color:#e0e0e0;
+    font-family:'IBM Plex Mono',monospace; font-size:11px;
+    padding:8px 12px; border-radius:4px; line-height:1.8;
+    border:1px solid rgba(255,255,255,0.15); pointer-events:none;
+  }}
+  #overlay b {{ color:#fff; }}
+  #overlay span {{ color:{_box_color}; font-weight:bold; }}
+  #mode-badge {{
+    position:absolute; top:10px; right:10px; z-index:100;
+    background:rgba(26,74,122,0.85); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600;
+    padding:4px 10px; border-radius:3px; letter-spacing:0.06em;
+    text-transform:uppercase; pointer-events:none;
+    border:1px solid rgba(255,255,255,0.2);
+  }}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.1.0/3Dmol-min.js"></script>
+</head>
+<body>
+<div style="position:relative">
+  <div id="viewer"></div>
+  <div id="overlay">
+    <b>Grid Box</b><br>
+    Center:&nbsp;<span>({_cx:.2f}, {_cy:.2f}, {_cz:.2f})</span><br>
+    Size:&nbsp;&nbsp;&nbsp;<span>{_sx:.1f} &times; {_sy:.1f} &times; {_sz:.1f} &Aring;</span><br>
+    Volume:&nbsp;<span>{_vol:.0f} &Aring;&sup3;</span><br>
+    Protein:<span>&nbsp;{_rec_sel_name}</span>
+  </div>
+  <div id="mode-badge">{_mode_label} grid</div>
+</div>
+<script>
+const viewer = $3Dmol.createViewer(document.getElementById("viewer"), {{backgroundColor:"#1a1a2e"}});
+const pdb = `{_rec_text_js}`;
+viewer.addModel(pdb, "pdbqt");
+viewer.setStyle({{}}, {_style_js});
+
+viewer.addBox({{center:{{x:{_cx},y:{_cy},z:{_cz}}}, dimensions:{{w:{_sx},h:{_sy},d:{_sz}}},
+  color:"{_box_color}", opacity:{_box_opacity}, wireframe:false}});
+viewer.addBox({{center:{{x:{_cx},y:{_cy},z:{_cz}}}, dimensions:{{w:{_sx},h:{_sy},d:{_sz}}},
+  color:"{_box_color}", opacity:0.95, wireframe:true}});
+
+const corners = {_corners_js};
+corners.forEach(([x,y,z]) => viewer.addSphere({{
+  center:{{x,y,z}}, radius:0.35, color:"{_box_color}", opacity:0.9}}));
+
+viewer.addSphere({{center:{{x:{_cx},y:{_cy},z:{_cz}}},
+  radius:0.6, color:"red", opacity:1.0}});
+
+viewer.zoomTo(); viewer.render(); viewer.zoom(0.85);
+</script>
+</body>
+</html>"""
+
+                import streamlit.components.v1 as _grid_comp
+                _grid_comp.html(_gridbox_html, height=470, scrolling=False)
+                st.caption(
+                    f"🔴 Red sphere = box centre  ·  {_grid_source_note}  ·  "
+                    "Rotate: left-drag  ·  Zoom: scroll  ·  Pan: right-drag"
+                )
+
+            except Exception as _gv_err:
+                st.warning(f"⚠️ Grid box preview unavailable: {_gv_err}")
+
     st.markdown("")
 
     skip_existing = st.checkbox(
@@ -1628,7 +1963,6 @@ with tab3:
         st.info(f" Running **{len(jobs)}** docking jobs ({len(receptors)} receptors × {len(ligands)} ligands){_skip_note}…")
 
         progress  = st.progress(0)
-        status    = st.empty()
         log_area  = st.empty()
         timer     = st.empty()
         t0        = time.time()
@@ -1651,10 +1985,6 @@ with tab3:
                 _pct = counters["done"] / len(jobs)
                 _txt = f"{counters['done']}/{len(jobs)} done — ✅ {counters['success']}  ❌ {counters['failed']}"
                 progress.progress(_pct, text=_txt)
-                status.info(
-                    f"**{counters['done']}/{len(jobs)}** done  |  "
-                    f"✅ {counters['success']}  ❌ {counters['failed']}"
-                )
                 log_area.text_area("Live log", "\n".join(log_lines[-30:]),
                                    height=160)
                 elapsed   = time.time() - t0
@@ -1662,8 +1992,9 @@ with tab3:
                 timer.caption(f"⏱ Estimated remaining: {int(remaining)}s")
 
         progress.progress(1.0)
-        status.success("✅ All docking jobs complete")
+        st.success("✅ All docking jobs complete")
         timer.empty()
+        time.sleep(0.5)  # Allow WebSocket to stabilize before results render
         st.divider()
         c1, c2, c3 = st.columns(3)
         c1.metric("Total jobs",  len(jobs))
@@ -1675,7 +2006,7 @@ with tab3:
 # TAB 4 — RESULTS
 # ══════════════════════════════════════════════════════════════════════════════
 with tab4:
-    st.markdown("###  Docking Results")
+    st.markdown("### Docking Results")
     st.caption("Scores are parsed directly from Vina log files in `results/`.")
 
     # Split result file stems into (protein, ligand)
@@ -1708,16 +2039,46 @@ with tab4:
         mode2_aff = mode_affs.get(2, None)
         delta_e   = round(mode2_aff - mode1_aff, 3) if (mode2_aff is not None and mode1_aff is not None) else None
 
-        # Ligand efficiency placeholder (requires heavy atom count from PDBQT)
+        # Ligand efficiency — count heavy atoms from ONE pose only.
+        # The docked output PDBQT contains all 9 Vina modes stacked as MODEL
+        # blocks, so reading the whole file gives N_atoms × N_modes (e.g. 297
+        # instead of 33). Fix: extract only the first MODEL block.
+        # Fallback: use the prepared-ligand PDBQT (single pose, cleanest source).
         dock_pdbqt = dock_dir / f"{protein}_{ligand}.pdbqt"
+        prep_pdbqt = prep_lig_dir / f"{ligand}.pdbqt"
         n_heavy = None
-        if dock_pdbqt.exists():
+
+        def _count_heavy_first_pose(path: Path) -> int | None:
+            """Return heavy-atom count from the first MODEL block (or whole file)."""
             try:
-                text  = dock_pdbqt.read_text(errors="replace")
-                heavy = parse_pdbqt_heavy_atoms(text)
-                n_heavy = len(heavy)
+                raw = path.read_text(errors="replace")
+                lines = raw.splitlines(keepends=True)
+                has_models = any(l.startswith("MODEL") for l in lines)
+                if has_models:
+                    # Collect only lines inside MODEL 1
+                    pose_lines, in_model = [], False
+                    for line in lines:
+                        if line.startswith("MODEL"):
+                            if in_model:          # second MODEL reached → stop
+                                break
+                            in_model = True
+                        elif line.startswith("ENDMDL"):
+                            break
+                        elif in_model:
+                            pose_lines.append(line)
+                else:
+                    pose_lines = lines
+                heavy = parse_pdbqt_heavy_atoms("".join(pose_lines))
+                return len(heavy) if heavy else None
             except Exception:
-                pass
+                return None
+
+        # Prefer prepared-ligand PDBQT (single pose) → fall back to docked output
+        for _src in (prep_pdbqt, dock_pdbqt):
+            if _src.exists():
+                n_heavy = _count_heavy_first_pose(_src)
+                if n_heavy:
+                    break
         le = round(mode1_aff / n_heavy, 3) if (mode1_aff is not None and n_heavy and n_heavy > 0) else None
 
         rows.append({
@@ -1768,9 +2129,14 @@ with tab4:
             with fc2:
                 _aff_min = float(df["Best Affinity (kcal/mol)"].min() if len(valid) else -15)
                 _aff_max = float(df["Best Affinity (kcal/mol)"].max() if len(valid) else 0)
+                _aff_max = min(_aff_max, 0.0)
+                # Guard: slider requires min < max. When all results share the
+                # same affinity (e.g. only one docking run), pad by 0.5 kcal/mol.
+                if _aff_min >= _aff_max:
+                    _aff_min = _aff_max - 0.5
                 _aff_rng = st.slider(
-                    "Affinity range (kcal/mol)", _aff_min, min(_aff_max, 0.0),
-                    (_aff_min, min(_aff_max, 0.0)), step=0.5, key="res_aff_slider",
+                    "Affinity range (kcal/mol)", _aff_min, _aff_max,
+                    (_aff_min, _aff_max), step=0.5, key="res_aff_slider",
                 )
             with fc3:
                 _lig_search = st.text_input("Search ligand name", placeholder="e.g. Imatinib", key="res_lig_search")
@@ -1816,6 +2182,7 @@ with tab4:
                 file_name="docking_results.csv",
                 mime="text/csv",
                 use_container_width=True,
+                key="dl_csv_results",
             )
         with col_dl2:
             try:
@@ -1845,7 +2212,7 @@ with tab4:
                         elif row % 2 == 0:
                             cell.set_facecolor("#f4f8fd")
                     _ax_t.set_title(
-                        f"𝒊-Dock Docking Report  —  {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}",
+                        f"IBDock Docking Report  —  {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}",
                         fontsize=11, fontweight="bold", pad=14, color="#0a2540",
                     )
                     plt.tight_layout()
@@ -1888,15 +2255,16 @@ with tab4:
                     except Exception:
                         pass
                     _d = _pdf.infodict()
-                    _d["Title"]   = "𝒊-Dock Docking Report"
+                    _d["Title"]   = "IBDock Docking Report"
                     _d["Subject"] = "AutoDock Vina Virtual Screening Results"
                 _pdf_buf.seek(0)
                 st.download_button(
                     "⬇ Download PDF Report",
                     data=_pdf_buf.getvalue(),
-                    file_name=f"idock_report_{pd.Timestamp.now().strftime('%Y%m%d_%H%M')}.pdf",
+                    file_name=f"IBDock_report_{pd.Timestamp.now().strftime('%Y%m%d_%H%M')}.pdf",
                     mime="application/pdf",
                     use_container_width=True,
+                    key="dl_pdf_results",
                 )
             except Exception as _pdf_err:
                 st.caption(f"PDF unavailable: {_pdf_err}")
@@ -1906,6 +2274,7 @@ with tab4:
 
         # ── Heatmap ────────────────────────────────────────────────────────
         st.subheader(" Affinity Heatmap")
+        _heatmap_placeholder = st.empty()
         try:
             pivot = df.pivot(index="Ligand", columns="Protein", values="Best Affinity (kcal/mol)")
             fig, ax = plt.subplots(
@@ -1920,14 +2289,15 @@ with tab4:
             ax.set_xlabel("")
             ax.set_ylabel("")
             plt.tight_layout()
-            st.pyplot(fig)
+            _heatmap_placeholder.pyplot(fig)
             plt.close(fig)
         except Exception:
-            st.info("Heatmap requires at least one protein and one ligand with valid scores.")
+            _heatmap_placeholder.info("Heatmap requires at least one protein and one ligand with valid scores.")
 
         # ── Bar chart — best affinity per ligand ───────────────────────────
         if len(df) >= 2:
             st.subheader(" Best Affinity Per Ligand")
+            _bar_placeholder = st.empty()
             proteins_list = df["Protein"].unique()
             ncols  = min(len(proteins_list), 3)
             fig2, axes = plt.subplots(
@@ -1947,7 +2317,7 @@ with tab4:
                 ax.spines[["top", "right"]].set_visible(False)
                 ax.legend(fontsize=7)
             plt.tight_layout()
-            st.pyplot(fig2)
+            _bar_placeholder.pyplot(fig2)
             plt.close(fig2)
             st.caption("Blue: strong (< −7) · Green: moderate (−5 to −7) · Orange: weak (> −5)")
 
@@ -1958,7 +2328,7 @@ with tab4:
 import streamlit.components.v1 as _components
 
 with tab5:
-    st.markdown("###  3D Pose Viewer")
+    st.markdown("### 3D Pose Viewer")
     st.caption("Interactive 3D visualisation of docked poses.")
 
     # Build pose index
@@ -2015,22 +2385,37 @@ with tab5:
 
             try:
                 rec_pdb = pdbqt_to_pdb_text(receptor_file, first_pose_only=False)
-                lig_pdb = pdbqt_to_pdb_text(pose_file, first_pose_only=not show_all)
+                # Convert ligand to SDF for correct bond-order rendering in py3Dmol.
+                # PDBQT has no CONECT/bond records; loading it as 'pdb' causes
+                # py3Dmol to infer bonds purely from atom distances, which collapses
+                # complex ligands into benzene-ring artefacts.
+                _obabel = obabel_path  # sidebar-configured Open Babel path
+                lig_sdf = ""
+                if _obabel:
+                    lig_sdf = pdbqt_to_sdf_text(
+                        pose_file, _obabel, first_pose_only=not show_all
+                    )
+                if lig_sdf:
+                    lig_pdb    = lig_sdf   # variable name kept for download buttons
+                    lig_format = "sdf"
+                else:
+                    # Fallback: raw PDB text (may render incorrectly for complex ligands)
+                    lig_pdb    = pdbqt_to_pdb_text(pose_file, first_pose_only=not show_all)
+                    lig_format = "pdb"
             except Exception as exc:
                 st.error(f"❌ Could not read pose files: {exc}")
                 st.stop()
 
             # Engine badge
             st.markdown(
-                '<span style="background:#e8f4ff;color:#0066cc;border:1px solid #b0d4f0;'
-                'padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;'
-                'font-family:Space Mono,monospace;letter-spacing:0.04em;">🔵 AutoDock Vina</span>',
+                '<span style="font-family:\'IBM Plex Mono\',monospace; font-size:0.72rem; color:#444;'
+                'border:1px solid #ccc; padding:2px 10px; border-radius:2px;">AutoDock Vina</span>',
                 unsafe_allow_html=True,
             )
             st.markdown("")
 
             # 3D viewer
-            viewer_html = build_viewer_html(rec_pdb, lig_pdb, protein_name, ligand_name, affinity)
+            viewer_html = build_viewer_html(rec_pdb, lig_pdb, protein_name, ligand_name, affinity, lig_format)
             _components.html(viewer_html, height=580, scrolling=False)
 
             # Stats row
@@ -2060,11 +2445,388 @@ with tab5:
                     use_container_width=True,
                 )
 
+            # Download complex (receptor + ligand together)
+            st.markdown("")
+            _complex_pdb = rec_pdb.rstrip() + "\nENDMDL\n" + lig_pdb
+            st.download_button(
+                "⬇ Download full complex PDB  *(receptor + ligand)*",
+                data=_complex_pdb,
+                file_name=f"{protein_name}_{ligand_name}_complex.pdb",
+                mime="text/plain",
+                use_container_width=True,
+            )
+
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 6 — ABOUT & CITATION
 # ══════════════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════════════════
+# TAB 6 — VALIDATION
+# ══════════════════════════════════════════════════════════════════════════════
 with tab6:
-    st.markdown("###  About 𝒊-Dock")
+    st.markdown("### Docking Validation")
+
+    # ── Load results CSV (needed for PDF report) ─────────────────────────────
+    results_csv = project_dir / "docking_results.csv"
+    df_results  = None
+    if results_csv.exists():
+        try:
+            df_results = pd.read_csv(results_csv)
+        except Exception:
+            pass
+
+    docked_pdbqts = sorted(dock_dir.glob("*.pdbqt"))
+
+
+    # ── Re-Docking RMSD vs Crystal / Reference Ligand ────────
+    st.markdown("#### Re-Docking RMSD vs Reference Ligand")
+    st.caption(
+        "Upload a reference ligand PDB (e.g. co-crystallised ligand from the PDB entry) for each protein. "
+        "Docked pose 1 is compared against it. **RMSD < 2.0 Å** is the standard pass criterion."
+    )
+
+    with st.expander("Important notes on re-docking validity", expanded=False):
+        st.markdown(
+            "Re-docking RMSD is only valid when the docked molecule is identical to the co-crystallised "
+            "reference ligand (same compound, same atom count). If your docked ligands differ from the "
+            "native ligand in the reference PDB, atom counts will not match and RMSD is not meaningful. "
+            "\n\n**How to obtain a valid reference:** Open the protein entry on RCSB, go to the Ligand tab, "
+            "download the co-crystallised ligand as SDF/PDB, then prepare it with Open Babel to match "
+            "your docked ligand format. Name the file to include the protein ID — e.g. `6C9H.pdb` or "
+            "`6C9H_Celastrol_ref.pdb` — for automatic pairing."
+        )
+
+    uploaded_refs = st.file_uploader(
+        "Upload reference ligand PDB file(s)",
+        type=["pdb"],
+        accept_multiple_files=True,
+        key="val_ref_upload",
+    )
+
+    # Strict atom-count tolerance for re-docking: exact match only (±0)
+    # The ±1 tolerance in compute_rmsd_from_lines is for self-consistency
+    # comparisons of the same molecule. For re-docking, even 1-atom difference
+    # means a different molecule — we block it here before calling the function.
+    _REDOCK_ATOM_TOL = 0
+
+    if uploaded_refs and docked_pdbqts:
+        redock_rows = []
+        for ref_file in uploaded_refs:
+            ref_text  = ref_file.read().decode("utf-8", errors="replace")
+            ref_lines = ref_text.splitlines(keepends=True)
+            ref_heavy = [l for l in ref_lines
+                         if l.startswith(("ATOM", "HETATM")) and not _is_hydrogen(l)]
+
+            if not ref_heavy:
+                redock_rows.append({
+                    "Reference File": ref_file.name,
+                    "Protein": "—", "Ligand": "—",
+                    "RMSD vs Reference (Å)": None,
+                    "Ref Heavy Atoms": 0,
+                    "Pose Heavy Atoms": None,
+                    "Status": "⚠️ No heavy atoms in reference file",
+                })
+                continue
+
+            # Match reference filename to docked pairs.
+            # Convention: "6C9H_Celastrol_ref.pdb" → matches protein+ligand
+            #             "Celastrol_ref.pdb"       → matches ligand name only
+            #             "6C9H.pdb"                → matches protein, compare all its ligands
+            ref_stem = Path(ref_file.name).stem.lower()
+            for suffix in ("_ref", "-ref", "_crystal", "-crystal", "_native", "-native"):
+                ref_stem = ref_stem.replace(suffix, "")
+
+            # Match ONLY docked pairs whose protein ID appears in the reference filename.
+            # e.g. "6C9H.pdb" → only 6C9H_*.pdbqt; "6C9H1.pdb" → only 6C9H_*.pdbqt
+            # No fallback to ALL pairs — that creates a combinatorial explosion.
+            matched = []
+            for dpdbqt in docked_pdbqts:
+                if ref_stem in dpdbqt.stem.lower():
+                    matched.append(dpdbqt)
+
+            if not matched:
+                # Try matching just the protein-name portion of the filename
+                _prot_names_rd = [r.stem.replace("_receptor", "")
+                                  for r in prep_rec_dir.glob("*_receptor.pdbqt")]
+                for pn in sorted(_prot_names_rd, key=len, reverse=True):
+                    if pn.lower() in ref_stem or ref_stem.startswith(pn.lower()):
+                        for dpdbqt in docked_pdbqts:
+                            if dpdbqt.stem.lower().startswith(pn.lower() + "_"):
+                                matched.append(dpdbqt)
+                        break  # stop after first matching protein
+
+            if not matched:
+                redock_rows.append({
+                    "Reference File": ref_file.name,
+                    "Protein": "—", "Ligand": "—",
+                    "RMSD vs Reference (Å)": None,
+                    "Ref Heavy Atoms": len(ref_heavy),
+                    "Pose Heavy Atoms": None,
+                    "Status": (
+                        f"ℹ️ No matching docked pair found for '{ref_file.name}'. "
+                        "Name your reference file as PROTEINID.pdb (e.g. 6C9H.pdb) "
+                        "or PROTEINID_LIGANDNAME_ref.pdb to auto-match."
+                    ),
+                })
+                continue
+
+            for dpdbqt in matched:
+                stem = dpdbqt.stem
+                protein_names = [r.stem.replace("_receptor", "")
+                                 for r in prep_rec_dir.glob("*_receptor.pdbqt")]
+                prot, lig = stem, "unknown"
+                for rec in sorted(protein_names, key=len, reverse=True):
+                    if stem.startswith(rec + "_"):
+                        prot = rec
+                        lig  = stem[len(rec) + 1:]
+                        break
+
+                pose1 = extract_vina_pose_by_mode(str(dpdbqt), 1)
+                if not pose1:
+                    redock_rows.append({
+                        "Reference File": ref_file.name,
+                        "Protein": prot, "Ligand": lig,
+                        "RMSD vs Reference (Å)": None,
+                        "Ref Heavy Atoms": len(ref_heavy),
+                        "Pose Heavy Atoms": None,
+                        "Status": "⚠️ Pose 1 missing",
+                    })
+                    continue
+
+                pose_heavy = [l for l in pose1
+                              if l.startswith(("ATOM", "HETATM")) and not _is_hydrogen(l)]
+
+                n_ref  = len(ref_heavy)
+                n_pose = len(pose_heavy)
+
+                # Strict atom count check — different molecule, skip RMSD entirely
+                if abs(n_ref - n_pose) > _REDOCK_ATOM_TOL:
+                    status = (
+                        f"❌ Different molecule — ref has {n_ref} heavy atoms, "
+                        f"pose has {n_pose}. Re-docking RMSD requires the same "
+                        f"ligand in both reference and docked pose."
+                    )
+                    redock_rows.append({
+                        "Reference File":        ref_file.name,
+                        "Protein":               prot,
+                        "Ligand":                lig,
+                        "RMSD vs Reference (Å)": None,
+                        "Ref Heavy Atoms":       n_ref,
+                        "Pose Heavy Atoms":      n_pose,
+                        "Status":                status,
+                    })
+                    continue
+
+                rmsd_val, err = compute_rmsd_from_lines(ref_heavy, pose_heavy)
+
+                if err:
+                    status = f"⚠️ {err}"
+                elif rmsd_val < 1.0:
+                    status = "✅ Excellent (< 1 Å)"
+                elif rmsd_val < 2.0:
+                    status = "✅ Pass (< 2 Å)"
+                elif rmsd_val < 3.0:
+                    status = "🟡 Borderline (2–3 Å)"
+                else:
+                    status = "🔴 Fail (≥ 3 Å)"
+
+                redock_rows.append({
+                    "Reference File":        ref_file.name,
+                    "Protein":               prot,
+                    "Ligand":                lig,
+                    "RMSD vs Reference (Å)": rmsd_val,
+                    "Ref Heavy Atoms":       n_ref,
+                    "Pose Heavy Atoms":      n_pose,
+                    "Status":                status,
+                })
+
+        if redock_rows:
+            # Save only rows with a real RMSD value for the PDF report
+            st.session_state["_pdf_redock_rows"] = [
+                r for r in redock_rows
+                if r.get("RMSD vs Reference (Å)") is not None
+                and not str(r.get("Status","")).startswith(("❌","ℹ️","⚠️"))
+            ]
+            df_redock = pd.DataFrame(redock_rows)
+            valid_rd  = df_redock["RMSD vs Reference (Å)"].dropna()
+
+            rd1, rd2, rd3 = st.columns(3)
+            rd1.metric("Pairs evaluated",  len(redock_rows))
+            rd2.metric("✅ Pass (< 2 Å)",  int((valid_rd < 2.0).sum()))
+            rd3.metric("🔴 Fail (≥ 3 Å)",  int((valid_rd >= 3.0).sum()),
+                       delta=int(-(valid_rd >= 3.0).sum()) if (valid_rd >= 3.0).any() else None,
+                       delta_color="inverse")
+
+            st.dataframe(df_redock, use_container_width=True, hide_index=True)
+
+            if not valid_rd.empty:
+                df_rp = df_redock.dropna(subset=["RMSD vs Reference (Å)"]).copy()
+                df_rp["Label"] = df_rp["Protein"] + "\n" + df_rp["Ligand"]
+                rc = [
+                    "#1a9e75" if v < 2.0 else "#f0a500" if v < 3.0 else "#d63030"
+                    for v in df_rp["RMSD vs Reference (Å)"]
+                ]
+                fig3, ax3 = plt.subplots(figsize=(8, max(3, len(df_rp) * 0.45)))
+                ax3.barh(df_rp["Label"], df_rp["RMSD vs Reference (Å)"],
+                         color=rc, alpha=0.82)
+                ax3.axvline(2.0, color="#1a9e75", linestyle="--",
+                            linewidth=1.2, label="2 Å pass threshold")
+                ax3.axvline(3.0, color="#f0a500", linestyle="--",
+                            linewidth=1.2, label="3 Å fail threshold")
+                ax3.set_xlabel("RMSD vs Reference (Å)", fontsize=9)
+                ax3.set_title("Re-Docking RMSD vs Reference Ligand",
+                              fontsize=10, fontweight="bold")
+                ax3.legend(fontsize=8)
+                ax3.invert_yaxis()
+                fig3.tight_layout()
+                st.pyplot(fig3)
+                plt.close(fig3)
+    elif uploaded_refs and not docked_pdbqts:
+        st.warning("No docked PDBQT files found. Run Docking first.")
+    else:
+        st.info("Upload one or more reference PDB files above to run re-docking validation.")
+
+
+    st.divider()
+
+    # ── PDF Report Generator ──────────────────────────────────────────────
+    st.markdown("#### Validation Report (PDF)")
+    st.caption(
+        "Generates a downloadable PDF summarising all validation results: "
+        "re-docking RMSD and docking results table."
+    )
+
+    if st.button("Generate PDF Report", use_container_width=True, key="gen_pdf"):
+        from matplotlib.backends.backend_pdf import PdfPages
+        import datetime
+
+        pdf_buf = io.BytesIO()
+        with PdfPages(pdf_buf) as pdf:
+
+            # ── Page 1: Title page ────────────────────────────────────────
+            fig_t, ax_t = plt.subplots(figsize=(11, 8.5))
+            ax_t.axis("off")
+            ax_t.text(0.5, 0.72, "IBDock Validation Report",
+                      ha="center", va="center", fontsize=26, fontweight="bold",
+                      transform=ax_t.transAxes)
+            ax_t.text(0.5, 0.62, f"Project: {project_dir.name}",
+                      ha="center", va="center", fontsize=14,
+                      transform=ax_t.transAxes, color="#444")
+            ax_t.text(0.5, 0.54,
+                      f"Generated: {datetime.datetime.now().strftime('%Y-%m-%d  %H:%M')}",
+                      ha="center", va="center", fontsize=11,
+                      transform=ax_t.transAxes, color="#666")
+            ax_t.text(0.5, 0.38,
+                      "Contents\n"
+                      "  1 · Docking Results Summary\n"
+                      "  2 · Re-Docking RMSD vs Reference Ligand",
+                      ha="center", va="center", fontsize=12,
+                      transform=ax_t.transAxes, color="#333",
+                      linespacing=1.9)
+            fig_t.patch.set_facecolor("#f7f9fc")
+            pdf.savefig(fig_t, bbox_inches="tight")
+            plt.close(fig_t)
+
+            # ── Page 2: Docking Results Table ─────────────────────────────
+            # Reload fresh from disk every time — df_results may be None at button click
+            _pdf_csv_path = result_dir / "docking_results.csv"
+            _pdf_df = None
+            if _pdf_csv_path.exists():
+                try:
+                    _pdf_df = pd.read_csv(_pdf_csv_path)
+                    _pdf_df = _pdf_df.dropna(how="all")
+                except Exception:
+                    pass
+            if _pdf_df is not None and not _pdf_df.empty:
+                df_results = _pdf_df  # update for any later use in PDF
+            if df_results is not None and not df_results.empty:
+                df_show = df_results.copy()
+                # Round floats
+                for col in df_show.select_dtypes("float").columns:
+                    df_show[col] = df_show[col].round(3)
+                df_show = df_show.dropna(how="all")
+
+                n_rows = len(df_show)
+                fig_h  = max(3.5, 0.38 * n_rows + 1.5)
+                fig_r, ax_r = plt.subplots(figsize=(14, fig_h))
+                ax_r.axis("off")
+                ax_r.set_title("Docking Results Summary",
+                               fontsize=14, fontweight="bold", pad=12)
+
+                cols  = list(df_show.columns)
+                rows  = df_show.values.tolist()
+                tbl   = ax_r.table(cellText=rows, colLabels=cols,
+                                   loc="center", cellLoc="center")
+                tbl.auto_set_font_size(False)
+                tbl.set_fontsize(7.5)
+                tbl.auto_set_column_width(list(range(len(cols))))
+
+                # Header styling
+                for j in range(len(cols)):
+                    tbl[0, j].set_facecolor("#0066cc")
+                    tbl[0, j].set_text_props(color="white", fontweight="bold")
+                # Alternating rows
+                for i in range(1, n_rows + 1):
+                    clr = "#f0f5ff" if i % 2 == 0 else "white"
+                    for j in range(len(cols)):
+                        tbl[i, j].set_facecolor(clr)
+
+                fig_r.tight_layout()
+                pdf.savefig(fig_r, bbox_inches="tight")
+                plt.close(fig_r)
+
+            # ── Page 3: Re-docking RMSD table (if results exist) ─────────
+            # Re-run the re-docking data if available in session state
+            _rd_data = st.session_state.get("_pdf_redock_rows", [])
+            if _rd_data:
+                df_rd = pd.DataFrame(_rd_data)
+                n_rd  = len(df_rd)
+                fig_rd_h = max(3.5, 0.38 * n_rd + 1.5)
+                fig_rd, ax_rd = plt.subplots(figsize=(14, fig_rd_h))
+                ax_rd.axis("off")
+                ax_rd.set_title("Re-Docking RMSD vs Reference Ligand",
+                                fontsize=14, fontweight="bold", pad=12)
+                rd_cols = list(df_rd.columns)
+                rd_rows = df_rd.round(4).values.tolist()
+                tbl_rd  = ax_rd.table(cellText=rd_rows, colLabels=rd_cols,
+                                      loc="center", cellLoc="center")
+                tbl_rd.auto_set_font_size(False)
+                tbl_rd.set_fontsize(7.5)
+                tbl_rd.auto_set_column_width(list(range(len(rd_cols))))
+                for j in range(len(rd_cols)):
+                    tbl_rd[0, j].set_facecolor("#0066cc")
+                    tbl_rd[0, j].set_text_props(color="white", fontweight="bold")
+                for i in range(1, n_rd + 1):
+                    clr = "#f0f5ff" if i % 2 == 0 else "white"
+                    for j in range(len(rd_cols)):
+                        tbl_rd[i, j].set_facecolor(clr)
+                fig_rd.tight_layout()
+                pdf.savefig(fig_rd, bbox_inches="tight")
+                plt.close(fig_rd)
+
+            # ── PDF metadata ─────────────────────────────────────────────
+            d = pdf.infodict()
+            d["Title"]   = "IBDock Validation Report"
+            d["Author"]  = "IBDock"
+            d["Subject"] = "Molecular Docking Validation"
+
+        pdf_buf.seek(0)
+        fname = f"IBDock_validation_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
+        st.download_button(
+            "⬇ Download PDF Report",
+            data=pdf_buf.getvalue(),
+            file_name=fname,
+            mime="application/pdf",
+            use_container_width=True,
+            key="dl_pdf",
+        )
+        st.success(f"✅ PDF ready — click above to download **{fname}**")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TAB 7 — ABOUT & CITATION
+# ══════════════════════════════════════════════════════════════════════════════
+with tab7:
+    st.markdown("### About IBDock")
     st.caption("Citation information, tool credits, and version details.")
 
     c_about, c_cite = st.columns([1, 1], gap="large")
@@ -2072,29 +2834,29 @@ with tab6:
     with c_about:
         st.markdown("""
 <div class="info-card">
-<h4>What is 𝒊-Dock?</h4>
+<h4>What is IBDock?</h4>
 <p>
-𝒊-Dock is a zero-command-line graphical interface for <b>batch molecular docking</b>
-using AutoDock Vina. It streamlines the full virtual screening pipeline: —
+IBDock is a browser-based graphical interface for <b>batch molecular docking</b>
+using AutoDock Vina. It integrates the full virtual screening pipeline —
 protein preparation, ligand preparation, grid box generation, parallel docking,
-and results analysis into a single browser-based application.
+and results analysis — into a single zero-command-line application.
 </p>
 </div>
 
 <div class="info-card">
 <h4>Designed for</h4>
 <p>
-Computational chemists, medicinal chemists, and structural biologists who need
-to rapidly screen compound libraries against one or more protein targets without
-writing scripts or memorising command-line flags.
+Computational and medicinal chemists and structural biologists who need
+to screen compound libraries against one or more protein targets without
+writing scripts or managing command-line flags.
 </p>
 </div>
 
 <div class="info-card">
 <h4>Platform</h4>
 <p>
-Windows · macOS · Linux<br>
-External tools (MGLTools, Vina, Open Babel) must be installed separately.
+Windows &middot; macOS &middot; Linux<br>
+External dependencies (MGLTools, Vina, Open Babel) must be installed separately.
 Pocket detection (P2Rank, fpocket) requires WSL on Windows.
 </p>
 </div>
@@ -2103,85 +2865,85 @@ Pocket detection (P2Rank, fpocket) requires WSL on Windows.
     with c_cite:
         st.markdown("""
 <div class="info-card">
-<h4> How to cite</h4>
-<p>If you use 𝒊-Dock in published research, please cite the following tools:</p>
+<h4>How to cite</h4>
+<p>If you use IBDock in published research, please cite the following tools:</p>
 </div>
         """, unsafe_allow_html=True)
 
-        with st.expander("AutoDock Vina", expanded=True):
-            st.code(
-                "Eberhardt J, Santos-Martins D, Tillack AF, Forli S. (2021). "
-                "AutoDock Vina 1.2.0: New Docking Methods, Expanded Force Field, "
-                "and Python Bindings. J Chem Inf Model. 61(8):3891–3898. "
-                "DOI: 10.1021/acs.jcim.1c00203",
-                language=None,
-            )
-            st.code(
-                "Trott O, Olson AJ. (2010). AutoDock Vina: Improving the speed "
-                "and accuracy of docking with a new scoring function, efficient "
-                "optimization, and multithreading. J Comput Chem. 31(2):455–461. "
-                "DOI: 10.1002/jcc.21334",
-                language=None,
-            )
+    with st.expander("AutoDock Vina", expanded=False):
+        st.code(
+            "Eberhardt J, Santos-Martins D, Tillack AF, Forli S. (2021). "
+            "AutoDock Vina 1.2.0: New Docking Methods, Expanded Force Field, "
+            "and Python Bindings. J Chem Inf Model. 61(8):3891–3898. "
+            "DOI: 10.1021/acs.jcim.1c00203",
+            language=None,
+        )
+        st.code(
+            "Trott O, Olson AJ. (2010). AutoDock Vina: Improving the speed "
+            "and accuracy of docking with a new scoring function, efficient "
+            "optimization, and multithreading. J Comput Chem. 31(2):455–461. "
+            "DOI: 10.1002/jcc.21334",
+            language=None,
+        )
 
-        with st.expander("MGLTools / AutoDockTools"):
-            st.code(
-                "Morris GM, Huey R, Lindstrom W, Sanner MF, Belew RK, Goodsell DS, Olson AJ. (2009). "
-                "AutoDock4 and AutoDockTools4: Automated docking with selective receptor flexibility. "
-                "J Comput Chem. 30(16):2785–2791. DOI: 10.1002/jcc.21256",
-                language=None,
-            )
+    with st.expander("MGLTools / AutoDockTools"):
+        st.code(
+            "Morris GM, Huey R, Lindstrom W, Sanner MF, Belew RK, Goodsell DS, Olson AJ. (2009). "
+            "AutoDock4 and AutoDockTools4: Automated docking with selective receptor flexibility. "
+            "J Comput Chem. 30(16):2785–2791. DOI: 10.1002/jcc.21256",
+            language=None,
+        )
 
-        with st.expander("Open Babel"):
-            st.code(
-                "O'Boyle NM, Banck M, James CA, Morley C, Vandermeersch T, Hutchison GR. (2011). "
-                "Open Babel: An open chemical toolbox. J Cheminform. 3:33. "
-                "DOI: 10.1186/1758-2946-3-33",
-                language=None,
-            )
+    with st.expander("Open Babel"):
+        st.code(
+            "O'Boyle NM, Banck M, James CA, Morley C, Vandermeersch T, Hutchison GR. (2011). "
+            "Open Babel: An open chemical toolbox. J Cheminform. 3:33. "
+            "DOI: 10.1186/1758-2946-3-33",
+            language=None,
+        )
 
-        with st.expander("P2Rank (pocket prediction)"):
-            st.code(
-                "Krivák R, Hoksza D. (2018). P2Rank: machine learning based tool "
-                "for rapid and accurate prediction of ligand binding sites from "
-                "protein structure. J Cheminform. 10:39. DOI: 10.1186/s13321-018-0285-8",
-                language=None,
-            )
+    with st.expander("P2Rank (pocket prediction)"):
+        st.code(
+            "Krivák R, Hoksza D. (2018). P2Rank: machine learning based tool "
+            "for rapid and accurate prediction of ligand binding sites from "
+            "protein structure. J Cheminform. 10:39. DOI: 10.1186/s13321-018-0285-8",
+            language=None,
+        )
 
-        with st.expander("fpocket (pocket prediction)"):
-            st.code(
-                "Le Guilloux V, Schmidtke P, Tuffery P. (2009). Fpocket: An open "
-                "source platform for ligand pocket detection. BMC Bioinformatics. 10:168. "
-                "DOI: 10.1186/1471-2105-10-168",
-                language=None,
-            )
+    with st.expander("fpocket (pocket prediction)"):
+        st.code(
+            "Le Guilloux V, Schmidtke P, Tuffery P. (2009). Fpocket: An open "
+            "source platform for ligand pocket detection. BMC Bioinformatics. 10:168. "
+            "DOI: 10.1186/1471-2105-10-168",
+            language=None,
+        )
 
     st.divider()
 
     st.markdown("""
-<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-top:0.5rem;">
+<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8rem; margin-top:0.5rem;">
   <div class="info-card">
-    <h4> Software Stack</h4>
-    <p>
-      Python 3.x · Streamlit · NumPy · Pandas<br>
-      Matplotlib · Seaborn · py3Dmol (3D viewer)
-    </p>
+        <h4>Software Stack</h4>
+        <p>
+          Python 3.x &middot; Streamlit &middot; NumPy &middot; Pandas<br>
+          Matplotlib &middot; Seaborn &middot; py3Dmol
+        </p>
   </div>
   <div class="info-card">
-    <h4> License</h4>
-    <p>
-      𝒊-Dock is open-source software.<br>
-      AutoDock Vina, MGLTools, Open Babel, P2Rank, and fpocket
-      are subject to their respective licences.
-    </p>
+        <h4>License</h4>
+        <p>
+         IBDock is open-source software.<br>
+          AutoDock Vina, MGLTools, Open Babel, P2Rank, and fpocket
+          are subject to their respective licences.
+        </p>
   </div>
   <div class="info-card">
-    <h4> Disclaimer</h4>
-    <p>
-      Docking scores are approximations. Results should be interpreted
-      in the context of experimental validation and expert knowledge.
-      Not intended for clinical decision-making.
-    </p>
+        <h4>Disclaimer</h4>
+        <p>
+          Docking scores are approximations. Results should be interpreted
+          alongside experimental validation and expert knowledge.
+          Not intended for clinical decision-making.
+        </p>
   </div>
 </div>
     """, unsafe_allow_html=True)
