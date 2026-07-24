@@ -551,7 +551,13 @@ def strip_receptor_hydrogens(pdbqt_path):
 # POCKET DETECTION
 # ──────────────────────────────────────────────────────────────────────────────
 
-def run_p2rank(pdb_file, p2rank_exec: str) -> np.ndarray:
+def run_p2rank(pdb_file, p2rank_exec: str, padding: float = 5.0) -> tuple:
+    """Run P2Rank and return (center, size) where size is derived from the
+    pocket points CSV (real geometry) rather than a hardcoded constant.
+
+    Returns:
+        (center, size) — both np.ndarray / list of 3 values in Angstroms.
+    """
     wsl_pdb = _win_to_wsl(pdb_file)
     cmd_parts = _build_wsl_cmd(p2rank_exec)
     prank_bin = cmd_parts[-1]
@@ -564,7 +570,10 @@ def run_p2rank(pdb_file, p2rank_exec: str) -> np.ndarray:
         raise RuntimeError(f"P2Rank failed: {result.stderr.decode(errors='replace').strip()}")
 
     pdb_stem = Path(pdb_file).stem
-    pred_wsl = f"{prank_bin.rsplit('/',1)[0]}/test_output/predict_{pdb_stem}/{pdb_stem}.pdb_predictions.csv"
+    out_base = f"{prank_bin.rsplit('/',1)[0]}/test_output/predict_{pdb_stem}/{pdb_stem}.pdb"
+
+    # ── Predictions CSV → pocket centre ───────────────────────────────────────
+    pred_wsl = out_base + "_predictions.csv"
     r2 = subprocess.run([wsl_exe, "wslpath", "-w", pred_wsl],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if r2.returncode != 0:
@@ -576,8 +585,42 @@ def run_p2rank(pdb_file, p2rank_exec: str) -> np.ndarray:
 
     df = pd.read_csv(pred_file)
     df.columns = df.columns.str.strip()
-    best = df.iloc[0]
-    return np.array([best["center_x"], best["center_y"], best["center_z"]])
+    best   = df.iloc[0]
+    center = np.array([best["center_x"], best["center_y"], best["center_z"]])
+
+    # ── Points CSV → pocket extent (real geometry) ────────────────────────────
+    # P2Rank writes <stem>.pdb_points.csv alongside predictions.csv.
+    # Each row is a surface/alpha-sphere point with x, y, z and a pocket rank.
+    # We use the extent of rank-1 pocket points to compute a geometry-based
+    # box size instead of an arbitrary constant.
+    size = None
+    pts_wsl = out_base + "_points.csv"
+    r3 = subprocess.run([wsl_exe, "wslpath", "-w", pts_wsl],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if r3.returncode == 0:
+        pts_file = Path(r3.stdout.strip())
+        if pts_file.exists():
+            try:
+                pts_df = pd.read_csv(pts_file)
+                pts_df.columns = pts_df.columns.str.strip()
+                # Keep only points that belong to pocket rank 1
+                if "pocket" in pts_df.columns:
+                    pts_df = pts_df[pts_df["pocket"] == 1]
+                if len(pts_df) >= 4 and {"x", "y", "z"}.issubset(pts_df.columns):
+                    xyz    = pts_df[["x", "y", "z"]].values.astype(float)
+                    extent = xyz.max(axis=0) - xyz.min(axis=0)
+                    size   = cap_grid([round_even(v) for v in (extent + 2 * padding)])
+            except Exception:
+                size = None  # fall through to evidence-based default below
+
+    # ── Fallback: evidence-based default when points file is unavailable ───────
+    # Median binding-site diameter across the PDB is ~10-14 Å.
+    # A 12 Å base + user padding is more defensible than a hardcoded 26 Å.
+    if size is None:
+        base = np.array([12.0, 12.0, 12.0])
+        size = cap_grid([round_even(v) for v in (base + 2 * padding)])
+
+    return center, size
 
 
 def run_fpocket(pdb_file, fpocket_exec: str):
@@ -595,7 +638,16 @@ def run_fpocket(pdb_file, fpocket_exec: str):
     return out_dir
 
 
-def get_fpocket_center(pocket_file) -> np.ndarray:
+def get_fpocket_center_and_size(pocket_file, padding: float = 5.0) -> tuple:
+    """Parse an fpocket pocket atom file and return (center, size).
+
+    fpocket writes pocket1_atm.pdb containing the residue atoms lining the
+    cavity.  The geometric extent of those atoms is a real measurement of the
+    binding site — far more accurate than a hardcoded 26 Å constant.
+
+    Returns:
+        (center, size) — both lists/arrays of 3 Angstrom values.
+    """
     coords = []
     with open(pocket_file) as fh:
         for line in fh:
@@ -606,7 +658,11 @@ def get_fpocket_center(pocket_file) -> np.ndarray:
                     continue
     if not coords:
         raise RuntimeError(f"No atoms in fpocket file: {pocket_file}")
-    return np.array(coords).mean(axis=0)
+    arr    = np.array(coords)
+    center = arr.mean(axis=0)
+    extent = arr.max(axis=0) - arr.min(axis=0)
+    size   = cap_grid([round_even(v) for v in (extent + 2 * padding)])
+    return center, size
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1276,7 +1332,7 @@ with tab1:
             padding = st.slider(
                 "Grid padding per face (Å)",
                 min_value=2.0, max_value=16.0, value=5.0, step=0.5, key="prot_padding",
-                help="Applied to ligand-based grids. Box = ligand extent + 2× padding. "
+                help="Added to all geometry-based grids. Box = detected extent + 2× padding. "
                      "8 Å is recommended for virtual screening.",
             )
         with c2:
@@ -1310,6 +1366,7 @@ with tab1:
 
                 # ── Grid centre detection ──────────────────────────────────
                 _method = grid_centre_method  # user selection from UI
+                size    = None  # initialise; set explicitly by pocket methods
 
                 if _method == "Co-crystallised ligand":
                     if lig_atoms.size == 0:
@@ -1328,21 +1385,22 @@ with tab1:
 
                 elif _method == "P2Rank pocket prediction":
                     try:
-                        center    = run_p2rank(pdb, p2rank_path)
-                        grid_type = "P2Rank pocket prediction"
+                        center, size = run_p2rank(pdb, p2rank_path, padding)
+                        grid_type    = "P2Rank pocket prediction"
                     except Exception as p2e:
                         st.warning(f"P2Rank failed for **{name}**: {p2e} — falling back to blind docking.")
                         atoms = extract_protein_atoms(lines)
                         if atoms.size == 0:
                             raise RuntimeError("No ATOM records found in PDB file")
                         center    = atoms.mean(axis=0)
+                        size      = None  # will be computed in grid box section
                         grid_type = "blind (whole protein)"
 
                 elif _method == "fpocket pocket prediction":
                     try:
                         pocket_dir  = run_fpocket(pdb, fpocket_path)
                         pocket_file = pocket_dir / "pockets" / "pocket1_atm.pdb"
-                        center      = get_fpocket_center(pocket_file)
+                        center, size = get_fpocket_center_and_size(pocket_file, padding)
                         grid_type   = "fpocket pocket prediction"
                     except Exception as fpe:
                         st.warning(f"fpocket failed for **{name}**: {fpe} — falling back to blind docking.")
@@ -1350,6 +1408,7 @@ with tab1:
                         if atoms.size == 0:
                             raise RuntimeError("No ATOM records found in PDB file")
                         center    = atoms.mean(axis=0)
+                        size      = None  # will be computed in grid box section
                         grid_type = "blind (whole protein)"
 
                 elif _method == "Blind docking (whole protein)":
@@ -1362,37 +1421,43 @@ with tab1:
                 else:  # "Auto (recommended)" — cascade
                     if lig_atoms.size > 0:
                         center    = lig_atoms.mean(axis=0)
+                        size      = None  # will be computed in grid box section
                         grid_type = "co-crystallised ligand"
                     else:
                         try:
-                            center    = run_p2rank(pdb, p2rank_path)
-                            grid_type = "P2Rank pocket prediction"
+                            center, size = run_p2rank(pdb, p2rank_path, padding)
+                            grid_type    = "P2Rank pocket prediction"
                         except Exception as p2e:
                             st.warning(f"P2Rank failed for {name}: {p2e} — trying fpocket…")
                             try:
-                                pocket_dir  = run_fpocket(pdb, fpocket_path)
-                                pocket_file = pocket_dir / "pockets" / "pocket1_atm.pdb"
-                                center      = get_fpocket_center(pocket_file)
-                                grid_type   = "fpocket pocket prediction"
+                                pocket_dir   = run_fpocket(pdb, fpocket_path)
+                                pocket_file  = pocket_dir / "pockets" / "pocket1_atm.pdb"
+                                center, size = get_fpocket_center_and_size(pocket_file, padding)
+                                grid_type    = "fpocket pocket prediction"
                             except Exception as fpe:
                                 st.warning(f"fpocket failed for {name}: {fpe} — using blind docking.")
                                 atoms = extract_protein_atoms(lines)
                                 if atoms.size == 0:
                                     raise RuntimeError("No ATOM records found in PDB file")
                                 center    = atoms.mean(axis=0)
+                                size      = None  # will be computed in grid box section
                                 grid_type = "blind (whole protein)"
 
                 # ── Grid box size ──────────────────────────────────────────
-                if "pocket" in grid_type:
-                    size = [26, 26, 26]
+                # P2Rank and fpocket methods already set `size` in their call
+                # above (geometry-based).  For other methods, or fallbacks that
+                # set size=None, we compute it here from real atom coordinates.
+                if size is not None:
+                    pass  # already set by pocket detection (real geometry)
                 elif "ligand" in grid_type:
                     extent   = lig_atoms.max(axis=0) - lig_atoms.min(axis=0)
                     raw_size = extent + 2 * padding
                     size     = cap_grid([round_even(v) for v in raw_size])
-                else:
-                    atoms    = extract_protein_atoms(lines)
-                    raw_size = atoms.max(axis=0) - atoms.min(axis=0) + padding
-                    size     = cap_grid([round_even(v) for v in raw_size])
+                else:  # blind docking or any unhandled fallback
+                    atoms       = extract_protein_atoms(lines)
+                    _blind_pad  = max(2 * padding, 16.0)  # min 8 Å per face for blind docking
+                    raw_size    = atoms.max(axis=0) - atoms.min(axis=0) + _blind_pad
+                    size        = cap_grid([round_even(v) for v in raw_size])
 
                 # ── Validate grid centre is near the protein ───────────────
                 _prot_atoms = extract_protein_atoms(lines)
@@ -2492,7 +2557,7 @@ with tab6:
             "\n\n**How to obtain a valid reference:** Open the protein entry on RCSB, go to the Ligand tab, "
             "download the co-crystallised ligand as SDF/PDB, then prepare it with Open Babel to match "
             "your docked ligand format. Name the file to include the protein ID — e.g. `6C9H.pdb` or "
-            "`6C9H_Celastrol_ref.pdb` — for automatic pairing."
+            "`6C9H_R734_ref.pdb` — for automatic pairing."
         )
 
     uploaded_refs = st.file_uploader(
@@ -2528,15 +2593,15 @@ with tab6:
                 continue
 
             # Match reference filename to docked pairs.
-            # Convention: "6C9H_Celastrol_ref.pdb" → matches protein+ligand
-            #             "Celastrol_ref.pdb"       → matches ligand name only
-            #             "6C9H.pdb"                → matches protein, compare all its ligands
+            # Convention: "6C9H_R734_ref.pdb" → matches protein+ligand
+            #             "R734_ref.pdb"       → matches ligand name only
+            #             "6C9H.pdb"           → matches protein, compare all its ligands
             ref_stem = Path(ref_file.name).stem.lower()
             for suffix in ("_ref", "-ref", "_crystal", "-crystal", "_native", "-native"):
                 ref_stem = ref_stem.replace(suffix, "")
 
             # Match ONLY docked pairs whose protein ID appears in the reference filename.
-            # e.g. "6C9H.pdb" → only 6C9H_*.pdbqt; "6C9H1.pdb" → only 6C9H_*.pdbqt
+            # e.g. "6C9H.pdb" → only 6C9H_*.pdbqt; "6C9H1.pdb" → only 6C9H1_*.pdbqt
             # No fallback to ALL pairs — that creates a combinatorial explosion.
             matched = []
             for dpdbqt in docked_pdbqts:
@@ -2564,7 +2629,7 @@ with tab6:
                     "Status": (
                         f"ℹ️ No matching docked pair found for '{ref_file.name}'. "
                         "Name your reference file as PROTEINID.pdb (e.g. 6C9H.pdb) "
-                        "or PROTEINID_LIGANDNAME_ref.pdb to auto-match."
+                        "or PROTEINID_LIGANDNAME_ref.pdb (e.g. 6C9H_R734_ref.pdb) to auto-match."
                     ),
                 })
                 continue
