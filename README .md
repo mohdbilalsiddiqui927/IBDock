@@ -53,7 +53,7 @@ executable paths with `wsl` in the Settings panel.
 ## Installation
 
 ```bash
-git clone https://github.com/Mohdbilalsiddiqui927/ibdock.git
+git clone https://github.com/mohdbilalsiddiqui927/IBDock.git
 cd ibdock
 pip install -r requirements.txt
 streamlit run IBDock.py
@@ -169,7 +169,7 @@ If IBDock is useful in your work, please cite:
 
 ```bibtex
 @article{ibdock2026,
-  author = {Siddiqui, Bilal and Tiwari, Sakshi and Khan, Imran A and Abdin, M Z},
+  author = {Bilal Siddiqui and Tiwari, Sakshi and Khan, Imran A and Abdin, M Z},
   title  = {{IBDock}: Browser-Based Batch Docking and Automated Validation
             with {AutoDock Vina}}
 }
