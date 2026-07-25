@@ -1,0 +1,8 @@
+Author Contributions
+
+B.S. designed and implemented the IBDock software, including the grid box derivation
+algorithm, batch docking pipeline, and symmetric RMSD validation module, and conducted
+the benchmark validation and data analysis. S.T. assisted with software development
+and performed validation experiments. I.A.K. conceived the original concept for the
+project and supervised the work. M.Z.A. supervised the project. All authors
+contributed to writing and reviewing the manuscript and approved the final version.
