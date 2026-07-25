@@ -17,6 +17,7 @@ It was built because setting up Vina manually is fragmented across too many tool
 
 - **Batch docking** — dock any number of ligands against one or more receptors in a single session, running all jobs in parallel via `concurrent.futures`
 - **Automated grid box derivation** — five selectable modes covering co-crystallised ligand extraction, P2Rank, fpocket, blind docking, and manual entry; the Auto mode cascades through them automatically
+- **Multi-chain-safe grid centring** — when a structure contains multiple crystallographic copies of the same complex (common in the PDB), ligand coordinates are restricted to a single representative chain rather than pooled across copies, avoiding a grid centre that corresponds to no real binding site
 - **Built-in RMSD validation** — symmetric heavy-atom RMSD against crystal reference poses, with Excellent / Pass / Borderline / Fail classification following Warren et al. (2006)
 - **Interactive 3D pose viewer** — powered by 3Dmol.js, embedded directly in the browser; no PyMOL or external viewer required
 - **PDF report export** — formatted multi-page validation report generated automatically from your results
@@ -52,7 +53,7 @@ executable paths with `wsl` in the Settings panel.
 ## Installation
 
 ```bash
-git clone https://github.com/BilalSiddiqui/ibdock.git
+git clone https://github.com/Mohdbilalsiddiqui927/ibdock.git
 cd ibdock
 pip install -r requirements.txt
 streamlit run IBDock.py
@@ -63,25 +64,29 @@ the **⚙ Settings** panel in the sidebar and point IBDock at your MGLTools, Vin
 Open Babel executables. Paths are saved to `IBDock_config.json` and remembered across
 sessions.
 
+**Note (Windows):** if the `python` command does not work in your terminal, use the
+Python launcher instead: `py -3 -m pip install -r requirements.txt` and `py -3 -m streamlit run IBDock.py`.
+
 ---
 
 ## Quick Start
 
-The `example/` folder contains a prepared 3OCB system (AKT1 kinase) ready to dock:
+The `example/` folder contains a prepared 1HNN system (human PNMT, bound to the
+inhibitor SK&F 29661) ready to dock:
 
 ```
 example/
-├── receptor/   3OCB.pdb                  raw PDB file as downloaded from RCSB
-├── ligand/     3OCB_ligand.sdf           co-crystallised ligand in SDF format
-└── reference/  crystal_pose_3OCB.pdb     crystal pose for RMSD validation
+├── receptor/   1HNN.pdb          raw PDB file as downloaded from RCSB
+├── ligand/     1HNN_ligand.pdb   co-crystallised ligand
+└── reference/  1HNN_ligand.pdb   crystal pose for RMSD validation
 ```
 
-1. Upload `3OCB.pdb` in **Protein Prep** — the grid box is detected automatically
-2. Upload `3OCB_ligand.sdf` in **Ligand Prep**
+1. Upload `1HNN.pdb` in **Protein Prep** — the grid box is detected automatically
+2. Upload `1HNN_ligand.pdb` in **Ligand Prep**
 3. Click **Run Docking** in the Docking tab
-4. Upload `crystal_pose_3OCB.pdb` in **Validation** and compute RMSD
+4. Upload `1HNN_ligand.pdb` (reference copy) in **Validation** and compute RMSD
 
-**Expected result:** affinity ≈ −9.2 kcal/mol · RMSD ≈ 0.648 Å (Excellent)
+**Expected result:** RMSD ≈ 1.02 Å (Pass)
 
 ---
 
@@ -116,6 +121,11 @@ radio button in the Protein Prep tab:
 | **fpocket pocket prediction** | Geometry-based alternative to P2Rank |
 | **Blind docking** | Unknown binding site; covers the full protein extent |
 
+For structures containing multiple crystallographic copies of the same complex
+(e.g. several chains each with their own bound ligand), grid derivation is
+automatically restricted to a single representative chain rather than pooling
+ligand coordinates across copies — see Features above.
+
 All modes write the final grid parameters to `grid_config.txt` alongside your results
 for full reproducibility.
 
@@ -123,22 +133,17 @@ for full reproducibility.
 
 ## Validation
 
-Re-docking was performed across six structurally diverse protein–ligand complexes
-(AutoDock Vina 1.2.3, exhaustiveness = 16, MGLTools 1.5.7, Open Babel 3.1.1).
-All six systems passed the 2.0 Å acceptance criterion (Warren et al., 2006).
+Re-docking was performed across the full 85-complex Astex Diverse Set (Hartshorn et
+al., 2007), using AutoDock Vina 1.2.3, exhaustiveness = 16, MGLTools 1.5.7, Open Babel
+3.1.1. Top-scored (Top-1) pose pass rate: **42/85 (49.4%)** at the standard RMSD ≤ 2.0 Å
+criterion, consistent with published AutoDock Vina performance on the same benchmark
+(Buttenschoen et al., 2024).
 
-| PDB | Protein | Family | RMSD (Å) | Result |
-|-----|---------|--------|----------|--------|
-| 3OCB | AKT1 | Kinase (AGC family) | 0.648 | ✅ Excellent |
-| 6C9H | AMPK | Kinase (CAMK family) | 0.948 | ✅ Excellent |
-| 6SFO | MAPK14 | Kinase (CMGC family) | 0.646 | ✅ Excellent |
-| 1ERR | Oestrogen Receptor α | Nuclear Receptor | 0.811 | ✅ Excellent |
-| 4H3X | MMP-9 | Matrix Metalloprotease | 1.408 | ✅ Pass |
-| 1HPX | HIV-1 Protease | Aspartic Protease | 1.735 | ✅ Pass |
-
-**Mean RMSD: 1.033 ± 0.445 Å across all six systems. Zero Borderline. Zero Fail.**
-
-Classification: Excellent < 1.0 Å · Pass 1.0–2.0 Å · Borderline 2.0–3.0 Å · Fail ≥ 3.0 Å
+A worked example is provided in the `example/` folder using 1HNN (human
+phenylethanolamine N-methyltransferase, PNMT), co-crystallised with its inhibitor
+1,2,3,4-tetrahydroisoquinoline-7-sulfonamide (SK&F 29661). Re-docking this system with
+IBDock using the co-crystallised ligand for automated grid box derivation yielded an
+RMSD of 1.020 Å against the crystal pose (Pass, < 2.0 Å threshold).
 
 ---
 
@@ -149,6 +154,8 @@ pip install pytest
 pytest Tests/test_ibdock.py -v
 ```
 
+---
+
 ## Contributing
 
 Bug reports, feature requests, and pull requests are welcome.
@@ -156,9 +163,21 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting.
 
 ---
 
+## Citation
 
+If IBDock is useful in your work, please cite:
 
-Please cite the tools IBDock depends on:
+```bibtex
+@article{ibdock2026,
+  author = {Siddiqui, Bilal and Tiwari, Sakshi and Khan, Imran A and Abdin, M Z},
+  title  = {{IBDock}: Browser-Based Batch Docking and Automated Validation
+            with {AutoDock Vina}}
+}
+```
+
+*(Full journal details will be added upon publication.)*
+
+Please also cite the tools IBDock depends on:
 
 - **AutoDock Vina:** Trott & Olson (2010) *J. Comput. Chem.* 31:455–461 · Eberhardt et al. (2021) *J. Chem. Inf. Model.* 61:3891–3898
 - **MGLTools:** Morris et al. (2009) *J. Comput. Chem.* 30:2785–2791
@@ -171,3 +190,4 @@ Please cite the tools IBDock depends on:
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
