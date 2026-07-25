@@ -169,7 +169,7 @@ If IBDock is useful in your work, please cite:
 
 ```bibtex
 @article{ibdock2026,
-  author = {Bilal Siddiqui and Tiwari, Sakshi and Khan, Imran A and Abdin, M Z},
+  author = {Bilal Siddiqui, Sakshi, Imran A Khan and MZ Abdin},
   title  = {{IBDock}: Browser-Based Batch Docking and Automated Validation
             with {AutoDock Vina}}
 }
