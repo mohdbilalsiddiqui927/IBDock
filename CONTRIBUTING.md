@@ -23,8 +23,8 @@ discuss it before writing code — it saves everyone time.
 ## Submitting a fix or feature
 
 ```bash
-git clone https://github.com/Mohdbilalsiddiqui927/ibdock.git
-cd ibdock
+git clone https://github.com/mohdbilalsiddiqui927/IBDock.git
+cd IBDock
 pip install -r requirements.txt
 pip install pytest
 pytest Tests/   # make sure everything passes before you start
