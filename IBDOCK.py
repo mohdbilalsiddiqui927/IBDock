@@ -28,6 +28,20 @@ import pandas as pd
 import seaborn as sns
 import streamlit as st
 
+# Optional — only required for Tab 6 (Re-Docking RMSD validation), which uses
+# graph-based atom correspondence instead of atom-name matching, since the
+# ligand-prep pipeline (SDF/MOL2 -> Open Babel -> PDBQT) does not guarantee
+# reference and docked-pose atom names will correspond.
+#   pip install rdkit spyrmsd
+try:
+    from rdkit import Chem as _Chem
+    from rdkit.Chem import rdFMCS as _rdFMCS
+    from spyrmsd import molecule as _spymol
+    from spyrmsd import rmsd as _spyrmsd_rmsd
+    _RMSD_DEPS_OK = True
+except ImportError:
+    _RMSD_DEPS_OK = False
+
 # ──────────────────────────────────────────────────────────────────────────────
 # CONFIG PERSISTENCE  (saved per-project in project_dir/IBDock_config.json)
 # ──────────────────────────────────────────────────────────────────────────────
@@ -278,6 +292,13 @@ EXCLUDE_RESNAMES = {
     "GOL", "GLY", "PG4", "PGE", "PG6", "PEG", "PE4", "P6G", "1PE", "2PE",
     "EDO", "EGL", "MPD", "IPA", "EOH", "ACE", "ACN", "DMS", "MSO",
     "DMF", "DMU", "IMD",
+    # Reducing agents and their reaction adducts with surface cysteines —
+    # NOT ligands, but not excluded before. Confirmed root cause: 1HVY's
+    # grid box was centered ~10.7 A from the true ligand because BME
+    # (beta-mercaptoethanol) and CME (a BME-modified cysteine, which reads
+    # as a HETATM) were pooled into the ligand-centroid average alongside
+    # the real ligand.
+    "BME", "CME", "DTT", "TCEP", "MRD", "B3P", "BTB", "PGO",
     # Detergents common in membrane protein crystals
     "BOG", "DDM", "OG",  "NG",  "LMT", "LDA",
     # Polyamines / crystallisation additives
@@ -418,16 +439,29 @@ def extract_ligand_atoms(lines: list, min_heavy_atoms: int = 7):
     Filtering strategy (in order):
     1. Skip any residue name in EXCLUDE_RESNAMES (ions, solvents, buffers,
        cryoprotectants).
-    2. Group remaining HETATM records by residue name and count heavy atoms.
-    3. Skip any residue whose heavy atom count is below min_heavy_atoms (default 7).
-       This catches small crystallographic additives not in EXCLUDE_RESNAMES such as
-       glycerol fragments, acetate, formate, and single-atom ions.
+    2. Group remaining HETATM records by (residue name, CHAIN) and count
+       heavy atoms per group.
+    3. Skip any group whose heavy atom count is below min_heavy_atoms
+       (default 7). This catches small crystallographic additives not in
+       EXCLUDE_RESNAMES such as glycerol fragments, acetate, formate, and
+       single-atom ions.
+    4. Restrict to a SINGLE chain: when a structure contains multiple
+       crystallographic copies of the complex (common — e.g. 4 copies in
+       the asymmetric unit), pooling ligand coordinates from every chain
+       together produces a centroid that doesn't correspond to any real
+       binding site (confirmed root cause of a ~10.7 A grid-centering
+       error on PDB 1HVY, which has 4 chains each with its own ligand).
+       Instead, pick the single chain with the most qualifying ligand
+       atoms and use only that chain's groups — this still allows
+       multiple co-located HETATM groups within ONE binding site (e.g. a
+       metal cofactor + organic ligand) to be combined together, since
+       those legitimately belong to the same site.
 
     Returns a numpy array of (x, y, z) coords and a set of surviving residue names.
     """
     from collections import defaultdict
 
-    groups = defaultdict(list)   # resname -> list of (x, y, z) for heavy atoms
+    groups = defaultdict(list)   # (resname, chain) -> list of (x, y, z) for heavy atoms
     for line in lines:
         if not line.startswith("HETATM"):
             continue
@@ -439,14 +473,27 @@ def extract_ligand_atoms(lines: list, min_heavy_atoms: int = 7):
             continue                       # skip hydrogens / deuteriums
         try:
             xyz = (float(line[30:38]), float(line[38:46]), float(line[46:54]))
-            groups[rn].append(xyz)
+            chain = line[21]
+            groups[(rn, chain)].append(xyz)
         except ValueError:
             continue
 
     # Apply minimum size filter — drop anything too small to be a drug ligand
+    qualifying = {key: xyzs for key, xyzs in groups.items() if len(xyzs) >= min_heavy_atoms}
+    if not qualifying:
+        return np.array([]), set()
+
+    # Restrict to the single chain with the most total qualifying ligand
+    # atoms — avoids pooling coordinates from multiple, spatially separate
+    # crystallographic copies of the same complex.
+    atoms_per_chain = defaultdict(int)
+    for (rn, chain), xyzs in qualifying.items():
+        atoms_per_chain[chain] += len(xyzs)
+    best_chain = max(atoms_per_chain, key=atoms_per_chain.get)
+
     coords, resnames = [], set()
-    for rn, xyzs in groups.items():
-        if len(xyzs) < min_heavy_atoms:
+    for (rn, chain), xyzs in qualifying.items():
+        if chain != best_chain:
             continue
         coords.extend(xyzs)
         resnames.add(rn)
@@ -536,12 +583,23 @@ def fix_pdbqt_atom_names(pdbqt_path):
 
 
 def strip_receptor_hydrogens(pdbqt_path):
-    """Remove hydrogen lines from a receptor PDBQT."""
+    """
+    Remove NONPOLAR hydrogen atoms from a receptor PDBQT, checked by AD4
+    atom type (column 77-79), not atom name. MGLTools names many hydrogens
+    with digit-prefixed identifiers (e.g. '1HD2', '2HG1') for geminal H's,
+    which a name-based "starts with H" check misses entirely — confirmed
+    empirically: 100% of H/HD atoms produced by this pipeline use that
+    naming convention, so the previous name-based check silently removed
+    nothing from any receptor.
+
+    Polar hydrogens (AD4 type 'HD') are explicitly preserved — required for
+    Vina's hydrogen-bond donor scoring term.
+    """
     kept = []
     with open(pdbqt_path) as fh:
         for line in fh:
-            if line.startswith(("ATOM", "HETATM")) and line[12:16].strip().startswith("H"):
-                continue
+            if line.startswith(("ATOM", "HETATM")) and line[77:79].strip() == "H":
+                continue  # drop nonpolar H only; keep HD (polar) and all heavy atoms
             kept.append(line)
     with open(pdbqt_path, "w") as fh:
         fh.writelines(kept)
@@ -673,11 +731,11 @@ def run_single_docking(job: tuple):
     """
     Run one AutoDock Vina job.
     job = (receptor, ligand, config_file, vina_exe,
-           exhaustiveness, num_modes, energy_range, cores, dock_dir, result_dir)
+           exhaustiveness, num_modes, energy_range, cores, dock_dir, result_dir, seed)
     Returns ("success"|"failed", protein_name, ligand_name, message).
     """
     rec, lig, config_file, vina_exe, exhaustiveness, num_modes, \
-        energy_range, cores_per_job, dock_dir, result_dir = job
+        energy_range, cores_per_job, dock_dir, result_dir, seed = job
 
     protein_name = Path(rec).stem.replace("_receptor", "")
     ligand_name  = Path(lig).stem
@@ -685,18 +743,26 @@ def run_single_docking(job: tuple):
     log_txt      = result_dir / f"{protein_name}_{ligand_name}.txt"
 
     try:
+        cmd = [
+            str(vina_exe),
+            "--receptor",      str(rec),
+            "--ligand",        str(lig),
+            "--config",        str(config_file),
+            "--exhaustiveness",str(exhaustiveness),
+            "--num_modes",     str(num_modes),
+            "--energy_range",  str(energy_range),
+            "--cpu",           str(cores_per_job),
+            "--out",           str(out_pdbqt),
+        ]
+        # Fixed seed => reproducible results run-to-run (Vina otherwise seeds
+        # from system entropy, so re-running the same job gives different
+        # poses each time — important for a validation study others need to
+        # be able to reproduce).
+        if seed is not None:
+            cmd += ["--seed", str(seed)]
+
         result = subprocess.run(
-            [
-                str(vina_exe),
-                "--receptor",      str(rec),
-                "--ligand",        str(lig),
-                "--config",        str(config_file),
-                "--exhaustiveness",str(exhaustiveness),
-                "--num_modes",     str(num_modes),
-                "--energy_range",  str(energy_range),
-                "--cpu",           str(cores_per_job),
-                "--out",           str(out_pdbqt),
-            ],
+            cmd,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True, shell=False,
         )
@@ -835,6 +901,47 @@ def pdbqt_to_sdf_text(pdbqt_path, obabel_path: str, first_pose_only: bool = True
                 pass
 
 
+def pdb_to_sdf_text(pdb_text: str, obabel_path: str) -> str:
+    """
+    Convert a reference ligand PDB (text) to SDF using Open Babel, the same
+    way pdbqt_to_sdf_text() already does for docked poses. This is what
+    makes redocking RMSD naming-agnostic: both molecules end up as SDF
+    graphs with bond tables, and compute_rmsd_from_sdf() matches them by
+    graph structure, not by atom name — which matters because ligands
+    prepared from SDF/MOL2 (see the screening pipeline above) get
+    Open-Babel-generated PDB-style atom names that will not, in general,
+    match the RCSB chemical-component-dictionary names on a reference
+    ligand downloaded straight from the PDB.
+    """
+    import tempfile
+    tmp_pdb = tmp_sdf = None
+    try:
+        tmp_pdb = tempfile.NamedTemporaryFile(suffix=".pdb", delete=False, mode="w")
+        tmp_pdb.write(pdb_text)
+        tmp_pdb.flush()
+        tmp_pdb.close()
+        tmp_sdf = tempfile.NamedTemporaryFile(suffix=".sdf", delete=False)
+        tmp_sdf.close()
+        result = subprocess.run(
+            [obabel_path, tmp_pdb.name, "-O", tmp_sdf.name],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30,
+        )
+        if result.returncode == 0 and Path(tmp_sdf.name).exists():
+            sdf_content = Path(tmp_sdf.name).read_text(errors="replace")
+            if sdf_content.strip():
+                return sdf_content
+        return ""
+    except Exception:
+        return ""
+    finally:
+        for tmp in (tmp_pdb, tmp_sdf):
+            try:
+                if tmp:
+                    os.unlink(tmp.name)
+            except Exception:
+                pass
+
+
 def extract_vina_pose_by_mode(pdbqt_path: str, mode_number: int) -> list:
     """Return ATOM/HETATM lines for a specific Vina mode."""
     lines = Path(pdbqt_path).read_text(errors="replace").splitlines(keepends=True)
@@ -880,45 +987,158 @@ def _is_hydrogen(line: str) -> bool:
 
 def compute_rmsd_from_lines(ref_lines: list, pose_lines: list):
     """
-    Compute symmetric RMSD between reference and pose (heavy atoms only).
-    Returns (rmsd_value, error_string). error_string is None on success.
+    Fast pre-check ONLY: verifies the reference and docked pose plausibly
+    have the same number of heavy atoms before we bother invoking Open Babel
+    + RDKit. This is NOT the RMSD calculation itself (that's
+    compute_rmsd_from_sdf, below) — do not use this function's absence of an
+    atom-count error to mean the RMSD is valid.
 
-    Uses _is_hydrogen() for consistent hydrogen filtering — same logic as
-    parse_pdbqt_heavy_atoms — so reference and pose atom counts always agree
-    when they represent the same molecule.
+    Returns (n_ref_heavy, n_pose_heavy, error_string). error_string is None
+    if the counts are compatible.
     """
-    def _coords(lines):
-        pts = []
+    def _count_heavy(lines):
+        n = 0
         for line in lines:
             if not line.startswith(("ATOM", "HETATM")):
                 continue
             if _is_hydrogen(line):
                 continue
+            n += 1
+        return n
+
+    n_ref, n_pose = _count_heavy(ref_lines), _count_heavy(pose_lines)
+    if n_ref == 0:
+        return n_ref, n_pose, "Reference has no heavy atoms"
+    if n_pose == 0:
+        return n_ref, n_pose, "Pose has no heavy atoms"
+    if n_ref != n_pose:
+        return n_ref, n_pose, f"Atom count mismatch: ref={n_ref}, pose={n_pose}"
+    return n_ref, n_pose, None
+
+
+def compute_rmsd_from_sdf(ref_sdf_text: str, pose_sdf_text: str):
+    """
+    Compute redocking RMSD between reference and docked pose using
+    GRAPH-BASED atom correspondence (spyrmsd, with an RDKit maximum-common-
+    substructure fallback) — not atom names, and not nearest-spatial-neighbor
+    matching. This is naming-agnostic: it works whether the docked ligand
+    was prepared from a PDB, SDF, or MOL2 file, because the correspondence
+    is established from molecular connectivity, not from whatever atom
+    names Open Babel or MGLTools happened to assign during preparation.
+
+    It is also symmetry-aware (ring flips, swapped carboxylate oxygens,
+    etc. are matched correctly rather than inflating RMSD).
+
+    No superposition/alignment is performed — the receptor is the shared
+    coordinate frame for both the crystal reference and the docked pose,
+    so a valid redocking RMSD must compare each atom to its own true
+    counterpart in that same fixed frame. Re-aligning the ligands first
+    would erase exactly the thing this metric is meant to catch: whether
+    Vina placed the ligand in the right pocket, in the right orientation,
+    relative to the fixed protein.
+
+    Returns (rmsd_value, error_string, note). error_string is None on
+    success. note is an optional caveat string (e.g. when only a fallback
+    partial match could be established).
+    """
+    if not _RMSD_DEPS_OK:
+        return None, ("Re-docking RMSD requires 'rdkit' and 'spyrmsd' "
+                       "(pip install rdkit spyrmsd) — not currently installed."), None
+
+    def _force_strip_hydrogens(mol):
+        # RDKit's RemoveHs() conservatively keeps hydrogens involved in odd
+        # valence situations (common after Open Babel bond-order guessing on
+        # coordinate-only crystal PDBs). We only need heavy-atom positions
+        # and connectivity for graph-based RMSD, so remove every atomic
+        # number 1 atom unconditionally rather than relying on that heuristic.
+        h_idx = [a.GetIdx() for a in mol.GetAtoms() if a.GetAtomicNum() == 1]
+        if not h_idx:
+            return mol
+        rw = _Chem.RWMol(mol)
+        for idx in sorted(h_idx, reverse=True):
+            rw.RemoveAtom(idx)
+        return rw.GetMol()
+
+    def _parse_molblock(text):
+        # Open Babel sometimes perceives an implausible bond order/formal-
+        # charge combination when guessing bonds from a coordinate-only
+        # crystal PDB (e.g. a carboxylate resonance form RDKit's strict
+        # valence table rejects). We only need atomic numbers, connectivity,
+        # and 3D coordinates for graph-based RMSD matching — not chemically
+        # valid valences — so we retry without the valence check rather
+        # than discarding the molecule outright.
+        mol = _Chem.MolFromMolBlock(text, removeHs=True, sanitize=True)
+        if mol is None:
+            mol = _Chem.MolFromMolBlock(text, removeHs=False, sanitize=False)
+            if mol is None:
+                return None
             try:
-                pts.append([float(line[30:38]), float(line[38:46]), float(line[46:54])])
-            except (ValueError, IndexError):
-                continue
-        return np.array(pts) if pts else np.array([]).reshape(0, 3)
+                _Chem.SanitizeMol(mol, sanitizeOps=_Chem.SANITIZE_ALL ^ _Chem.SANITIZE_PROPERTIES)
+            except Exception:
+                pass  # proceed with whatever sanitization succeeded
+        return _force_strip_hydrogens(mol)
 
-    ca, cb = _coords(ref_lines), _coords(pose_lines)
-    if ca.size == 0:
-        return None, "Reference has no heavy atoms"
-    if cb.size == 0:
-        return None, "Pose has no heavy atoms"
-    if len(ca) != len(cb):
-        # Allow ±1 tolerance — common when the reference was extracted from a
-        # crystal PDB that includes an alternate conformation atom or a lone-pair
-        # pseudo-atom that Open Babel strips during ligand preparation.
-        if abs(len(ca) - len(cb)) <= 1:
-            n = min(len(ca), len(cb))
-            ca, cb = ca[:n], cb[:n]
-        else:
-            return None, f"Atom count mismatch: ref={len(ca)}, pose={len(cb)}"
+    ref_rdmol = _parse_molblock(ref_sdf_text)
+    pose_rdmol = _parse_molblock(pose_sdf_text)
 
-    def _one_way(src, ref):
-        return np.sqrt(sum(np.sum((ref - row) ** 2, axis=1).min() for row in src) / len(src))
+    if ref_rdmol is None:
+        return None, "Could not parse reference ligand (RDKit failed to read the SDF/bond table)", None
+    if pose_rdmol is None:
+        return None, "Could not parse docked pose (RDKit failed to read the SDF/bond table)", None
 
-    return round(max(_one_way(ca, cb), _one_way(cb, ca)), 4), None
+    n_ref, n_pose = ref_rdmol.GetNumAtoms(), pose_rdmol.GetNumAtoms()
+    if n_ref != n_pose:
+        return None, (f"Heavy-atom count mismatch: reference={n_ref}, pose={n_pose}. "
+                       f"Re-docking RMSD requires the same ligand in both."), None
+
+    # --- Primary path: spyrmsd graph-isomorphism, symmetry-corrected RMSD ---
+    try:
+        ref_mol = _spymol.Molecule.from_rdkit(ref_rdmol)
+        pose_mol = _spymol.Molecule.from_rdkit(pose_rdmol)
+        rmsd_val = _spyrmsd_rmsd.rmsdwrapper(
+            ref_mol, pose_mol, symmetry=True, center=False, minimize=False, strip=True
+        )
+        val = rmsd_val[0] if isinstance(rmsd_val, list) else rmsd_val
+        return round(float(val), 4), None, None
+    except Exception:
+        pass  # fall through to RDKit MCS fallback below
+
+    # --- Fallback: RDKit maximum common substructure (loose atom/bond compare) ---
+    # Needed when Open Babel perceives slightly different bonds for the
+    # crystal PDB vs. the PDBQT torsion tree (e.g. a bond dropped across a
+    # rotatable torsion, splitting the pose into disconnected fragments) —
+    # spyrmsd correctly refuses to match non-isomorphic graphs, so this
+    # fallback finds the best partial correspondence instead of failing outright.
+    try:
+        mcs = _rdFMCS.FindMCS(
+            [ref_rdmol, pose_rdmol],
+            atomCompare=_rdFMCS.AtomCompare.CompareElements,
+            bondCompare=_rdFMCS.BondCompare.CompareAny,
+            ringMatchesRingOnly=False,
+            timeout=15,
+        )
+        if mcs.numAtoms < max(3, 0.9 * n_ref):
+            return None, (
+                f"Reference and docked pose are not graph-isomorphic, and only a small "
+                f"common substructure could be matched ({mcs.numAtoms}/{n_ref} atoms). "
+                f"Bond perception likely differs between the two structures (or a bond "
+                f"was dropped across a rotatable torsion during PDBQT conversion) — "
+                f"inspect this pair manually before trusting any RMSD for it."
+            ), None
+
+        patt = _Chem.MolFromSmarts(mcs.smartsString)
+        ref_match = ref_rdmol.GetSubstructMatch(patt)
+        pose_match = pose_rdmol.GetSubstructMatch(patt)
+        ref_conf = ref_rdmol.GetConformer()
+        pose_conf = pose_rdmol.GetConformer()
+        ref_coords = np.array([list(ref_conf.GetAtomPosition(i)) for i in ref_match])
+        pose_coords = np.array([list(pose_conf.GetAtomPosition(i)) for i in pose_match])
+        diffs = ref_coords - pose_coords
+        rmsd_val = np.sqrt(np.mean(np.sum(diffs ** 2, axis=1)))
+        note = f"partial graph match: {mcs.numAtoms}/{n_ref} atoms (bond perception differed)"
+        return round(float(rmsd_val), 4), None, note
+    except Exception as e_mcs:
+        return None, f"Graph-based RMSD failed (spyrmsd and RDKit MCS both errored: {e_mcs})", None
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1557,7 +1777,6 @@ with tab2:
             randomize_pose = st.checkbox("Randomise input pose",        False, key="lig_rand")
             rigid_ligand   = st.checkbox("Treat as rigid (no torsions)", False, key="lig_rigid")
         with c2:
-            add_hydrogens         = st.checkbox("Add hydrogens",                True,  key="lig_addh")
             generate_3d           = st.checkbox("Generate 3D coordinates",      True,  key="lig_3d")
             calc_lig_charges      = st.checkbox("Calculate Gasteiger charges",  True,  key="lig_charges")
             remove_nonpolar_h_lig = st.checkbox("Remove non-polar hydrogens",   True,  key="lig_nph")
@@ -1581,12 +1800,36 @@ with tab2:
                 pdb_file  = prep_lig_dir / f"{lig_file.stem}.pdb"
                 pdbqt_out = prep_lig_dir / f"{lig_file.stem}.pdbqt"
 
-                # Step 1: Open Babel → PDB
-                cmd = [str(obabel_path), str(lig_file), "-O", str(pdb_file)]
-                if add_hydrogens:    cmd.append("--addhydrogens")
+                # Step 1a: Open Babel — pH-based protonation FIRST, as its own
+                # call. Combining -p with --gen3d in a single Open Babel
+                # invocation silently discards the pH-based protonation
+                # (verified directly: acetic acid stays protonated as -COOH
+                # at pH 7.4 when -p and --gen3d are combined, regardless of
+                # flag order, but correctly deprotonates to -COO- when -p is
+                # run alone). Running -p as its own step, then generating 3D
+                # coordinates on the ALREADY-protonated structure, preserves
+                # the correct protonation state.
+                if correct_ph:
+                    pdb_protonated = prep_lig_dir / f"{lig_file.stem}_protonated.pdb"
+                    cmd_ph = [str(obabel_path), str(lig_file), "-O", str(pdb_protonated),
+                              "-p", str(ph_value)]
+                    run_cmd(cmd_ph)
+                    if not pdb_protonated.exists():
+                        raise RuntimeError("Open Babel did not generate a protonated PDB file")
+                    step1_input = pdb_protonated
+                else:
+                    step1_input = lig_file
+
+                # Step 1b: Open Babel — 3D embedding, charges, etc. on top of
+                # the (optionally) already-protonated structure.
+                # NOTE: --addhydrogens is not a real Open Babel option (it is
+                # silently ignored — verified empirically: atom count is
+                # identical with or without it) and has been removed. Standard
+                # hydrogens are added by --gen3d / -p above and by MGLTools'
+                # -A checkhydrogens in Step 2 below.
+                cmd = [str(obabel_path), str(step1_input), "-O", str(pdb_file)]
                 if generate_3d:      cmd.append("--gen3d")
                 if calc_lig_charges: cmd += ["--partialcharge", "gasteiger"]
-                if correct_ph:       cmd += ["-p", str(ph_value)]
                 if randomize_pose:   cmd.append("--randomize")
                 run_cmd(cmd)
 
@@ -1758,6 +2001,17 @@ with tab3:
             cores_per_job = st.number_input(
                 "CPU cores per job", 1, total_cores,
                 max(1, total_cores // 2), key="vina_cores",
+            )
+            use_fixed_seed = st.checkbox(
+                "Use fixed random seed (reproducible results)", True, key="vina_use_seed",
+                help="Vina's search is stochastic. Without a fixed seed, re-running the "
+                     "same job produces different poses each time. Enable this — and "
+                     "report the seed value in your Methods section — for reproducible, "
+                     "publication-quality results.",
+            )
+            vina_seed = st.number_input(
+                "Random seed", 0, 2**31 - 1, 42, key="vina_seed_val",
+                disabled=not use_fixed_seed,
             )
             st.caption(
                 f"**{int(cpu_workers)} jobs × {int(cores_per_job)} cores "
@@ -2013,7 +2267,8 @@ viewer.zoomTo(); viewer.render(); viewer.zoom(0.85);
                     continue
                 jobs.append((rec, lig, cfg, vina_path,
                              int(exhaustiveness), int(num_modes), int(energy_range),
-                             int(cores_per_job), dock_dir, result_dir))
+                             int(cores_per_job), dock_dir, result_dir,
+                             int(vina_seed) if use_fixed_seed else None))
 
         if not jobs:
             st.error("❌ No valid docking jobs. Check protein/ligand files and grid configs.")
@@ -2144,7 +2399,7 @@ with tab4:
                 n_heavy = _count_heavy_first_pose(_src)
                 if n_heavy:
                     break
-        le = round(mode1_aff / n_heavy, 3) if (mode1_aff is not None and n_heavy and n_heavy > 0) else None
+        le = round(-mode1_aff / n_heavy, 3) if (mode1_aff is not None and n_heavy and n_heavy > 0) else None
 
         rows.append({
             "Protein":               protein,
@@ -2233,7 +2488,7 @@ with tab4:
         st.caption(
             "**Best Affinity** = Vina mode 1 score · "
             "**ΔE Mode1→2** = energy gap (larger = more selective pose) · "
-            "**Ligand Efficiency** = Best Affinity ÷ Heavy Atoms"
+            "**Ligand Efficiency** = −(Best Affinity) ÷ Heavy Atoms"
         )
 
         # ── Download buttons ───────────────────────────────────────────────
@@ -2567,12 +2822,6 @@ with tab6:
         key="val_ref_upload",
     )
 
-    # Strict atom-count tolerance for re-docking: exact match only (±0)
-    # The ±1 tolerance in compute_rmsd_from_lines is for self-consistency
-    # comparisons of the same molecule. For re-docking, even 1-atom difference
-    # means a different molecule — we block it here before calling the function.
-    _REDOCK_ATOM_TOL = 0
-
     if uploaded_refs and docked_pdbqts:
         redock_rows = []
         for ref_file in uploaded_refs:
@@ -2599,6 +2848,11 @@ with tab6:
             ref_stem = Path(ref_file.name).stem.lower()
             for suffix in ("_ref", "-ref", "_crystal", "-crystal", "_native", "-native"):
                 ref_stem = ref_stem.replace(suffix, "")
+
+            # Convert the reference ligand to SDF once per reference file (bond
+            # perception via Open Babel), for graph-based RMSD matching that
+            # doesn't depend on atom naming — see compute_rmsd_from_sdf().
+            ref_sdf_text = pdb_to_sdf_text(ref_text, obabel_path)
 
             # Match ONLY docked pairs whose protein ID appears in the reference filename.
             # e.g. "6C9H.pdb" → only 6C9H_*.pdbqt; "6C9H1.pdb" → only 6C9H1_*.pdbqt
@@ -2660,16 +2914,14 @@ with tab6:
                 pose_heavy = [l for l in pose1
                               if l.startswith(("ATOM", "HETATM")) and not _is_hydrogen(l)]
 
-                n_ref  = len(ref_heavy)
-                n_pose = len(pose_heavy)
+                # Fast pre-check only (line-count based) — catches obviously
+                # different molecules before we bother with Open Babel/RDKit.
+                # NOTE: passing this check does NOT mean the RMSD below is
+                # valid — the real correspondence check happens in
+                # compute_rmsd_from_sdf() via graph matching.
+                n_ref, n_pose, count_err = compute_rmsd_from_lines(ref_heavy, pose_heavy)
 
-                # Strict atom count check — different molecule, skip RMSD entirely
-                if abs(n_ref - n_pose) > _REDOCK_ATOM_TOL:
-                    status = (
-                        f"❌ Different molecule — ref has {n_ref} heavy atoms, "
-                        f"pose has {n_pose}. Re-docking RMSD requires the same "
-                        f"ligand in both reference and docked pose."
-                    )
+                if count_err:
                     redock_rows.append({
                         "Reference File":        ref_file.name,
                         "Protein":               prot,
@@ -2677,11 +2929,36 @@ with tab6:
                         "RMSD vs Reference (Å)": None,
                         "Ref Heavy Atoms":       n_ref,
                         "Pose Heavy Atoms":      n_pose,
-                        "Status":                status,
+                        "Status":                f"❌ {count_err}",
                     })
                     continue
 
-                rmsd_val, err = compute_rmsd_from_lines(ref_heavy, pose_heavy)
+                if not ref_sdf_text.strip():
+                    redock_rows.append({
+                        "Reference File":        ref_file.name,
+                        "Protein":               prot,
+                        "Ligand":                lig,
+                        "RMSD vs Reference (Å)": None,
+                        "Ref Heavy Atoms":       n_ref,
+                        "Pose Heavy Atoms":      n_pose,
+                        "Status":                "⚠️ Could not convert reference ligand to SDF (Open Babel failed)",
+                    })
+                    continue
+
+                pose_sdf_text = pdbqt_to_sdf_text(str(dpdbqt), obabel_path, first_pose_only=True)
+                if not pose_sdf_text.strip():
+                    redock_rows.append({
+                        "Reference File":        ref_file.name,
+                        "Protein":               prot,
+                        "Ligand":                lig,
+                        "RMSD vs Reference (Å)": None,
+                        "Ref Heavy Atoms":       n_ref,
+                        "Pose Heavy Atoms":      n_pose,
+                        "Status":                "⚠️ Could not convert docked pose to SDF (Open Babel failed)",
+                    })
+                    continue
+
+                rmsd_val, err, note = compute_rmsd_from_sdf(ref_sdf_text, pose_sdf_text)
 
                 if err:
                     status = f"⚠️ {err}"
@@ -2693,6 +2970,9 @@ with tab6:
                     status = "🟡 Borderline (2–3 Å)"
                 else:
                     status = "🔴 Fail (≥ 3 Å)"
+
+                if note:
+                    status += f"  [{note}]"
 
                 redock_rows.append({
                     "Reference File":        ref_file.name,
