@@ -4,11 +4,11 @@
 #
 #  Requirements:
 #      pip install streamlit numpy pandas matplotlib seaborn
-#  External tools (Windows paths as defaults, configurable in sidebar):
+#  External tools (portable bundled paths preferred; configurable in sidebar):
 #      • MGLTools 1.5.7  — protein & ligand preparation
 #      • Open Babel 3.x  — ligand format conversion
 #      • AutoDock Vina   — docking engine
-#      • fpocket / P2Rank (optional, WSL) — pocket detection
+#      • fpocket / P2Rank — pocket detection (bundled native P2Rank; validated WSL fpocket)
 #
 #  Usage:
 #      streamlit run vina_dock.py
@@ -17,6 +17,7 @@
 import io
 import json
 import os
+import shutil
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -28,64 +29,220 @@ import pandas as pd
 import seaborn as sns
 import streamlit as st
 
-# Optional — only required for Tab 6 (Re-Docking RMSD validation), which uses
-# graph-based atom correspondence instead of atom-name matching, since the
-# ligand-prep pipeline (SDF/MOL2 -> Open Babel -> PDBQT) does not guarantee
-# reference and docked-pose atom names will correspond.
-#   pip install rdkit spyrmsd
-try:
-    from rdkit import Chem as _Chem
-    from rdkit.Chem import rdFMCS as _rdFMCS
-    from spyrmsd import molecule as _spymol
-    from spyrmsd import rmsd as _spyrmsd_rmsd
-    _RMSD_DEPS_OK = True
-except ImportError:
-    _RMSD_DEPS_OK = False
-
 # ──────────────────────────────────────────────────────────────────────────────
 # CONFIG PERSISTENCE  (saved per-project in project_dir/IBDock_config.json)
 # ──────────────────────────────────────────────────────────────────────────────
 import platform as _platform
+import sys as _sys
+
 _os = _platform.system()
-if _os == "Windows":
-    _DEF = dict(
-        mgl_python  = r"C:\MGLTools-1.5.7\python.exe",
-        prep_rec    = r"C:\MGLTools-1.5.7\AutoDockTools\Utilities24\prepare_receptor4.py",
-        prep_lig    = r"C:\MGLTools-1.5.7\AutoDockTools\Utilities24\prepare_ligand4.py",
-        vina_path   = r"C:\vina\vina.exe",
-        obabel_path = r"C:\Program Files\OpenBabel-3.1.1\obabel.exe",
-        fpocket_path= "wsl fpocket",
-        p2rank_path = "wsl /home/user/p2rank/distro/prank",
-    )
-elif _os == "Darwin":
-    _DEF = dict(
-        mgl_python  = "/opt/homebrew/bin/pythonsh",
-        prep_rec    = "/opt/homebrew/share/mgltools/AutoDockTools/Utilities24/prepare_receptor4.py",
-        prep_lig    = "/opt/homebrew/share/mgltools/AutoDockTools/Utilities24/prepare_ligand4.py",
-        vina_path   = "/opt/homebrew/bin/vina",
-        obabel_path = "/opt/homebrew/bin/obabel",
-        fpocket_path= "wsl fpocket",
-        p2rank_path = "wsl /home/user/p2rank/distro/prank",
+
+# -----------------------------------------------------------------------------
+# PORTABLE TOOL ROOT
+# -----------------------------------------------------------------------------
+# For the distributed Windows build, external scientific tools live beside the
+# application in: IBDock\tools\.  This deliberately uses an ONEDIR build so
+# the bundled MGLTools/P2Rank/OpenBabel files remain ordinary files on disk.
+if getattr(_sys, "frozen", False):
+    APP_DIR = Path(_sys.executable).resolve().parent
+else:
+    APP_DIR = Path(__file__).resolve().parent
+
+# Resolve bundled scientific tools in both source and PyInstaller ONEDIR builds.
+# PyInstaller places bundled data under _internal.
+if getattr(_sys, "frozen", False):
+    _tool_candidates = [
+        APP_DIR / "_internal" / "tools",
+        APP_DIR / "tools",
+    ]
+    BUNDLED_TOOLS = next(
+        (p for p in _tool_candidates if p.exists()),
+        APP_DIR / "_internal" / "tools",
     )
 else:
-    _DEF = dict(
-        mgl_python  = "/usr/bin/pythonsh",
-        prep_rec    = "/usr/share/mgltools/AutoDockTools/Utilities24/prepare_receptor4.py",
-        prep_lig    = "/usr/share/mgltools/AutoDockTools/Utilities24/prepare_ligand4.py",
-        vina_path   = "/usr/bin/vina",
-        obabel_path = "/usr/bin/obabel",
-        fpocket_path= "wsl fpocket",
-        p2rank_path = "wsl /home/user/p2rank/distro/prank",
+    BUNDLED_TOOLS = APP_DIR / "tools"
+
+
+def _first_existing(*paths):
+    for p in paths:
+        p = Path(p)
+        if p.exists():
+            return str(p)
+    return ""
+
+
+def _bundled_defaults():
+    """Return portable defaults, preferring bundled tools over system installs."""
+    mgl = BUNDLED_TOOLS / "MGLTools"
+    obabel = _first_existing(
+        BUNDLED_TOOLS / "OpenBabel" / "obabel.exe",
+        mgl / "OpenBabel-2.3.2" / "obabel.exe",
     )
+    vina = _first_existing(BUNDLED_TOOLS / "Vina" / "vina.exe")
+    fpocket = _first_existing(
+        BUNDLED_TOOLS / "fpocket" / "fpocket.exe",
+        BUNDLED_TOOLS / "fpocket" / "fpocket.bat",
+    )
+    p2rank = _first_existing(
+        BUNDLED_TOOLS / "P2Rank" / "prank.bat",
+        BUNDLED_TOOLS / "P2Rank" / "prank.exe",
+    )
+
+    # User's currently validated Windows installation paths are retained as a
+    # fallback while the portable tools are being assembled.
+    if _os == "Windows":
+        mgl_root = Path(r"C:\Program Files (x86)\MGLTools-1.5.7")
+        mgl_python = _first_existing(mgl / "python.exe", mgl_root / "python.exe")
+        prep_rec = _first_existing(
+            mgl / "Lib" / "site-packages" / "AutoDockTools" / "Utilities24" / "prepare_receptor4.py",
+            mgl_root / "Lib" / "site-packages" / "AutoDockTools" / "Utilities24" / "prepare_receptor4.py",
+        )
+        prep_lig = _first_existing(
+            mgl / "Lib" / "site-packages" / "AutoDockTools" / "Utilities24" / "prepare_ligand4.py",
+            mgl_root / "Lib" / "site-packages" / "AutoDockTools" / "Utilities24" / "prepare_ligand4.py",
+        )
+        obabel = obabel or _first_existing(
+            mgl_root / "OpenBabel-2.3.2" / "obabel.exe",
+        )
+        vina = vina or _first_existing(Path(r"D:\app\docking\vina_1.2.7_win.exe"))
+
+        # Native bundled fpocket only.
+        fpocket = fpocket or _first_existing(
+            BUNDLED_TOOLS / "fpocket-master" / "bin" / "fpocket.exe",
+            BUNDLED_TOOLS / "fpocket" / "fpocket.exe",
+        )
+        p2rank = p2rank or str(BUNDLED_TOOLS / "P2Rank" / "prank.bat")
+
+        return dict(
+            mgl_python=mgl_python,
+            prep_rec=prep_rec,
+            prep_lig=prep_lig,
+            vina_path=vina,
+            obabel_path=obabel,
+            fpocket_path=fpocket,
+            p2rank_path=p2rank,
+        )
+
+    if _os == "Darwin":
+        return dict(
+            mgl_python="/opt/homebrew/bin/pythonsh",
+            prep_rec="/opt/homebrew/share/mgltools/AutoDockTools/Utilities24/prepare_receptor4.py",
+            prep_lig="/opt/homebrew/share/mgltools/AutoDockTools/Utilities24/prepare_ligand4.py",
+            vina_path="/opt/homebrew/bin/vina",
+            obabel_path="/opt/homebrew/bin/obabel",
+            fpocket_path="",
+            p2rank_path="",
+        )
+
+    return dict(
+        mgl_python="/usr/bin/pythonsh",
+        prep_rec="/usr/share/mgltools/AutoDockTools/Utilities24/prepare_receptor4.py",
+        prep_lig="/usr/share/mgltools/AutoDockTools/Utilities24/prepare_ligand4.py",
+        vina_path="/usr/bin/vina",
+        obabel_path="/usr/bin/obabel",
+        fpocket_path="fpocket",
+        p2rank_path="prank",
+    )
+
+
+_DEF = _bundled_defaults()
 
 def _load_config(project_dir: Path) -> dict:
     cfg_file = project_dir / "IBDock_config.json"
+
     if cfg_file.exists():
         try:
-            return {**_DEF, **json.loads(cfg_file.read_text())}
+            cfg = {**_DEF, **json.loads(cfg_file.read_text())}
         except Exception:
-            pass
-    return dict(_DEF)
+            cfg = dict(_DEF)
+    else:
+        cfg = dict(_DEF)
+
+    # ------------------------------------------------------------
+    # Windows portable tools
+    # Always prefer bundled native tools over old machine-specific
+    # paths or obsolete WSL configuration.
+    # ------------------------------------------------------------
+    if _os == "Windows":
+
+        # -------------------------
+        # P2Rank
+        # -------------------------
+        bundled_p2rank = _first_existing(
+            BUNDLED_TOOLS / "P2Rank" / "prank.bat",
+            BUNDLED_TOOLS / "P2Rank" / "prank.exe",
+            BUNDLED_TOOLS / "P2Rank" / "prank",
+        )
+
+        if bundled_p2rank:
+            cfg["p2rank_path"] = bundled_p2rank
+
+        # -------------------------
+        # fpocket
+        # -------------------------
+        bundled_fpocket = _first_existing(
+            BUNDLED_TOOLS / "fpocket-master" / "bin" / "fpocket.exe",
+            BUNDLED_TOOLS / "fpocket" / "fpocket.exe",
+        )
+
+        if bundled_fpocket:
+            cfg["fpocket_path"] = bundled_fpocket
+
+        # -------------------------
+        # MGLTools
+        # -------------------------
+        bundled_mgl = BUNDLED_TOOLS / "MGLTools-1.5.7"
+
+        bundled_mgl_python = _first_existing(
+            bundled_mgl / "python.exe",
+            bundled_mgl / "pythonsh.exe",
+        )
+
+        bundled_prep_rec = _first_existing(
+            bundled_mgl / "Lib" / "site-packages"
+            / "AutoDockTools" / "Utilities24"
+            / "prepare_receptor4.py",
+        )
+
+        bundled_prep_lig = _first_existing(
+            bundled_mgl / "Lib" / "site-packages"
+            / "AutoDockTools" / "Utilities24"
+            / "prepare_ligand4.py",
+        )
+
+        if bundled_mgl_python:
+            cfg["mgl_python"] = bundled_mgl_python
+
+        if bundled_prep_rec:
+            cfg["prep_rec"] = bundled_prep_rec
+
+        if bundled_prep_lig:
+            cfg["prep_lig"] = bundled_prep_lig
+
+        # -------------------------
+        # Open Babel
+        # -------------------------
+        bundled_obabel = _first_existing(
+            BUNDLED_TOOLS / "OpenBabel" / "obabel.exe",
+            BUNDLED_TOOLS / "OpenBabel-2.3.2" / "obabel.exe",
+        )
+
+        if bundled_obabel:
+            cfg["obabel_path"] = bundled_obabel
+
+        # -------------------------
+        # AutoDock Vina
+        # -------------------------
+        bundled_vina = _first_existing(
+            BUNDLED_TOOLS / "vina" / "vina.exe",
+            BUNDLED_TOOLS / "Vina" / "vina.exe",
+        )
+
+        if bundled_vina:
+            cfg["vina_path"] = bundled_vina
+
+    return cfg
+
 
 def _save_config(project_dir: Path, cfg: dict):
     try:
@@ -292,13 +449,6 @@ EXCLUDE_RESNAMES = {
     "GOL", "GLY", "PG4", "PGE", "PG6", "PEG", "PE4", "P6G", "1PE", "2PE",
     "EDO", "EGL", "MPD", "IPA", "EOH", "ACE", "ACN", "DMS", "MSO",
     "DMF", "DMU", "IMD",
-    # Reducing agents and their reaction adducts with surface cysteines —
-    # NOT ligands, but not excluded before. Confirmed root cause: 1HVY's
-    # grid box was centered ~10.7 A from the true ligand because BME
-    # (beta-mercaptoethanol) and CME (a BME-modified cysteine, which reads
-    # as a HETATM) were pooled into the ligand-centroid average alongside
-    # the real ligand.
-    "BME", "CME", "DTT", "TCEP", "MRD", "B3P", "BTB", "PGO",
     # Detergents common in membrane protein crystals
     "BOG", "DDM", "OG",  "NG",  "LMT", "LDA",
     # Polyamines / crystallisation additives
@@ -323,7 +473,7 @@ def run_cmd(cmd: list):
     )
 
 
-def validate_tool(path_str: str, label: str, wsl_tool: bool = False) -> dict:
+def validate_tool(path_str: str, label: str) -> dict:
     """
     Validate an external tool by checking its path and running it.
     Returns {"label", "ok", "version", "detail"}.
@@ -335,43 +485,6 @@ def validate_tool(path_str: str, label: str, wsl_tool: bool = False) -> dict:
         return result
 
     path_str = path_str.strip()
-
-    # WSL-hosted tools (fpocket, P2Rank)
-    if wsl_tool or path_str.lower().startswith("wsl"):
-        wsl_exe = _resolve_wsl_exe()
-        parts = path_str.split()
-        if len(parts) >= 2:
-            binary = parts[-1]
-            if binary.startswith("/"):
-                check = subprocess.run(
-                    [wsl_exe, "test", "-f", binary],
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE
-                )
-                if check.returncode != 0:
-                    result["detail"] = f"File not found inside WSL: `{binary}` — check the path is correct."
-                    return result
-            else:
-                check = subprocess.run(
-                    [wsl_exe, "which", binary],
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE
-                )
-                if check.returncode != 0:
-                    result["detail"] = f"Binary `{binary}` not found in WSL PATH. Try: sudo apt install {binary}"
-                    return result
-        try:
-            cmd = _build_wsl_cmd(path_str) + ["--version"]
-            proc = subprocess.run(cmd, stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE, text=True, timeout=15)
-            out = (proc.stdout + proc.stderr).strip()
-            version_line = next((l for l in out.splitlines() if l.strip()), "(no output)")
-            result["ok"] = True
-            result["version"] = version_line[:120]
-            result["detail"] = "Reachable via WSL ✔"
-        except subprocess.TimeoutExpired:
-            result["detail"] = "Timed out — WSL may be starting up, try again"
-        except Exception as exc:
-            result["detail"] = str(exc)
-        return result
 
     path = Path(path_str)
     if path.suffix.lower() == ".py":
@@ -385,7 +498,9 @@ def validate_tool(path_str: str, label: str, wsl_tool: bool = False) -> dict:
     if not path.exists():
         result["detail"] = f"File not found: {path}"
         return result
-    if not os.access(str(path), os.X_OK):
+    # Windows .bat/.cmd launchers are executable through cmd.exe even when
+    # os.access(..., X_OK) is not meaningful on Windows.
+    if path.suffix.lower() not in {".bat", ".cmd"} and not os.access(str(path), os.X_OK):
         result["detail"] = f"File exists but is not executable: {path}"
         return result
 
@@ -439,29 +554,16 @@ def extract_ligand_atoms(lines: list, min_heavy_atoms: int = 7):
     Filtering strategy (in order):
     1. Skip any residue name in EXCLUDE_RESNAMES (ions, solvents, buffers,
        cryoprotectants).
-    2. Group remaining HETATM records by (residue name, CHAIN) and count
-       heavy atoms per group.
-    3. Skip any group whose heavy atom count is below min_heavy_atoms
-       (default 7). This catches small crystallographic additives not in
-       EXCLUDE_RESNAMES such as glycerol fragments, acetate, formate, and
-       single-atom ions.
-    4. Restrict to a SINGLE chain: when a structure contains multiple
-       crystallographic copies of the complex (common — e.g. 4 copies in
-       the asymmetric unit), pooling ligand coordinates from every chain
-       together produces a centroid that doesn't correspond to any real
-       binding site (confirmed root cause of a ~10.7 A grid-centering
-       error on PDB 1HVY, which has 4 chains each with its own ligand).
-       Instead, pick the single chain with the most qualifying ligand
-       atoms and use only that chain's groups — this still allows
-       multiple co-located HETATM groups within ONE binding site (e.g. a
-       metal cofactor + organic ligand) to be combined together, since
-       those legitimately belong to the same site.
+    2. Group remaining HETATM records by residue name and count heavy atoms.
+    3. Skip any residue whose heavy atom count is below min_heavy_atoms (default 7).
+       This catches small crystallographic additives not in EXCLUDE_RESNAMES such as
+       glycerol fragments, acetate, formate, and single-atom ions.
 
     Returns a numpy array of (x, y, z) coords and a set of surviving residue names.
     """
     from collections import defaultdict
 
-    groups = defaultdict(list)   # (resname, chain) -> list of (x, y, z) for heavy atoms
+    groups = defaultdict(list)   # resname -> list of (x, y, z) for heavy atoms
     for line in lines:
         if not line.startswith("HETATM"):
             continue
@@ -473,27 +575,14 @@ def extract_ligand_atoms(lines: list, min_heavy_atoms: int = 7):
             continue                       # skip hydrogens / deuteriums
         try:
             xyz = (float(line[30:38]), float(line[38:46]), float(line[46:54]))
-            chain = line[21]
-            groups[(rn, chain)].append(xyz)
+            groups[rn].append(xyz)
         except ValueError:
             continue
 
     # Apply minimum size filter — drop anything too small to be a drug ligand
-    qualifying = {key: xyzs for key, xyzs in groups.items() if len(xyzs) >= min_heavy_atoms}
-    if not qualifying:
-        return np.array([]), set()
-
-    # Restrict to the single chain with the most total qualifying ligand
-    # atoms — avoids pooling coordinates from multiple, spatially separate
-    # crystallographic copies of the same complex.
-    atoms_per_chain = defaultdict(int)
-    for (rn, chain), xyzs in qualifying.items():
-        atoms_per_chain[chain] += len(xyzs)
-    best_chain = max(atoms_per_chain, key=atoms_per_chain.get)
-
     coords, resnames = [], set()
-    for (rn, chain), xyzs in qualifying.items():
-        if chain != best_chain:
+    for rn, xyzs in groups.items():
+        if len(xyzs) < min_heavy_atoms:
             continue
         coords.extend(xyzs)
         resnames.add(rn)
@@ -583,23 +672,12 @@ def fix_pdbqt_atom_names(pdbqt_path):
 
 
 def strip_receptor_hydrogens(pdbqt_path):
-    """
-    Remove NONPOLAR hydrogen atoms from a receptor PDBQT, checked by AD4
-    atom type (column 77-79), not atom name. MGLTools names many hydrogens
-    with digit-prefixed identifiers (e.g. '1HD2', '2HG1') for geminal H's,
-    which a name-based "starts with H" check misses entirely — confirmed
-    empirically: 100% of H/HD atoms produced by this pipeline use that
-    naming convention, so the previous name-based check silently removed
-    nothing from any receptor.
-
-    Polar hydrogens (AD4 type 'HD') are explicitly preserved — required for
-    Vina's hydrogen-bond donor scoring term.
-    """
+    """Remove hydrogen lines from a receptor PDBQT."""
     kept = []
     with open(pdbqt_path) as fh:
         for line in fh:
-            if line.startswith(("ATOM", "HETATM")) and line[77:79].strip() == "H":
-                continue  # drop nonpolar H only; keep HD (polar) and all heavy atoms
+            if line.startswith(("ATOM", "HETATM")) and line[12:16].strip().startswith("H"):
+                continue
             kept.append(line)
     with open(pdbqt_path, "w") as fh:
         fh.writelines(kept)
@@ -609,90 +687,158 @@ def strip_receptor_hydrogens(pdbqt_path):
 # POCKET DETECTION
 # ──────────────────────────────────────────────────────────────────────────────
 
-def run_p2rank(pdb_file, p2rank_exec: str, padding: float = 5.0) -> tuple:
-    """Run P2Rank and return (center, size) where size is derived from the
-    pocket points CSV (real geometry) rather than a hardcoded constant.
+def _run_native_p2rank(pdb_file, p2rank_exec: str, padding: float = 5.0) -> tuple:
+    """Run a native Windows P2Rank launcher and locate its prediction CSVs.
 
-    Returns:
-        (center, size) — both np.ndarray / list of 3 values in Angstroms.
+    This is used when a bundled prank.bat/prank.exe is present.  The function
+    intentionally searches the generated files instead of assuming one exact
+    P2Rank output layout, because P2Rank distributions can differ by version.
     """
-    wsl_pdb = _win_to_wsl(pdb_file)
-    cmd_parts = _build_wsl_cmd(p2rank_exec)
-    prank_bin = cmd_parts[-1]
-    wsl_exe = cmd_parts[0]
-    result = subprocess.run(
-        [wsl_exe, "bash", prank_bin, "predict", "-f", wsl_pdb],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-    )
+    exe = Path(p2rank_exec)
+    if not exe.exists():
+        raise RuntimeError(f"P2Rank executable not found: {exe}")
+
+    pdb = Path(pdb_file).resolve()
+    work_dir = pdb.parent
+    cmd = [str(exe), "predict", "-f", str(pdb)]
+    kwargs = {"stdout": subprocess.PIPE, "stderr": subprocess.PIPE, "text": True, "cwd": str(work_dir)}
+    if exe.suffix.lower() in {".bat", ".cmd"}:
+        cmd = ["cmd.exe", "/c"] + cmd
+
+    result = subprocess.run(cmd, **kwargs)
     if result.returncode != 0:
-        raise RuntimeError(f"P2Rank failed: {result.stderr.decode(errors='replace').strip()}")
+        raise RuntimeError(f"P2Rank failed: {(result.stderr or result.stdout).strip()}")
 
-    pdb_stem = Path(pdb_file).stem
-    out_base = f"{prank_bin.rsplit('/',1)[0]}/test_output/predict_{pdb_stem}/{pdb_stem}.pdb"
+    stem = pdb.stem
+    candidates = list(work_dir.rglob(f"{stem}*predictions.csv"))
+    if not candidates:
+        # Some distributions write into a fixed output directory under the
+        # P2Rank installation. Search beside the executable as a second pass.
+        candidates = list(exe.parent.rglob(f"{stem}*predictions.csv"))
+    if not candidates:
+        raise RuntimeError("P2Rank completed but no predictions.csv file was found.")
 
-    # ── Predictions CSV → pocket centre ───────────────────────────────────────
-    pred_wsl = out_base + "_predictions.csv"
-    r2 = subprocess.run([wsl_exe, "wslpath", "-w", pred_wsl],
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    if r2.returncode != 0:
-        raise RuntimeError(f"Could not resolve P2Rank output path: {pred_wsl}")
-
-    pred_file = Path(r2.stdout.strip())
-    if not pred_file.exists():
-        raise RuntimeError(f"P2Rank prediction file not found: {pred_file}")
-
+    pred_file = max(candidates, key=lambda p: p.stat().st_mtime)
     df = pd.read_csv(pred_file)
     df.columns = df.columns.str.strip()
-    best   = df.iloc[0]
-    center = np.array([best["center_x"], best["center_y"], best["center_z"]])
+    if df.empty or not {"center_x", "center_y", "center_z"}.issubset(df.columns):
+        raise RuntimeError(f"Invalid P2Rank prediction file: {pred_file}")
 
-    # ── Points CSV → pocket extent (real geometry) ────────────────────────────
-    # P2Rank writes <stem>.pdb_points.csv alongside predictions.csv.
-    # Each row is a surface/alpha-sphere point with x, y, z and a pocket rank.
-    # We use the extent of rank-1 pocket points to compute a geometry-based
-    # box size instead of an arbitrary constant.
+    best = df.iloc[0]
+    center = np.array([best["center_x"], best["center_y"], best["center_z"]], dtype=float)
+
     size = None
-    pts_wsl = out_base + "_points.csv"
-    r3 = subprocess.run([wsl_exe, "wslpath", "-w", pts_wsl],
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    if r3.returncode == 0:
-        pts_file = Path(r3.stdout.strip())
-        if pts_file.exists():
-            try:
-                pts_df = pd.read_csv(pts_file)
-                pts_df.columns = pts_df.columns.str.strip()
-                # Keep only points that belong to pocket rank 1
-                if "pocket" in pts_df.columns:
-                    pts_df = pts_df[pts_df["pocket"] == 1]
-                if len(pts_df) >= 4 and {"x", "y", "z"}.issubset(pts_df.columns):
-                    xyz    = pts_df[["x", "y", "z"]].values.astype(float)
-                    extent = xyz.max(axis=0) - xyz.min(axis=0)
-                    size   = cap_grid([round_even(v) for v in (extent + 2 * padding)])
-            except Exception:
-                size = None  # fall through to evidence-based default below
+    points = list(pred_file.parent.glob(f"{stem}*_points.csv"))
+    if points:
+        try:
+            pts_df = pd.read_csv(points[0])
+            pts_df.columns = pts_df.columns.str.strip()
+            if "pocket" in pts_df.columns:
+                pts_df = pts_df[pts_df["pocket"] == 1]
+            if len(pts_df) >= 4 and {"x", "y", "z"}.issubset(pts_df.columns):
+                xyz = pts_df[["x", "y", "z"]].values.astype(float)
+                extent = xyz.max(axis=0) - xyz.min(axis=0)
+                size = cap_grid([round_even(v) for v in (extent + 2 * padding)])
+        except Exception:
+            size = None
 
-    # ── Fallback: evidence-based default when points file is unavailable ───────
-    # Median binding-site diameter across the PDB is ~10-14 Å.
-    # A 12 Å base + user padding is more defensible than a hardcoded 26 Å.
     if size is None:
-        base = np.array([12.0, 12.0, 12.0])
-        size = cap_grid([round_even(v) for v in (base + 2 * padding)])
+        size = cap_grid([round_even(v) for v in (np.array([12.0, 12.0, 12.0]) + 2 * padding)])
 
     return center, size
 
 
+def run_p2rank(pdb_file, p2rank_exec: str, padding: float = 5.0) -> tuple:
+    """Run bundled native Windows P2Rank only. WSL is not used for P2Rank."""
+    if not p2rank_exec or not str(p2rank_exec).strip():
+        raise RuntimeError("P2Rank path is not configured.")
+
+    if str(p2rank_exec).lower().startswith("wsl"):
+        raise RuntimeError(
+            "P2Rank WSL configuration is no longer supported. "
+            "Please use the bundled native P2Rank tool."
+        )
+
+    return _run_native_p2rank(pdb_file, p2rank_exec, padding)
+
+
 def run_fpocket(pdb_file, fpocket_exec: str):
-    wsl_pdb = _win_to_wsl(pdb_file)
-    cmd_parts = _build_wsl_cmd(fpocket_exec)
+    """Run the bundled native Windows fpocket executable."""
+    import shutil
+
+    pdb_file = Path(pdb_file)
+
+    if not pdb_file.exists():
+        raise RuntimeError(f"fpocket input PDB not found: {pdb_file}")
+
+    fpocket_exec = str(fpocket_exec or "").strip()
+
+    if not fpocket_exec:
+        raise RuntimeError("Native fpocket executable is not configured.")
+
+    if fpocket_exec.lower().startswith("wsl"):
+        raise RuntimeError(
+            "WSL fpocket configuration detected. "
+            "IBDock requires the bundled native fpocket.exe."
+        )
+
+    exe = Path(fpocket_exec)
+
+    if not exe.exists():
+        raise RuntimeError(
+            f"Native fpocket executable not found: {exe}"
+        )
+
+    out_dir = pdb_file.parent / f"{pdb_file.stem}_out"
+
+    if out_dir.exists():
+        # Previous fpocket runs may have been created by MSYS/UCRT64
+        # or WSL and may contain files that Windows cannot delete.
+        # Do not fail the docking workflow because of stale output.
+        #
+        # Rename the previous result directory instead. Native fpocket
+        # can then create a clean <protein>_out directory.
+        backup_dir = pdb_file.parent / f"{pdb_file.stem}_out_previous"
+
+        try:
+            if backup_dir.exists():
+                import shutil
+                shutil.rmtree(backup_dir, ignore_errors=True)
+
+            out_dir.rename(backup_dir)
+
+        except Exception:
+            # If rename is also blocked (for example by OneDrive),
+            # continue and let fpocket report the actual problem.
+            pass
+
     result = subprocess.run(
-        cmd_parts + ["-f", wsl_pdb],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        [str(exe), "-f", pdb_file.name],
+        cwd=str(pdb_file.parent),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        errors="replace",
     )
+
     if result.returncode != 0:
-        raise RuntimeError(f"fpocket failed: {result.stderr.decode(errors='replace').strip()}")
-    out_dir = Path(pdb_file).parent / (Path(pdb_file).stem + "_out")
-    if not out_dir.exists():
-        raise RuntimeError(f"fpocket output directory not found: {out_dir}")
+        error_text = (
+            result.stderr.strip()
+            or result.stdout.strip()
+            or "unknown fpocket error"
+        )
+        raise RuntimeError(
+            f"Native fpocket failed: {error_text}"
+        )
+
+    pocket_file = out_dir / "pockets" / "pocket1_atm.pdb"
+
+    if not pocket_file.exists():
+        raise RuntimeError(
+            "Native fpocket completed but no pocket output "
+            f"was found: {pocket_file}"
+        )
+
     return out_dir
 
 
@@ -731,11 +877,11 @@ def run_single_docking(job: tuple):
     """
     Run one AutoDock Vina job.
     job = (receptor, ligand, config_file, vina_exe,
-           exhaustiveness, num_modes, energy_range, cores, dock_dir, result_dir, seed)
+           exhaustiveness, num_modes, energy_range, cores, dock_dir, result_dir)
     Returns ("success"|"failed", protein_name, ligand_name, message).
     """
     rec, lig, config_file, vina_exe, exhaustiveness, num_modes, \
-        energy_range, cores_per_job, dock_dir, result_dir, seed = job
+        energy_range, cores_per_job, dock_dir, result_dir = job
 
     protein_name = Path(rec).stem.replace("_receptor", "")
     ligand_name  = Path(lig).stem
@@ -743,26 +889,18 @@ def run_single_docking(job: tuple):
     log_txt      = result_dir / f"{protein_name}_{ligand_name}.txt"
 
     try:
-        cmd = [
-            str(vina_exe),
-            "--receptor",      str(rec),
-            "--ligand",        str(lig),
-            "--config",        str(config_file),
-            "--exhaustiveness",str(exhaustiveness),
-            "--num_modes",     str(num_modes),
-            "--energy_range",  str(energy_range),
-            "--cpu",           str(cores_per_job),
-            "--out",           str(out_pdbqt),
-        ]
-        # Fixed seed => reproducible results run-to-run (Vina otherwise seeds
-        # from system entropy, so re-running the same job gives different
-        # poses each time — important for a validation study others need to
-        # be able to reproduce).
-        if seed is not None:
-            cmd += ["--seed", str(seed)]
-
         result = subprocess.run(
-            cmd,
+            [
+                str(vina_exe),
+                "--receptor",      str(rec),
+                "--ligand",        str(lig),
+                "--config",        str(config_file),
+                "--exhaustiveness",str(exhaustiveness),
+                "--num_modes",     str(num_modes),
+                "--energy_range",  str(energy_range),
+                "--cpu",           str(cores_per_job),
+                "--out",           str(out_pdbqt),
+            ],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True, shell=False,
         )
@@ -901,47 +1039,6 @@ def pdbqt_to_sdf_text(pdbqt_path, obabel_path: str, first_pose_only: bool = True
                 pass
 
 
-def pdb_to_sdf_text(pdb_text: str, obabel_path: str) -> str:
-    """
-    Convert a reference ligand PDB (text) to SDF using Open Babel, the same
-    way pdbqt_to_sdf_text() already does for docked poses. This is what
-    makes redocking RMSD naming-agnostic: both molecules end up as SDF
-    graphs with bond tables, and compute_rmsd_from_sdf() matches them by
-    graph structure, not by atom name — which matters because ligands
-    prepared from SDF/MOL2 (see the screening pipeline above) get
-    Open-Babel-generated PDB-style atom names that will not, in general,
-    match the RCSB chemical-component-dictionary names on a reference
-    ligand downloaded straight from the PDB.
-    """
-    import tempfile
-    tmp_pdb = tmp_sdf = None
-    try:
-        tmp_pdb = tempfile.NamedTemporaryFile(suffix=".pdb", delete=False, mode="w")
-        tmp_pdb.write(pdb_text)
-        tmp_pdb.flush()
-        tmp_pdb.close()
-        tmp_sdf = tempfile.NamedTemporaryFile(suffix=".sdf", delete=False)
-        tmp_sdf.close()
-        result = subprocess.run(
-            [obabel_path, tmp_pdb.name, "-O", tmp_sdf.name],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30,
-        )
-        if result.returncode == 0 and Path(tmp_sdf.name).exists():
-            sdf_content = Path(tmp_sdf.name).read_text(errors="replace")
-            if sdf_content.strip():
-                return sdf_content
-        return ""
-    except Exception:
-        return ""
-    finally:
-        for tmp in (tmp_pdb, tmp_sdf):
-            try:
-                if tmp:
-                    os.unlink(tmp.name)
-            except Exception:
-                pass
-
-
 def extract_vina_pose_by_mode(pdbqt_path: str, mode_number: int) -> list:
     """Return ATOM/HETATM lines for a specific Vina mode."""
     lines = Path(pdbqt_path).read_text(errors="replace").splitlines(keepends=True)
@@ -987,158 +1084,45 @@ def _is_hydrogen(line: str) -> bool:
 
 def compute_rmsd_from_lines(ref_lines: list, pose_lines: list):
     """
-    Fast pre-check ONLY: verifies the reference and docked pose plausibly
-    have the same number of heavy atoms before we bother invoking Open Babel
-    + RDKit. This is NOT the RMSD calculation itself (that's
-    compute_rmsd_from_sdf, below) — do not use this function's absence of an
-    atom-count error to mean the RMSD is valid.
+    Compute symmetric RMSD between reference and pose (heavy atoms only).
+    Returns (rmsd_value, error_string). error_string is None on success.
 
-    Returns (n_ref_heavy, n_pose_heavy, error_string). error_string is None
-    if the counts are compatible.
+    Uses _is_hydrogen() for consistent hydrogen filtering — same logic as
+    parse_pdbqt_heavy_atoms — so reference and pose atom counts always agree
+    when they represent the same molecule.
     """
-    def _count_heavy(lines):
-        n = 0
+    def _coords(lines):
+        pts = []
         for line in lines:
             if not line.startswith(("ATOM", "HETATM")):
                 continue
             if _is_hydrogen(line):
                 continue
-            n += 1
-        return n
-
-    n_ref, n_pose = _count_heavy(ref_lines), _count_heavy(pose_lines)
-    if n_ref == 0:
-        return n_ref, n_pose, "Reference has no heavy atoms"
-    if n_pose == 0:
-        return n_ref, n_pose, "Pose has no heavy atoms"
-    if n_ref != n_pose:
-        return n_ref, n_pose, f"Atom count mismatch: ref={n_ref}, pose={n_pose}"
-    return n_ref, n_pose, None
-
-
-def compute_rmsd_from_sdf(ref_sdf_text: str, pose_sdf_text: str):
-    """
-    Compute redocking RMSD between reference and docked pose using
-    GRAPH-BASED atom correspondence (spyrmsd, with an RDKit maximum-common-
-    substructure fallback) — not atom names, and not nearest-spatial-neighbor
-    matching. This is naming-agnostic: it works whether the docked ligand
-    was prepared from a PDB, SDF, or MOL2 file, because the correspondence
-    is established from molecular connectivity, not from whatever atom
-    names Open Babel or MGLTools happened to assign during preparation.
-
-    It is also symmetry-aware (ring flips, swapped carboxylate oxygens,
-    etc. are matched correctly rather than inflating RMSD).
-
-    No superposition/alignment is performed — the receptor is the shared
-    coordinate frame for both the crystal reference and the docked pose,
-    so a valid redocking RMSD must compare each atom to its own true
-    counterpart in that same fixed frame. Re-aligning the ligands first
-    would erase exactly the thing this metric is meant to catch: whether
-    Vina placed the ligand in the right pocket, in the right orientation,
-    relative to the fixed protein.
-
-    Returns (rmsd_value, error_string, note). error_string is None on
-    success. note is an optional caveat string (e.g. when only a fallback
-    partial match could be established).
-    """
-    if not _RMSD_DEPS_OK:
-        return None, ("Re-docking RMSD requires 'rdkit' and 'spyrmsd' "
-                       "(pip install rdkit spyrmsd) — not currently installed."), None
-
-    def _force_strip_hydrogens(mol):
-        # RDKit's RemoveHs() conservatively keeps hydrogens involved in odd
-        # valence situations (common after Open Babel bond-order guessing on
-        # coordinate-only crystal PDBs). We only need heavy-atom positions
-        # and connectivity for graph-based RMSD, so remove every atomic
-        # number 1 atom unconditionally rather than relying on that heuristic.
-        h_idx = [a.GetIdx() for a in mol.GetAtoms() if a.GetAtomicNum() == 1]
-        if not h_idx:
-            return mol
-        rw = _Chem.RWMol(mol)
-        for idx in sorted(h_idx, reverse=True):
-            rw.RemoveAtom(idx)
-        return rw.GetMol()
-
-    def _parse_molblock(text):
-        # Open Babel sometimes perceives an implausible bond order/formal-
-        # charge combination when guessing bonds from a coordinate-only
-        # crystal PDB (e.g. a carboxylate resonance form RDKit's strict
-        # valence table rejects). We only need atomic numbers, connectivity,
-        # and 3D coordinates for graph-based RMSD matching — not chemically
-        # valid valences — so we retry without the valence check rather
-        # than discarding the molecule outright.
-        mol = _Chem.MolFromMolBlock(text, removeHs=True, sanitize=True)
-        if mol is None:
-            mol = _Chem.MolFromMolBlock(text, removeHs=False, sanitize=False)
-            if mol is None:
-                return None
             try:
-                _Chem.SanitizeMol(mol, sanitizeOps=_Chem.SANITIZE_ALL ^ _Chem.SANITIZE_PROPERTIES)
-            except Exception:
-                pass  # proceed with whatever sanitization succeeded
-        return _force_strip_hydrogens(mol)
+                pts.append([float(line[30:38]), float(line[38:46]), float(line[46:54])])
+            except (ValueError, IndexError):
+                continue
+        return np.array(pts) if pts else np.array([]).reshape(0, 3)
 
-    ref_rdmol = _parse_molblock(ref_sdf_text)
-    pose_rdmol = _parse_molblock(pose_sdf_text)
+    ca, cb = _coords(ref_lines), _coords(pose_lines)
+    if ca.size == 0:
+        return None, "Reference has no heavy atoms"
+    if cb.size == 0:
+        return None, "Pose has no heavy atoms"
+    if len(ca) != len(cb):
+        # Allow ±1 tolerance — common when the reference was extracted from a
+        # crystal PDB that includes an alternate conformation atom or a lone-pair
+        # pseudo-atom that Open Babel strips during ligand preparation.
+        if abs(len(ca) - len(cb)) <= 1:
+            n = min(len(ca), len(cb))
+            ca, cb = ca[:n], cb[:n]
+        else:
+            return None, f"Atom count mismatch: ref={len(ca)}, pose={len(cb)}"
 
-    if ref_rdmol is None:
-        return None, "Could not parse reference ligand (RDKit failed to read the SDF/bond table)", None
-    if pose_rdmol is None:
-        return None, "Could not parse docked pose (RDKit failed to read the SDF/bond table)", None
+    def _one_way(src, ref):
+        return np.sqrt(sum(np.sum((ref - row) ** 2, axis=1).min() for row in src) / len(src))
 
-    n_ref, n_pose = ref_rdmol.GetNumAtoms(), pose_rdmol.GetNumAtoms()
-    if n_ref != n_pose:
-        return None, (f"Heavy-atom count mismatch: reference={n_ref}, pose={n_pose}. "
-                       f"Re-docking RMSD requires the same ligand in both."), None
-
-    # --- Primary path: spyrmsd graph-isomorphism, symmetry-corrected RMSD ---
-    try:
-        ref_mol = _spymol.Molecule.from_rdkit(ref_rdmol)
-        pose_mol = _spymol.Molecule.from_rdkit(pose_rdmol)
-        rmsd_val = _spyrmsd_rmsd.rmsdwrapper(
-            ref_mol, pose_mol, symmetry=True, center=False, minimize=False, strip=True
-        )
-        val = rmsd_val[0] if isinstance(rmsd_val, list) else rmsd_val
-        return round(float(val), 4), None, None
-    except Exception:
-        pass  # fall through to RDKit MCS fallback below
-
-    # --- Fallback: RDKit maximum common substructure (loose atom/bond compare) ---
-    # Needed when Open Babel perceives slightly different bonds for the
-    # crystal PDB vs. the PDBQT torsion tree (e.g. a bond dropped across a
-    # rotatable torsion, splitting the pose into disconnected fragments) —
-    # spyrmsd correctly refuses to match non-isomorphic graphs, so this
-    # fallback finds the best partial correspondence instead of failing outright.
-    try:
-        mcs = _rdFMCS.FindMCS(
-            [ref_rdmol, pose_rdmol],
-            atomCompare=_rdFMCS.AtomCompare.CompareElements,
-            bondCompare=_rdFMCS.BondCompare.CompareAny,
-            ringMatchesRingOnly=False,
-            timeout=15,
-        )
-        if mcs.numAtoms < max(3, 0.9 * n_ref):
-            return None, (
-                f"Reference and docked pose are not graph-isomorphic, and only a small "
-                f"common substructure could be matched ({mcs.numAtoms}/{n_ref} atoms). "
-                f"Bond perception likely differs between the two structures (or a bond "
-                f"was dropped across a rotatable torsion during PDBQT conversion) — "
-                f"inspect this pair manually before trusting any RMSD for it."
-            ), None
-
-        patt = _Chem.MolFromSmarts(mcs.smartsString)
-        ref_match = ref_rdmol.GetSubstructMatch(patt)
-        pose_match = pose_rdmol.GetSubstructMatch(patt)
-        ref_conf = ref_rdmol.GetConformer()
-        pose_conf = pose_rdmol.GetConformer()
-        ref_coords = np.array([list(ref_conf.GetAtomPosition(i)) for i in ref_match])
-        pose_coords = np.array([list(pose_conf.GetAtomPosition(i)) for i in pose_match])
-        diffs = ref_coords - pose_coords
-        rmsd_val = np.sqrt(np.mean(np.sum(diffs ** 2, axis=1)))
-        note = f"partial graph match: {mcs.numAtoms}/{n_ref} atoms (bond perception differed)"
-        return round(float(rmsd_val), 4), None, note
-    except Exception as e_mcs:
-        return None, f"Graph-based RMSD failed (spyrmsd and RDKit MCS both errored: {e_mcs})", None
+    return round(max(_one_way(ca, cb), _one_way(cb, ca)), 4), None
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1229,8 +1213,17 @@ def build_viewer_html(receptor_pdb: str, ligand_pdb: str,
     <option value="ss">Secondary Structure</option>
     <option value="white">White</option>
   </select>
+  <div class="ctrl-label" style="margin-left:6px">Background</div>
+  <select id="viewer_bg">
+    <option value="#1a1f2e">Dark</option>
+    <option value="#000000">Black</option>
+    <option value="#ffffff">White</option>
+    <option value="#f2f2f2">Light Grey</option>
+    <option value="#808080">Grey</option>
+  </select>
   <button onclick="viewer.zoomTo();">Reset View</button>
   <button onclick="viewer.spin(!spinning); spinning=!spinning; this.textContent=spinning?'Stop':'Spin';">Spin</button>
+  <button onclick="downloadPosePNG();">Download PNG</button>
   <span class="badge">AutoDock Vina &nbsp;&middot;&nbsp; {aff_str}</span>
 </div>
 <div id="info">
@@ -1241,6 +1234,21 @@ def build_viewer_html(receptor_pdb: str, ligand_pdb: str,
 <script>
 var viewer = $3Dmol.createViewer("viewer", {{backgroundColor:"#1a1f2e"}});
 var spinning = false;
+
+function downloadPosePNG() {{
+  try {{
+    var img = viewer.pngURI();
+    var a = document.createElement("a");
+    a.href = img;
+    a.download = "IBDock_Pose_Viewer.png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }} catch (e) {{
+    console.error("Pose PNG download failed:", e);
+    alert("Unable to download the Pose Viewer image.");
+  }}
+}}
 viewer.addModel('{rec_js}', 'pdb');
 viewer.addModel('{lig_js}', '{lig_fmt_js}');
 var models = viewer.getModelList();
@@ -1272,6 +1280,12 @@ function applyStyles() {{
 document.getElementById("rec_style").onchange = applyStyles;
 document.getElementById("lig_style").onchange = applyStyles;
 document.getElementById("rec_color").onchange = applyStyles;
+
+document.getElementById("viewer_bg").onchange = function() {{
+  viewer.setBackgroundColor(this.value);
+  viewer.render();
+}};
+
 applyStyles();
 viewer.zoomTo({{model: 1}});
 viewer.zoom(0.9);
@@ -1327,11 +1341,8 @@ if _proj_input.strip():
     st.session_state["_last_project_dir"] = _proj_input.strip()
 
 # Live project-dir feedback
-if _proj_input.strip():
-    if project_dir.exists():
-        st.sidebar.success(f"✅ Directory found")
-    else:
-        st.sidebar.error("❌ Directory does not exist")
+if _proj_input.strip() and not project_dir.exists():
+    st.sidebar.error("❌ Directory does not exist")
 
 # Load per-project config (after we have project_dir candidate)
 _cfg = _load_config(project_dir) if project_dir.exists() else dict(_DEF)
@@ -1351,12 +1362,12 @@ obabel_path = st.sidebar.text_input("Open Babel (obabel)",      _cfg["obabel_pat
 st.sidebar.markdown("---")
 st.sidebar.markdown("**Pocket Detection** *(optional)*")
 fpocket_path = st.sidebar.text_input(
-    "fpocket  (WSL prefix required)", _cfg["fpocket_path"],
+    "fpocket (bundled native tool preferred)", _cfg["fpocket_path"],
     help="Used when pocket detection is selected in Protein Prep.",
 )
 p2rank_path = st.sidebar.text_input(
-    "P2Rank  (WSL prefix required)", _cfg["p2rank_path"],
-    help="P2Rank is tried first; fpocket is the fallback in Auto mode.",
+    "P2Rank (bundled native tool)", _cfg["p2rank_path"],
+    help="P2Rank uses the bundled native Windows tool; fpocket is the fallback in Auto mode.",
 )
 
 st.sidebar.markdown("---")
@@ -1371,17 +1382,17 @@ if project_dir.exists():
 
 if st.sidebar.button("Validate All Tools", use_container_width=True):
     tools = [
-        (mgl_python,   "MGLTools python.exe",    False),
-        (prep_rec,     "prepare_receptor4.py",   False),
-        (prep_lig,     "prepare_ligand4.py",      False),
-        (vina_path,    "AutoDock Vina",           False),
-        (obabel_path,  "Open Babel",              False),
-        (fpocket_path, "fpocket (WSL)",           True),
-        (p2rank_path,  "P2Rank (WSL)",            True),
+        (mgl_python,   "MGLTools python.exe"),
+        (prep_rec,     "prepare_receptor4.py"),
+        (prep_lig,     "prepare_ligand4.py"),
+        (vina_path,    "AutoDock Vina"),
+        (obabel_path,  "Open Babel"),
+        (fpocket_path, "fpocket"),
+        (p2rank_path,  "P2Rank"),
     ]
     ph = st.sidebar.empty()
     ph.info("⏳ Validating…")
-    results = [validate_tool(p, l, w) for p, l, w in tools]
+    results = [validate_tool(p, l) for p, l in tools]
     ph.empty()
 
     n_ok = sum(r["ok"] for r in results)
@@ -1451,21 +1462,10 @@ if not project_dir.exists() or str(project_dir) == ".":
 raw_prot = project_dir / "raw_proteins"
 raw_lig  = project_dir / "raw_ligands"
 
-if not raw_prot.exists() or not raw_lig.exists():
-    st.error("❌  Project directory must contain `raw_proteins/` and `raw_ligands/` subfolders.")
-    st.markdown("""
-    Create them manually or let IBDock create them for you:
-    ```
-    my_project/
-    ├── raw_proteins/
-    └── raw_ligands/
-    ```
-    """)
-    if st.button("Create subfolders now"):
-        raw_prot.mkdir(parents=True, exist_ok=True)
-        raw_lig.mkdir(parents=True, exist_ok=True)
-        st.success("✅ Subfolders created — add your files and refresh.")
-    st.stop()
+# Do not globally stop the application when input folders are missing.
+# Individual workflow tabs handle missing input folders themselves.
+raw_prot_exists = raw_prot.exists()
+raw_lig_exists = raw_lig.exists()
 
 # Create output directories
 grid_dir     = project_dir / "grid"
@@ -1541,8 +1541,8 @@ with tab1:
             help=(
                 "**Auto**: tries co-crystallised ligand → P2Rank → fpocket → blind docking.\n\n"
                 "**Co-crystallised ligand**: uses HETATM atoms in the PDB as the binding site centre.\n\n"
-                "**P2Rank**: machine-learning pocket prediction (WSL required).\n\n"
-                "**fpocket**: geometric pocket detection (WSL required).\n\n"
+                "**P2Rank**: machine-learning pocket prediction using the bundled native Windows tool.\n\n"
+                "**fpocket**: geometric pocket detection (bundled native tool preferred; WSL fallback supported).\n\n"
                 "**Blind docking**: centres on the whole protein — use for unknown binding sites."
             ),
         )
@@ -1777,6 +1777,7 @@ with tab2:
             randomize_pose = st.checkbox("Randomise input pose",        False, key="lig_rand")
             rigid_ligand   = st.checkbox("Treat as rigid (no torsions)", False, key="lig_rigid")
         with c2:
+            add_hydrogens         = st.checkbox("Add hydrogens",                True,  key="lig_addh")
             generate_3d           = st.checkbox("Generate 3D coordinates",      True,  key="lig_3d")
             calc_lig_charges      = st.checkbox("Calculate Gasteiger charges",  True,  key="lig_charges")
             remove_nonpolar_h_lig = st.checkbox("Remove non-polar hydrogens",   True,  key="lig_nph")
@@ -1800,36 +1801,12 @@ with tab2:
                 pdb_file  = prep_lig_dir / f"{lig_file.stem}.pdb"
                 pdbqt_out = prep_lig_dir / f"{lig_file.stem}.pdbqt"
 
-                # Step 1a: Open Babel — pH-based protonation FIRST, as its own
-                # call. Combining -p with --gen3d in a single Open Babel
-                # invocation silently discards the pH-based protonation
-                # (verified directly: acetic acid stays protonated as -COOH
-                # at pH 7.4 when -p and --gen3d are combined, regardless of
-                # flag order, but correctly deprotonates to -COO- when -p is
-                # run alone). Running -p as its own step, then generating 3D
-                # coordinates on the ALREADY-protonated structure, preserves
-                # the correct protonation state.
-                if correct_ph:
-                    pdb_protonated = prep_lig_dir / f"{lig_file.stem}_protonated.pdb"
-                    cmd_ph = [str(obabel_path), str(lig_file), "-O", str(pdb_protonated),
-                              "-p", str(ph_value)]
-                    run_cmd(cmd_ph)
-                    if not pdb_protonated.exists():
-                        raise RuntimeError("Open Babel did not generate a protonated PDB file")
-                    step1_input = pdb_protonated
-                else:
-                    step1_input = lig_file
-
-                # Step 1b: Open Babel — 3D embedding, charges, etc. on top of
-                # the (optionally) already-protonated structure.
-                # NOTE: --addhydrogens is not a real Open Babel option (it is
-                # silently ignored — verified empirically: atom count is
-                # identical with or without it) and has been removed. Standard
-                # hydrogens are added by --gen3d / -p above and by MGLTools'
-                # -A checkhydrogens in Step 2 below.
-                cmd = [str(obabel_path), str(step1_input), "-O", str(pdb_file)]
+                # Step 1: Open Babel → PDB
+                cmd = [str(obabel_path), str(lig_file), "-O", str(pdb_file)]
+                if add_hydrogens:    cmd.append("--addhydrogens")
                 if generate_3d:      cmd.append("--gen3d")
                 if calc_lig_charges: cmd += ["--partialcharge", "gasteiger"]
+                if correct_ph:       cmd += ["-p", str(ph_value)]
                 if randomize_pose:   cmd.append("--randomize")
                 run_cmd(cmd)
 
@@ -2002,17 +1979,6 @@ with tab3:
                 "CPU cores per job", 1, total_cores,
                 max(1, total_cores // 2), key="vina_cores",
             )
-            use_fixed_seed = st.checkbox(
-                "Use fixed random seed (reproducible results)", True, key="vina_use_seed",
-                help="Vina's search is stochastic. Without a fixed seed, re-running the "
-                     "same job produces different poses each time. Enable this — and "
-                     "report the seed value in your Methods section — for reproducible, "
-                     "publication-quality results.",
-            )
-            vina_seed = st.number_input(
-                "Random seed", 0, 2**31 - 1, 42, key="vina_seed_val",
-                disabled=not use_fixed_seed,
-            )
             st.caption(
                 f"**{int(cpu_workers)} jobs × {int(cores_per_job)} cores "
                 f"= {int(cpu_workers)*int(cores_per_job)} / {total_cores} cores used**"
@@ -2027,8 +1993,6 @@ with tab3:
         key="gridbox_show",
         help="Load an interactive 3D viewer showing the docking search space overlaid on the receptor.",
     )
-    if not _show_gridbox:
-        st.caption("Enable the checkbox above to visualize the grid box on the receptor structure.")
 
     _rec_files = sorted(prep_rec_dir.glob("*_receptor.pdbqt")) if _show_gridbox else []
 
@@ -2267,8 +2231,7 @@ viewer.zoomTo(); viewer.render(); viewer.zoom(0.85);
                     continue
                 jobs.append((rec, lig, cfg, vina_path,
                              int(exhaustiveness), int(num_modes), int(energy_range),
-                             int(cores_per_job), dock_dir, result_dir,
-                             int(vina_seed) if use_fixed_seed else None))
+                             int(cores_per_job), dock_dir, result_dir))
 
         if not jobs:
             st.error("❌ No valid docking jobs. Check protein/ligand files and grid configs.")
@@ -2280,7 +2243,7 @@ viewer.zoomTo(); viewer.render(); viewer.zoom(0.85);
         if not jobs:
             st.success(f"✅ All {_total_possible} jobs already completed (resume mode). Nothing to do.")
             st.stop()
-        st.info(f" Running **{len(jobs)}** docking jobs ({len(receptors)} receptors × {len(ligands)} ligands){_skip_note}…")
+        st.info(f"Running **{len(jobs)}** docking jobs ({len(receptors)} receptors × {len(ligands)} ligands){_skip_note}…")
 
         progress  = st.progress(0)
         log_area  = st.empty()
@@ -2289,7 +2252,7 @@ viewer.zoomTo(); viewer.render(); viewer.zoom(0.85);
         counters  = {"done": 0, "success": 0, "failed": 0}
         log_lines = []
 
-        progress.progress(0, text="Starting docking jobs…")
+        progress.progress(0, text="Docking in progress…")
         with ThreadPoolExecutor(max_workers=int(cpu_workers)) as pool:
             futures = {pool.submit(run_single_docking, job): job for job in jobs}
             for future in as_completed(futures):
@@ -2399,7 +2362,7 @@ with tab4:
                 n_heavy = _count_heavy_first_pose(_src)
                 if n_heavy:
                     break
-        le = round(-mode1_aff / n_heavy, 3) if (mode1_aff is not None and n_heavy and n_heavy > 0) else None
+        le = round(mode1_aff / n_heavy, 3) if (mode1_aff is not None and n_heavy and n_heavy > 0) else None
 
         rows.append({
             "Protein":               protein,
@@ -2488,7 +2451,7 @@ with tab4:
         st.caption(
             "**Best Affinity** = Vina mode 1 score · "
             "**ΔE Mode1→2** = energy gap (larger = more selective pose) · "
-            "**Ligand Efficiency** = −(Best Affinity) ÷ Heavy Atoms"
+            "**Ligand Efficiency** = Best Affinity ÷ Heavy Atoms"
         )
 
         # ── Download buttons ───────────────────────────────────────────────
@@ -2822,6 +2785,12 @@ with tab6:
         key="val_ref_upload",
     )
 
+    # Strict atom-count tolerance for re-docking: exact match only (±0)
+    # The ±1 tolerance in compute_rmsd_from_lines is for self-consistency
+    # comparisons of the same molecule. For re-docking, even 1-atom difference
+    # means a different molecule — we block it here before calling the function.
+    _REDOCK_ATOM_TOL = 0
+
     if uploaded_refs and docked_pdbqts:
         redock_rows = []
         for ref_file in uploaded_refs:
@@ -2848,11 +2817,6 @@ with tab6:
             ref_stem = Path(ref_file.name).stem.lower()
             for suffix in ("_ref", "-ref", "_crystal", "-crystal", "_native", "-native"):
                 ref_stem = ref_stem.replace(suffix, "")
-
-            # Convert the reference ligand to SDF once per reference file (bond
-            # perception via Open Babel), for graph-based RMSD matching that
-            # doesn't depend on atom naming — see compute_rmsd_from_sdf().
-            ref_sdf_text = pdb_to_sdf_text(ref_text, obabel_path)
 
             # Match ONLY docked pairs whose protein ID appears in the reference filename.
             # e.g. "6C9H.pdb" → only 6C9H_*.pdbqt; "6C9H1.pdb" → only 6C9H1_*.pdbqt
@@ -2914,14 +2878,16 @@ with tab6:
                 pose_heavy = [l for l in pose1
                               if l.startswith(("ATOM", "HETATM")) and not _is_hydrogen(l)]
 
-                # Fast pre-check only (line-count based) — catches obviously
-                # different molecules before we bother with Open Babel/RDKit.
-                # NOTE: passing this check does NOT mean the RMSD below is
-                # valid — the real correspondence check happens in
-                # compute_rmsd_from_sdf() via graph matching.
-                n_ref, n_pose, count_err = compute_rmsd_from_lines(ref_heavy, pose_heavy)
+                n_ref  = len(ref_heavy)
+                n_pose = len(pose_heavy)
 
-                if count_err:
+                # Strict atom count check — different molecule, skip RMSD entirely
+                if abs(n_ref - n_pose) > _REDOCK_ATOM_TOL:
+                    status = (
+                        f"❌ Different molecule — ref has {n_ref} heavy atoms, "
+                        f"pose has {n_pose}. Re-docking RMSD requires the same "
+                        f"ligand in both reference and docked pose."
+                    )
                     redock_rows.append({
                         "Reference File":        ref_file.name,
                         "Protein":               prot,
@@ -2929,36 +2895,11 @@ with tab6:
                         "RMSD vs Reference (Å)": None,
                         "Ref Heavy Atoms":       n_ref,
                         "Pose Heavy Atoms":      n_pose,
-                        "Status":                f"❌ {count_err}",
+                        "Status":                status,
                     })
                     continue
 
-                if not ref_sdf_text.strip():
-                    redock_rows.append({
-                        "Reference File":        ref_file.name,
-                        "Protein":               prot,
-                        "Ligand":                lig,
-                        "RMSD vs Reference (Å)": None,
-                        "Ref Heavy Atoms":       n_ref,
-                        "Pose Heavy Atoms":      n_pose,
-                        "Status":                "⚠️ Could not convert reference ligand to SDF (Open Babel failed)",
-                    })
-                    continue
-
-                pose_sdf_text = pdbqt_to_sdf_text(str(dpdbqt), obabel_path, first_pose_only=True)
-                if not pose_sdf_text.strip():
-                    redock_rows.append({
-                        "Reference File":        ref_file.name,
-                        "Protein":               prot,
-                        "Ligand":                lig,
-                        "RMSD vs Reference (Å)": None,
-                        "Ref Heavy Atoms":       n_ref,
-                        "Pose Heavy Atoms":      n_pose,
-                        "Status":                "⚠️ Could not convert docked pose to SDF (Open Babel failed)",
-                    })
-                    continue
-
-                rmsd_val, err, note = compute_rmsd_from_sdf(ref_sdf_text, pose_sdf_text)
+                rmsd_val, err = compute_rmsd_from_lines(ref_heavy, pose_heavy)
 
                 if err:
                     status = f"⚠️ {err}"
@@ -2970,9 +2911,6 @@ with tab6:
                     status = "🟡 Borderline (2–3 Å)"
                 else:
                     status = "🔴 Fail (≥ 3 Å)"
-
-                if note:
-                    status += f"  [{note}]"
 
                 redock_rows.append({
                     "Reference File":        ref_file.name,
@@ -3201,8 +3139,9 @@ writing scripts or managing command-line flags.
 <h4>Platform</h4>
 <p>
 Windows &middot; macOS &middot; Linux<br>
-External dependencies (MGLTools, Vina, Open Babel) must be installed separately.
-Pocket detection (P2Rank, fpocket) requires WSL on Windows.
+The packaged Windows build bundles MGLTools, Vina, Open Babel, and P2Rank. P2Rank uses the bundled native Windows implementation.
+fpocket uses the validated WSL implementation.
+Pocket detection uses bundled native P2Rank. The validated WSL implementation is retained for fpocket only.
 </p>
 </div>
         """, unsafe_allow_html=True)
