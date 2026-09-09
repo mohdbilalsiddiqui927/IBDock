@@ -3,15 +3,15 @@
 #  A user-friendly Streamlit application for virtual screening
 #
 #  Requirements:
-#      pip install streamlit numpy pandas matplotlib seaborn
+#      pip install streamlit numpy pandas matplotlib seaborn rdkit spyrmsd
 #  External tools (portable bundled paths preferred; configurable in sidebar):
 #      • MGLTools 1.5.7  — protein & ligand preparation
 #      • Open Babel 3.x  — ligand format conversion
 #      • AutoDock Vina   — docking engine
-#      • fpocket / P2Rank — pocket detection (bundled native P2Rank; validated WSL fpocket)
+#      • fpocket / P2Rank — pocket detection (bundled native Windows tools)
 #
 #  Usage:
-#      streamlit run vina_dock.py
+#      streamlit run IBDock_PORTABLE.py
 # =============================================================================
 
 import io
@@ -28,6 +28,21 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import streamlit as st
+
+# Optional at import time, required only for the Validation/RMSD module.
+# Installation: pip install rdkit spyrmsd
+try:
+    from rdkit import Chem as _Chem
+    from spyrmsd import molecule as _spymol
+    from spyrmsd import rmsd as _spyrmsd_rmsd
+    _RMSD_DEPS_OK = True
+    _RMSD_DEPS_ERROR = ""
+except ImportError as _rmsd_import_error:
+    _Chem = None
+    _spymol = None
+    _spyrmsd_rmsd = None
+    _RMSD_DEPS_OK = False
+    _RMSD_DEPS_ERROR = str(_rmsd_import_error)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # CONFIG PERSISTENCE  (saved per-project in project_dir/IBDock_config.json)
@@ -80,6 +95,7 @@ def _bundled_defaults():
     )
     vina = _first_existing(BUNDLED_TOOLS / "Vina" / "vina.exe")
     fpocket = _first_existing(
+        BUNDLED_TOOLS / "fpocket-master" / "bin" / "fpocket.exe",
         BUNDLED_TOOLS / "fpocket" / "fpocket.exe",
         BUNDLED_TOOLS / "fpocket" / "fpocket.bat",
     )
@@ -104,9 +120,9 @@ def _bundled_defaults():
         obabel = obabel or _first_existing(
             mgl_root / "OpenBabel-2.3.2" / "obabel.exe",
         )
-        vina = vina or _first_existing(Path(r"D:\app\docking\vina_1.2.7_win.exe"))
+        
 
-        # Native bundled fpocket only.
+        # Pocket detection is fully native on Windows.
         fpocket = fpocket or _first_existing(
             BUNDLED_TOOLS / "fpocket-master" / "bin" / "fpocket.exe",
             BUNDLED_TOOLS / "fpocket" / "fpocket.exe",
@@ -158,91 +174,25 @@ def _load_config(project_dir: Path) -> dict:
     else:
         cfg = dict(_DEF)
 
-    # ------------------------------------------------------------
-    # Windows portable tools
-    # Always prefer bundled native tools over old machine-specific
-    # paths or obsolete WSL configuration.
-    # ------------------------------------------------------------
+    # On Windows, always prefer the bundled native pocket tools.
     if _os == "Windows":
-
-        # -------------------------
-        # P2Rank
-        # -------------------------
         bundled_p2rank = _first_existing(
             BUNDLED_TOOLS / "P2Rank" / "prank.bat",
             BUNDLED_TOOLS / "P2Rank" / "prank.exe",
             BUNDLED_TOOLS / "P2Rank" / "prank",
         )
-
-        if bundled_p2rank:
-            cfg["p2rank_path"] = bundled_p2rank
-
-        # -------------------------
-        # fpocket
-        # -------------------------
         bundled_fpocket = _first_existing(
             BUNDLED_TOOLS / "fpocket-master" / "bin" / "fpocket.exe",
             BUNDLED_TOOLS / "fpocket" / "fpocket.exe",
         )
 
+        if bundled_p2rank:
+            cfg["p2rank_path"] = bundled_p2rank
+
         if bundled_fpocket:
             cfg["fpocket_path"] = bundled_fpocket
 
-        # -------------------------
-        # MGLTools
-        # -------------------------
-        bundled_mgl = BUNDLED_TOOLS / "MGLTools-1.5.7"
-
-        bundled_mgl_python = _first_existing(
-            bundled_mgl / "python.exe",
-            bundled_mgl / "pythonsh.exe",
-        )
-
-        bundled_prep_rec = _first_existing(
-            bundled_mgl / "Lib" / "site-packages"
-            / "AutoDockTools" / "Utilities24"
-            / "prepare_receptor4.py",
-        )
-
-        bundled_prep_lig = _first_existing(
-            bundled_mgl / "Lib" / "site-packages"
-            / "AutoDockTools" / "Utilities24"
-            / "prepare_ligand4.py",
-        )
-
-        if bundled_mgl_python:
-            cfg["mgl_python"] = bundled_mgl_python
-
-        if bundled_prep_rec:
-            cfg["prep_rec"] = bundled_prep_rec
-
-        if bundled_prep_lig:
-            cfg["prep_lig"] = bundled_prep_lig
-
-        # -------------------------
-        # Open Babel
-        # -------------------------
-        bundled_obabel = _first_existing(
-            BUNDLED_TOOLS / "OpenBabel" / "obabel.exe",
-            BUNDLED_TOOLS / "OpenBabel-2.3.2" / "obabel.exe",
-        )
-
-        if bundled_obabel:
-            cfg["obabel_path"] = bundled_obabel
-
-        # -------------------------
-        # AutoDock Vina
-        # -------------------------
-        bundled_vina = _first_existing(
-            BUNDLED_TOOLS / "vina" / "vina.exe",
-            BUNDLED_TOOLS / "Vina" / "vina.exe",
-        )
-
-        if bundled_vina:
-            cfg["vina_path"] = bundled_vina
-
     return cfg
-
 
 def _save_config(project_dir: Path, cfg: dict):
     try:
@@ -449,6 +399,9 @@ EXCLUDE_RESNAMES = {
     "GOL", "GLY", "PG4", "PGE", "PG6", "PEG", "PE4", "P6G", "1PE", "2PE",
     "EDO", "EGL", "MPD", "IPA", "EOH", "ACE", "ACN", "DMS", "MSO",
     "DMF", "DMU", "IMD",
+    # Reducing agents and their reaction adducts with surface cysteines —
+    # NOT ligands; excluding them prevents false grid-centroid shifts.
+    "BME", "CME", "DTT", "TCEP", "MRD", "B3P", "BTB", "PGO",
     # Detergents common in membrane protein crystals
     "BOG", "DDM", "OG",  "NG",  "LMT", "LDA",
     # Polyamines / crystallisation additives
@@ -474,19 +427,15 @@ def run_cmd(cmd: list):
 
 
 def validate_tool(path_str: str, label: str) -> dict:
-    """
-    Validate an external tool by checking its path and running it.
-    Returns {"label", "ok", "version", "detail"}.
-    """
+    """Validate a native external tool."""
     result = {"label": label, "ok": False, "version": None, "detail": ""}
 
     if not path_str or not path_str.strip():
         result["detail"] = "Path not specified"
         return result
 
-    path_str = path_str.strip()
+    path = Path(path_str.strip())
 
-    path = Path(path_str)
     if path.suffix.lower() == ".py":
         if path.exists():
             result["ok"] = True
@@ -498,8 +447,7 @@ def validate_tool(path_str: str, label: str) -> dict:
     if not path.exists():
         result["detail"] = f"File not found: {path}"
         return result
-    # Windows .bat/.cmd launchers are executable through cmd.exe even when
-    # os.access(..., X_OK) is not meaningful on Windows.
+
     if path.suffix.lower() not in {".bat", ".cmd"} and not os.access(str(path), os.X_OK):
         result["detail"] = f"File exists but is not executable: {path}"
         return result
@@ -507,11 +455,17 @@ def validate_tool(path_str: str, label: str) -> dict:
     for flag in ["--version", "-version", "--help", ""]:
         try:
             cmd = [str(path)] + ([flag] if flag else [])
-            proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                  text=True, timeout=10, shell=False)
+            if path.suffix.lower() in {".bat", ".cmd"}:
+                cmd = ["cmd.exe", "/c"] + cmd
+            proc = subprocess.run(
+                cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                text=True, timeout=10, shell=False
+            )
             out = (proc.stdout + proc.stderr).strip()
             if out:
-                result["version"] = next((l for l in out.splitlines() if l.strip()), "")[:120]
+                result["version"] = next(
+                    (l for l in out.splitlines() if l.strip()), ""
+                )[:120]
                 break
         except Exception:
             continue
@@ -519,29 +473,6 @@ def validate_tool(path_str: str, label: str) -> dict:
     result["ok"] = True
     result["detail"] = "Executable found and runs ✔"
     return result
-
-
-def _resolve_wsl_exe() -> str:
-    system_root = Path(os.environ.get("SystemRoot", r"C:\Windows"))
-    for candidate in [system_root / "SysNative" / "wsl.exe",
-                      system_root / "System32" / "wsl.exe"]:
-        if candidate.exists():
-            return str(candidate)
-    return "wsl"
-
-
-def _build_wsl_cmd(exec_str: str) -> list:
-    parts = exec_str.split()
-    if parts and parts[0].lower() == "wsl":
-        parts[0] = _resolve_wsl_exe()
-    return parts
-
-
-def _win_to_wsl(path) -> str:
-    s = str(path).replace("\\", "/")
-    if len(s) >= 2 and s[1] == ":":
-        return f"/mnt/{s[0].lower()}{s[2:]}"
-    return s
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -554,16 +485,29 @@ def extract_ligand_atoms(lines: list, min_heavy_atoms: int = 7):
     Filtering strategy (in order):
     1. Skip any residue name in EXCLUDE_RESNAMES (ions, solvents, buffers,
        cryoprotectants).
-    2. Group remaining HETATM records by residue name and count heavy atoms.
-    3. Skip any residue whose heavy atom count is below min_heavy_atoms (default 7).
-       This catches small crystallographic additives not in EXCLUDE_RESNAMES such as
-       glycerol fragments, acetate, formate, and single-atom ions.
+    2. Group remaining HETATM records by (residue name, CHAIN) and count
+       heavy atoms per group.
+    3. Skip any group whose heavy atom count is below min_heavy_atoms
+       (default 7). This catches small crystallographic additives not in
+       EXCLUDE_RESNAMES such as glycerol fragments, acetate, formate, and
+       single-atom ions.
+    4. Restrict to a SINGLE chain: when a structure contains multiple
+       crystallographic copies of the complex (common — e.g. 4 copies in
+       the asymmetric unit), pooling ligand coordinates from every chain
+       together produces a centroid that doesn't correspond to any real
+       binding site (confirmed root cause of a ~10.7 A grid-centering
+       error on PDB 1HVY, which has 4 chains each with its own ligand).
+       Instead, pick the single chain with the most qualifying ligand
+       atoms and use only that chain's groups — this still allows
+       multiple co-located HETATM groups within ONE binding site (e.g. a
+       metal cofactor + organic ligand) to be combined together, since
+       those legitimately belong to the same site.
 
     Returns a numpy array of (x, y, z) coords and a set of surviving residue names.
     """
     from collections import defaultdict
 
-    groups = defaultdict(list)   # resname -> list of (x, y, z) for heavy atoms
+    groups = defaultdict(list)   # (resname, chain) -> list of (x, y, z) for heavy atoms
     for line in lines:
         if not line.startswith("HETATM"):
             continue
@@ -575,19 +519,33 @@ def extract_ligand_atoms(lines: list, min_heavy_atoms: int = 7):
             continue                       # skip hydrogens / deuteriums
         try:
             xyz = (float(line[30:38]), float(line[38:46]), float(line[46:54]))
-            groups[rn].append(xyz)
+            chain = line[21]
+            groups[(rn, chain)].append(xyz)
         except ValueError:
             continue
 
     # Apply minimum size filter — drop anything too small to be a drug ligand
+    qualifying = {key: xyzs for key, xyzs in groups.items() if len(xyzs) >= min_heavy_atoms}
+    if not qualifying:
+        return np.array([]), set()
+
+    # Restrict to the single chain with the most total qualifying ligand
+    # atoms — avoids pooling coordinates from multiple, spatially separate
+    # crystallographic copies of the same complex.
+    atoms_per_chain = defaultdict(int)
+    for (rn, chain), xyzs in qualifying.items():
+        atoms_per_chain[chain] += len(xyzs)
+    best_chain = max(atoms_per_chain, key=atoms_per_chain.get)
+
     coords, resnames = [], set()
-    for rn, xyzs in groups.items():
-        if len(xyzs) < min_heavy_atoms:
+    for (rn, chain), xyzs in qualifying.items():
+        if chain != best_chain:
             continue
         coords.extend(xyzs)
         resnames.add(rn)
 
     return (np.array(coords) if coords else np.array([])), resnames
+
 
 
 def parse_pdbqt_heavy_atoms(text: str) -> list:
@@ -672,15 +630,27 @@ def fix_pdbqt_atom_names(pdbqt_path):
 
 
 def strip_receptor_hydrogens(pdbqt_path):
-    """Remove hydrogen lines from a receptor PDBQT."""
+    """
+    Remove NONPOLAR hydrogen atoms from a receptor PDBQT, checked by AD4
+    atom type (column 77-79), not atom name. MGLTools names many hydrogens
+    with digit-prefixed identifiers (e.g. '1HD2', '2HG1') for geminal H's,
+    which a name-based "starts with H" check misses entirely — confirmed
+    empirically: 100% of H/HD atoms produced by this pipeline use that
+    naming convention, so the previous name-based check silently removed
+    nothing from any receptor.
+
+    Polar hydrogens (AD4 type 'HD') are explicitly preserved — required for
+    Vina's hydrogen-bond donor scoring term.
+    """
     kept = []
     with open(pdbqt_path) as fh:
         for line in fh:
-            if line.startswith(("ATOM", "HETATM")) and line[12:16].strip().startswith("H"):
-                continue
+            if line.startswith(("ATOM", "HETATM")) and line[77:79].strip() == "H":
+                continue  # drop nonpolar H only; keep HD (polar) and all heavy atoms
             kept.append(line)
     with open(pdbqt_path, "w") as fh:
         fh.writelines(kept)
+
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -749,13 +719,11 @@ def _run_native_p2rank(pdb_file, p2rank_exec: str, padding: float = 5.0) -> tupl
 
 
 def run_p2rank(pdb_file, p2rank_exec: str, padding: float = 5.0) -> tuple:
-    """Run bundled native Windows P2Rank only. WSL is not used for P2Rank."""
+    """Run the bundled native Windows P2Rank executable."""
     if not p2rank_exec or not str(p2rank_exec).strip():
         raise RuntimeError("P2Rank path is not configured.")
 
-    if str(p2rank_exec).lower().startswith("wsl"):
         raise RuntimeError(
-            "P2Rank WSL configuration is no longer supported. "
             "Please use the bundled native P2Rank tool."
         )
 
@@ -764,57 +732,46 @@ def run_p2rank(pdb_file, p2rank_exec: str, padding: float = 5.0) -> tuple:
 
 def run_fpocket(pdb_file, fpocket_exec: str):
     """Run the bundled native Windows fpocket executable."""
-    import shutil
-
     pdb_file = Path(pdb_file)
 
     if not pdb_file.exists():
         raise RuntimeError(f"fpocket input PDB not found: {pdb_file}")
 
     fpocket_exec = str(fpocket_exec or "").strip()
-
     if not fpocket_exec:
         raise RuntimeError("Native fpocket executable is not configured.")
 
-    if fpocket_exec.lower().startswith("wsl"):
         raise RuntimeError(
-            "WSL fpocket configuration detected. "
-            "IBDock requires the bundled native fpocket.exe."
+            "Please use the bundled native fpocket.exe."
         )
 
     exe = Path(fpocket_exec)
-
     if not exe.exists():
-        raise RuntimeError(
-            f"Native fpocket executable not found: {exe}"
-        )
+        raise RuntimeError(f"fpocket executable not found: {exe}")
 
     out_dir = pdb_file.parent / f"{pdb_file.stem}_out"
+    run_dir = pdb_file.parent
+    run_pdb = pdb_file
 
+    # fpocket always creates "<input_stem>_out". On Windows, an older
+    # fpocket output can be locked by Explorer, a viewer, antivirus, or
+    # another process. Do not fail the entire pocket-detection method just
+    # because that previous directory cannot be removed. Instead, run fpocket
+    # in a unique temporary working directory using a copy of the PDB.
     if out_dir.exists():
-        # Previous fpocket runs may have been created by MSYS/UCRT64
-        # or WSL and may contain files that Windows cannot delete.
-        # Do not fail the docking workflow because of stale output.
-        #
-        # Rename the previous result directory instead. Native fpocket
-        # can then create a clean <protein>_out directory.
-        backup_dir = pdb_file.parent / f"{pdb_file.stem}_out_previous"
-
         try:
-            if backup_dir.exists():
-                import shutil
-                shutil.rmtree(backup_dir, ignore_errors=True)
-
-            out_dir.rename(backup_dir)
-
-        except Exception:
-            # If rename is also blocked (for example by OneDrive),
-            # continue and let fpocket report the actual problem.
-            pass
+            shutil.rmtree(out_dir)
+        except (PermissionError, OSError):
+            unique_tag = f"{os.getpid()}_{int(time.time() * 1000)}"
+            run_dir = pdb_file.parent / f".{pdb_file.stem}_fpocket_{unique_tag}"
+            run_dir.mkdir(parents=True, exist_ok=False)
+            run_pdb = run_dir / pdb_file.name
+            shutil.copy2(pdb_file, run_pdb)
+            out_dir = run_dir / f"{pdb_file.stem}_out"
 
     result = subprocess.run(
-        [str(exe), "-f", pdb_file.name],
-        cwd=str(pdb_file.parent),
+        [str(exe), "-f", run_pdb.name],
+        cwd=str(run_dir),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
@@ -827,16 +784,12 @@ def run_fpocket(pdb_file, fpocket_exec: str):
             or result.stdout.strip()
             or "unknown fpocket error"
         )
-        raise RuntimeError(
-            f"Native fpocket failed: {error_text}"
-        )
+        raise RuntimeError(f"fpocket failed: {error_text}")
 
     pocket_file = out_dir / "pockets" / "pocket1_atm.pdb"
-
     if not pocket_file.exists():
         raise RuntimeError(
-            "Native fpocket completed but no pocket output "
-            f"was found: {pocket_file}"
+            f"fpocket completed but pocket file was not found: {pocket_file}"
         )
 
     return out_dir
@@ -877,11 +830,11 @@ def run_single_docking(job: tuple):
     """
     Run one AutoDock Vina job.
     job = (receptor, ligand, config_file, vina_exe,
-           exhaustiveness, num_modes, energy_range, cores, dock_dir, result_dir)
+           exhaustiveness, num_modes, energy_range, cores, dock_dir, result_dir, seed)
     Returns ("success"|"failed", protein_name, ligand_name, message).
     """
     rec, lig, config_file, vina_exe, exhaustiveness, num_modes, \
-        energy_range, cores_per_job, dock_dir, result_dir = job
+        energy_range, cores_per_job, dock_dir, result_dir, seed = job
 
     protein_name = Path(rec).stem.replace("_receptor", "")
     ligand_name  = Path(lig).stem
@@ -889,18 +842,26 @@ def run_single_docking(job: tuple):
     log_txt      = result_dir / f"{protein_name}_{ligand_name}.txt"
 
     try:
+        cmd = [
+            str(vina_exe),
+            "--receptor",      str(rec),
+            "--ligand",        str(lig),
+            "--config",        str(config_file),
+            "--exhaustiveness",str(exhaustiveness),
+            "--num_modes",     str(num_modes),
+            "--energy_range",  str(energy_range),
+            "--cpu",           str(cores_per_job),
+            "--out",           str(out_pdbqt),
+        ]
+        # Fixed seed => reproducible results run-to-run (Vina otherwise seeds
+        # from system entropy, so re-running the same job gives different
+        # poses each time — important for a validation study others need to
+        # be able to reproduce).
+        if seed is not None:
+            cmd += ["--seed", str(seed)]
+
         result = subprocess.run(
-            [
-                str(vina_exe),
-                "--receptor",      str(rec),
-                "--ligand",        str(lig),
-                "--config",        str(config_file),
-                "--exhaustiveness",str(exhaustiveness),
-                "--num_modes",     str(num_modes),
-                "--energy_range",  str(energy_range),
-                "--cpu",           str(cores_per_job),
-                "--out",           str(out_pdbqt),
-            ],
+            cmd,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True, shell=False,
         )
@@ -916,6 +877,7 @@ def run_single_docking(job: tuple):
 
     except Exception as exc:
         return ("failed", protein_name, ligand_name, str(exc))
+
 
 
 def parse_vina_log(log_file) -> float | None:
@@ -978,7 +940,7 @@ def pdbqt_to_pdb_text(pdbqt_path, first_pose_only: bool = True) -> str:
     return "".join(out)
 
 
-def pdbqt_to_sdf_text(pdbqt_path, obabel_path: str, first_pose_only: bool = True) -> str:
+def pdbqt_to_sdf_text(pdbqt_path, obabel_path: str, first_pose_only: bool = True, add_hydrogens: bool = True) -> str:
     """
     Convert a PDBQT ligand pose to SDF format using Open Babel.
     SDF preserves explicit bond tables (bond orders, ring perception),
@@ -1014,8 +976,12 @@ def pdbqt_to_sdf_text(pdbqt_path, obabel_path: str, first_pose_only: bool = True
     try:
         tmp_sdf = tempfile.NamedTemporaryFile(suffix=".sdf", delete=False)
         tmp_sdf.close()
+        obabel_cmd = [obabel_path, pdbqt_path, "-O", tmp_sdf.name]
+        if add_hydrogens:
+            obabel_cmd.append("-h")
+
         result = subprocess.run(
-            [obabel_path, pdbqt_path, "-O", tmp_sdf.name, "-h"],
+            obabel_cmd,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30,
         )
         if result.returncode == 0 and Path(tmp_sdf.name).exists():
@@ -1061,6 +1027,23 @@ def extract_vina_pose_by_mode(pdbqt_path: str, mode_number: int) -> list:
     return coords
 
 
+def _count_pdbqt_models(pdbqt_path) -> int:
+    """
+    Count how many Vina pose (MODEL) blocks a docked PDBQT contains, so the
+    best-pose RMSD sweep below knows how many modes to try. Falls back to 1
+    for older/single-pose PDBQTs with no MODEL records at all.
+    """
+    import re
+    try:
+        text = Path(pdbqt_path).read_text(errors="replace")
+    except Exception:
+        return 0
+    n = len(re.findall(r"^MODEL\s+\d+", text, flags=re.MULTILINE))
+    if n > 0:
+        return n
+    return 1 if ("ATOM" in text or "HETATM" in text) else 0
+
+
 def _is_hydrogen(line: str) -> bool:
     """
     Return True if a PDBQT/PDB ATOM/HETATM line represents a hydrogen.
@@ -1082,47 +1065,913 @@ def _is_hydrogen(line: str) -> bool:
     )
 
 
+def _coordinate_bridge_rmsd(ref_heavy_lines: list, pose_heavy_lines: list,
+                             lig_stem: str, prep_lig_dir,
+                             ref_sdf_text: str = "",
+                             tolerance: float = 0.02,
+                             max_automorphisms: int = 2000):
+    """
+    Best-case RMSD path: establishes the reference<->docked-pose atom
+    correspondence via EXACT coordinate identity through the ligand
+    preparation pipeline's own provenance, instead of via bond-graph
+    matching or spatial nearest-neighbor guessing.
+
+    Why this can succeed where compute_rmsd_from_sdf()'s graph-based
+    stages cannot: AutoDock Vina never reorders, adds, or removes atoms
+    in a docked pose PDBQT relative to the PRE-DOCKING prepared ligand
+    PDBQT it was given -- it only rotates/translates them. And
+    MGLTools' torsion-tree reordering from the (optionally protonated)
+    input structure into that prepared PDBQT is itself just a
+    reordering of the SAME 3D coordinates, not a recomputation of them.
+    So whenever the uploaded reference has the same coordinates as
+    whatever originally went into ligand prep for this ligand (true
+    whenever the reference is the same co-crystallised structure used
+    to build raw_ligands/{lig_stem}, not a separately regenerated one),
+    we can chain:
+        reference atom -[exact coordinate match]-> prepared PDBQT row
+                        -[same row, Vina invariant]-> docked pose row
+    with no bond-perception step, and no assumption that the pose is
+    spatially close to the reference. That second point is what makes
+    this succeed on cases the graph/spatial fallbacks in
+    compute_rmsd_from_sdf() cannot: a rotatable substituent that moved
+    far from its reference position during docking still has a fixed,
+    correct correspondence here, because the correspondence was never
+    spatial to begin with -- it was fixed by ligand-prep bookkeeping
+    before docking happened.
+
+    SYMMETRY REFINEMENT (second layer): the coordinate bridge fixes
+    atom IDENTITY (this is atom 5 in both files), but says nothing
+    about molecular SYMMETRY -- if the ligand has a locally symmetric
+    group (a phenyl ring, a carboxylate, a tert-butyl), that group can
+    flip into a chemically-indistinguishable orientation during docking
+    without the pose being "wrong". The bridge alone would score that
+    flip as a large per-atom displacement, even though a symmetry-
+    equivalent relabelling of the SAME correspondence gives a much
+    smaller, chemically honest RMSD. This refinement computes the
+    reference ligand's own automorphism group (from ref_sdf_text, a
+    cleanly-bonded source -- NOT the pose's PDBQT-derived bonds, which
+    is exactly the unreliable input the bridge was built to avoid) and
+    minimizes RMSD over that group, on top of the bridge's fixed
+    identity mapping. This never changes WHICH atoms correspond, only
+    which chemically-equivalent labelling of that correspondence is
+    scored. If ref_sdf_text is unavailable, doesn't parse, or its
+    heavy-atom order doesn't line up element-for-element with
+    ref_heavy_lines, this refinement is silently skipped and the plain
+    bridge RMSD is returned unchanged -- it is a strict enhancement,
+    never a requirement.
+
+    Returns (rmsd, note) on success. Returns None if the bridge does
+    not apply (no prepared-ligand PDBQT retained for this ligand, atom
+    counts don't match, or some reference atom has no unambiguous exact
+    coordinate match) -- callers should fall back to
+    compute_rmsd_from_sdf() in that case; nothing here is a substitute
+    for it, only a preferred first attempt.
+    """
+    prep_pdbqt = Path(prep_lig_dir) / f"{lig_stem}.pdbqt"
+    if not prep_pdbqt.exists():
+        return None
+
+    _TWO_LETTER_ELEMENTS = {
+        "CL", "BR", "NA", "MG", "CA", "ZN", "FE", "MN", "CU", "SE", "SI", "AL",
+    }
+
+    def _element_from_name(name: str) -> str:
+        """
+        Derive an element symbol from a PDB/PDBQT atom-name field (cols
+        12-16). Used instead of trusting the trailing columns, because
+        PDBQT replaces the standard PDB element column with charge +
+        AutoDock atom type (e.g. "0.266  A", "-0.219 NA") -- reading
+        that as an element is wrong, not just imprecise. Handles a
+        leading digit (old-style "1HB" hydrogen naming) and a short
+        list of common two-letter elements; anything else falls back
+        to the first alphabetic character, which is exactly what
+        _is_hydrogen() already relies on for H-detection.
+        """
+        s = name.strip().upper()
+        if s and s[0].isdigit():
+            s = s[1:]
+        if len(s) >= 2 and s[:2] in _TWO_LETTER_ELEMENTS:
+            return s[:2]
+        return s[:1]
+
+    def _parse_heavy(lines):
+        out = []
+        for line in lines:
+            if not line.startswith(("ATOM", "HETATM")) or _is_hydrogen(line):
+                continue
+            elem = _element_from_name(line[12:16])
+            try:
+                x, y, z = float(line[30:38]), float(line[38:46]), float(line[46:54])
+            except ValueError:
+                continue
+            out.append((elem, x, y, z))
+        return out
+
+    try:
+        prep_lines = prep_pdbqt.read_text(errors="replace").splitlines(keepends=True)
+    except Exception:
+        return None
+
+    prep_heavy = _parse_heavy(prep_lines)
+    ref_heavy = _parse_heavy(ref_heavy_lines)
+    pose_heavy = _parse_heavy(pose_heavy_lines)
+
+    if not prep_heavy or len(prep_heavy) != len(pose_heavy):
+        # Not the pose that came from this prepared ligand -- filename
+        # matching upstream should prevent this, but never silently
+        # mismap if it happens anyway.
+        return None
+
+    if len(ref_heavy) != len(prep_heavy):
+        return None
+
+    # ref_row -> prep_row via exact (tolerance-gated) coordinate match.
+    # Each prep atom is consumed at most once.
+    used = set()
+    ref_to_prep = {}
+    for ri, (relem, rx, ry, rz) in enumerate(ref_heavy):
+        best_j, best_d = None, None
+        for j, (pelem, px, py, pz) in enumerate(prep_heavy):
+            if j in used or pelem != relem:
+                continue
+            d = ((rx - px) ** 2 + (ry - py) ** 2 + (rz - pz) ** 2) ** 0.5
+            if d <= tolerance and (best_d is None or d < best_d):
+                best_j, best_d = j, d
+        if best_j is None:
+            return None
+        used.add(best_j)
+        ref_to_prep[ri] = best_j
+
+    # Compose ref_row -> prep_row -> pose_row (same row index in the
+    # docked pose as in the prepared ligand -- the Vina invariant).
+    n = len(ref_to_prep)
+
+    def _rmsd_for_mapping(idx_map):
+        """RMSD for a given ref_row -> pose_row correspondence (a dict
+        or list indexable by ref row)."""
+        total = 0.0
+        for ri in range(n):
+            relem, rx, ry, rz = ref_heavy[ri]
+            pose_row = idx_map[ri]
+            pelem, px, py, pz = pose_heavy[pose_row]
+            if pelem != relem:
+                return None  # sanity check: element must still agree
+            total += (rx - px) ** 2 + (ry - py) ** 2 + (rz - pz) ** 2
+        return round((total / n) ** 0.5, 4)
+
+    base_rmsd = _rmsd_for_mapping(ref_to_prep)
+    if base_rmsd is None:
+        return None  # sanity check: element must still agree at this row
+
+    # -----------------------------------------------------------------
+    # Symmetry refinement (optional second layer, see docstring). Never
+    # changes WHICH atoms correspond -- only searches for a chemically
+    # equivalent relabelling of that same correspondence that scores a
+    # lower, more honest RMSD when the ligand has genuine local
+    # symmetry (e.g. a flipped phenyl ring or carboxylate).
+    # -----------------------------------------------------------------
+    best_rmsd = base_rmsd
+    symmetry_note = ""
+
+    if ref_sdf_text and ref_sdf_text.strip():
+        try:
+            ref_mol = _Chem.MolFromMolBlock(ref_sdf_text, removeHs=False, sanitize=True)
+            if ref_mol is not None:
+                h_idx = [a.GetIdx() for a in ref_mol.GetAtoms() if a.GetAtomicNum() == 1]
+                if h_idx:
+                    rw = _Chem.RWMol(ref_mol)
+                    for idx in sorted(h_idx, reverse=True):
+                        rw.RemoveAtom(idx)  # descending order preserves relative order of the rest
+                    ref_mol = rw.GetMol()
+
+                # Sanity check: heavy-atom element sequence must line up
+                # 1:1 with ref_heavy before any automorphism is trusted --
+                # if Open Babel's SDF conversion reordered atoms relative
+                # to the raw reference lines, automorphism indices would
+                # silently refer to the wrong atoms.
+                mol_elems = [a.GetSymbol().upper() for a in ref_mol.GetAtoms()]
+                line_elems = [e.upper() for (e, _, _, _) in ref_heavy]
+                if len(mol_elems) == len(line_elems) and mol_elems == line_elems:
+                    matches = ref_mol.GetSubstructMatches(
+                        ref_mol, uniquify=False, useChirality=True,
+                        maxMatches=max_automorphisms,
+                    )
+                    n_automorphisms = len(matches)
+                    for sigma in matches:
+                        if len(sigma) != n:
+                            continue
+                        # sigma(i) is the ref atom equivalent to atom i;
+                        # score that relabelling against the bridge's
+                        # already-fixed identity mapping.
+                        relabelled_map = [ref_to_prep[sigma[i]] for i in range(n)]
+                        cand = _rmsd_for_mapping(relabelled_map)
+                        if cand is not None and cand < best_rmsd:
+                            best_rmsd = cand
+                    if n_automorphisms > 1 and best_rmsd < base_rmsd:
+                        symmetry_note = (
+                            f" A {n_automorphisms}-fold local symmetry in the "
+                            "reference was found and used to refine the score "
+                            f"(unrefined bridge RMSD was {base_rmsd} \u00c5)."
+                        )
+        except Exception:
+            pass  # symmetry refinement is optional -- fall through to base_rmsd
+
+    return best_rmsd, (
+        "Exact atom correspondence via ligand-preparation provenance "
+        "(reference matched to the pre-docking prepared ligand PDBQT by "
+        "coordinate identity; Vina preserves atom order from that file "
+        "into every docked pose) \u2014 no bond-graph matching or spatial "
+        "correspondence guessing was needed or used." + symmetry_note
+    )
+
+
+def pdb_to_sdf_text(pdb_text: str, obabel_path: str) -> str:
+    """
+    Convert a reference ligand PDB (text) to SDF using Open Babel, the same
+    way pdbqt_to_sdf_text() already does for docked poses. This is what
+    makes redocking RMSD naming-agnostic: both molecules end up as SDF
+    graphs with bond tables, and compute_rmsd_from_sdf() matches them by
+    graph structure, not by atom name — which matters because ligands
+    prepared from SDF/MOL2 (see the screening pipeline above) get
+    Open-Babel-generated PDB-style atom names that will not, in general,
+    match the RCSB chemical-component-dictionary names on a reference
+    ligand downloaded straight from the PDB.
+    """
+    import tempfile
+    tmp_pdb = tmp_sdf = None
+    try:
+        tmp_pdb = tempfile.NamedTemporaryFile(suffix=".pdb", delete=False, mode="w")
+        tmp_pdb.write(pdb_text)
+        tmp_pdb.flush()
+        tmp_pdb.close()
+        tmp_sdf = tempfile.NamedTemporaryFile(suffix=".sdf", delete=False)
+        tmp_sdf.close()
+        result = subprocess.run(
+            [obabel_path, tmp_pdb.name, "-O", tmp_sdf.name],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30,
+        )
+        if result.returncode == 0 and Path(tmp_sdf.name).exists():
+            sdf_content = Path(tmp_sdf.name).read_text(errors="replace")
+            if sdf_content.strip():
+                return sdf_content
+        return ""
+    except Exception:
+        return ""
+    finally:
+        for tmp in (tmp_pdb, tmp_sdf):
+            try:
+                if tmp:
+                    os.unlink(tmp.name)
+            except Exception:
+                pass
+
+
+def extract_vina_pose_by_mode(pdbqt_path: str, mode_number: int) -> list:
+    """Return ATOM/HETATM lines for a specific Vina mode."""
+    lines = Path(pdbqt_path).read_text(errors="replace").splitlines(keepends=True)
+    current_model, in_target, coords = 0, False, []
+    for line in lines:
+        if line.startswith("MODEL"):
+            try:
+                current_model = int(line.split()[1])
+            except (IndexError, ValueError):
+                current_model += 1
+            in_target = (current_model == mode_number)
+        elif line.startswith("ENDMDL"):
+            if in_target:
+                break
+            in_target = False
+        elif in_target and line.startswith(("ATOM", "HETATM")):
+            coords.append(line)
+    if not coords and mode_number == 1:
+        coords = [l for l in lines if l.startswith(("ATOM", "HETATM"))]
+    return coords
+
+
 def compute_rmsd_from_lines(ref_lines: list, pose_lines: list):
     """
-    Compute symmetric RMSD between reference and pose (heavy atoms only).
-    Returns (rmsd_value, error_string). error_string is None on success.
+    Fast pre-check ONLY: verifies the reference and docked pose plausibly
+    have the same number of heavy atoms before we bother invoking Open Babel
+    + RDKit. This is NOT the RMSD calculation itself (that's
+    compute_rmsd_from_sdf, below) — do not use this function's absence of an
+    atom-count error to mean the RMSD is valid.
 
-    Uses _is_hydrogen() for consistent hydrogen filtering — same logic as
-    parse_pdbqt_heavy_atoms — so reference and pose atom counts always agree
-    when they represent the same molecule.
+    Returns (n_ref_heavy, n_pose_heavy, error_string). error_string is None
+    if the counts are compatible.
     """
-    def _coords(lines):
-        pts = []
+    def _count_heavy(lines):
+        n = 0
         for line in lines:
             if not line.startswith(("ATOM", "HETATM")):
                 continue
             if _is_hydrogen(line):
                 continue
-            try:
-                pts.append([float(line[30:38]), float(line[38:46]), float(line[46:54])])
-            except (ValueError, IndexError):
+            n += 1
+        return n
+
+    n_ref, n_pose = _count_heavy(ref_lines), _count_heavy(pose_lines)
+    if n_ref == 0:
+        return n_ref, n_pose, "Reference has no heavy atoms"
+    if n_pose == 0:
+        return n_ref, n_pose, "Pose has no heavy atoms"
+    if n_ref != n_pose:
+        return n_ref, n_pose, f"Atom count mismatch: ref={n_ref}, pose={n_pose}"
+    return n_ref, n_pose, None
+
+
+def compute_rmsd_from_sdf(ref_sdf_text: str, pose_sdf_text: str):
+    """
+    Two-stage redocking RMSD validation.
+
+    Stage 1: sPyRMSD symmetry-aware graph matching on the reference and
+             docked pose exactly as independently parsed.
+    Stage 2: a cheap RDKit sanitize/normalize pass on both molecules,
+             then sPyRMSD again — this fixes cases where the raw parse
+             just wasn't sanitized correctly (valence/aromaticity
+             flags), not genuine connectivity differences.
+    No RMSD is returned if neither stage produces a valid graph-
+    isomorphism correspondence. Cases where bond perception itself
+    disagrees between reference and pose (not just sanitization) are
+    reported as failures rather than resolved via spatial atom
+    correspondence, since a nearest-atom mapping doesn't guarantee the
+    atoms are chemically the same one — only graph-verified
+    correspondences are used to compute RMSD.
+
+    RMSD is heavy-atom RMSD in the original receptor coordinate frame.
+    No translation/rotation minimization is applied.
+    """
+    if not _RMSD_DEPS_OK:
+        return None, (
+            "Validation RMSD dependencies are unavailable. "
+            f"Import error: {_RMSD_DEPS_ERROR}"
+        ), None
+
+    def _strip_h(mol):
+        h_idx = [
+            a.GetIdx() for a in mol.GetAtoms()
+            if a.GetAtomicNum() == 1
+        ]
+        if not h_idx:
+            return mol
+        rw = _Chem.RWMol(mol)
+        for idx in sorted(h_idx, reverse=True):
+            rw.RemoveAtom(idx)
+        return rw.GetMol()
+
+    def _extract_pdbqt_model(text, model_number=1):
+        """
+        Extract a single MODEL from a multi-pose PDBQT file.
+
+        AutoDock Vina writes multiple docking poses as MODEL blocks.
+        Validation must compare the reference ligand against one
+        individual pose, not the concatenated coordinates of all poses.
+        """
+        if not text:
+            return text
+
+        lines = text.splitlines()
+
+        has_models = any(
+            line.startswith("MODEL")
+            for line in lines
+        )
+
+        if not has_models:
+            return text
+
+        selected = []
+        inside = False
+
+        for line in lines:
+            if line.startswith("MODEL"):
+                parts = line.split()
+
+                try:
+                    number = int(parts[1])
+                except Exception:
+                    number = None
+
+                inside = (number == model_number)
+
+                if inside:
+                    selected.append(line)
+
                 continue
-        return np.array(pts) if pts else np.array([]).reshape(0, 3)
 
-    ca, cb = _coords(ref_lines), _coords(pose_lines)
-    if ca.size == 0:
-        return None, "Reference has no heavy atoms"
-    if cb.size == 0:
-        return None, "Pose has no heavy atoms"
-    if len(ca) != len(cb):
-        # Allow ±1 tolerance — common when the reference was extracted from a
-        # crystal PDB that includes an alternate conformation atom or a lone-pair
-        # pseudo-atom that Open Babel strips during ligand preparation.
-        if abs(len(ca) - len(cb)) <= 1:
-            n = min(len(ca), len(cb))
-            ca, cb = ca[:n], cb[:n]
-        else:
-            return None, f"Atom count mismatch: ref={len(ca)}, pose={len(cb)}"
+            if line.startswith("ENDMDL"):
+                if inside:
+                    selected.append(line)
+                inside = False
+                continue
 
-    def _one_way(src, ref):
-        return np.sqrt(sum(np.sum((ref - row) ** 2, axis=1).min() for row in src) / len(src))
+            if inside:
+                selected.append(line)
 
-    return round(max(_one_way(ca, cb), _one_way(cb, ca)), 4), None
+        if not selected:
+            return None
+
+        return "\n".join(selected) + "\n"
+
+
+    def _parse(text, sanitize=True):
+        # PDBQT docking output may contain multiple Vina poses.
+        # Keep only MODEL 1 for validation.
+        extracted = _extract_pdbqt_model(text, model_number=1)
+
+        if extracted is None:
+            return None
+
+        # MolBlock parsing is retained for SDF/MolBlock input.
+        mol = _Chem.MolFromMolBlock(
+            extracted,
+            removeHs=True,
+            sanitize=sanitize
+        )
+
+        if mol is None and sanitize:
+            mol = _Chem.MolFromMolBlock(
+                text,
+                removeHs=False,
+                sanitize=False
+            )
+            if mol is not None:
+                try:
+                    _Chem.SanitizeMol(
+                        mol,
+                        sanitizeOps=(
+                            _Chem.SANITIZE_ALL
+                            ^ _Chem.SANITIZE_PROPERTIES
+                        )
+                    )
+                except Exception:
+                    pass
+
+        if mol is None:
+            return None
+
+        return _strip_h(mol)
+
+    def _spyrmsd(ref_mol, pose_mol):
+        r = _spymol.Molecule.from_rdkit(ref_mol)
+        q = _spymol.Molecule.from_rdkit(pose_mol)
+
+        r.strip()
+        q.strip()
+
+        result = _spyrmsd_rmsd.symmrmsd(
+            r.coordinates,
+            q.coordinates,
+            r.atomicnums,
+            q.atomicnums,
+            r.adjacency_matrix,
+            q.adjacency_matrix,
+            center=False,
+            minimize=False,
+        )
+
+        value = (
+            float(result[0])
+            if isinstance(result, (list, tuple, np.ndarray))
+            else float(result)
+        )
+
+        return round(value, 4)
+
+    def _normalize_bonds(mol):
+        """
+        Rebuild a sanitized copy where possible. This is deliberately
+        conservative: connectivity is preserved and no arbitrary bonds
+        are created.
+        """
+        cp = _Chem.Mol(mol)
+
+        try:
+            _Chem.SanitizeMol(cp)
+        except Exception:
+            try:
+                _Chem.SanitizeMol(
+                    cp,
+                    sanitizeOps=(
+                        _Chem.SANITIZE_ALL
+                        ^ _Chem.SANITIZE_PROPERTIES
+                    )
+                )
+            except Exception:
+                pass
+
+        return _strip_h(cp)
+
+    ref = _parse(ref_sdf_text)
+    pose = _parse(pose_sdf_text)
+
+    if ref is None:
+        return None, "Could not parse reference ligand with RDKit.", None
+
+    if pose is None:
+        return None, "Could not parse docked pose with RDKit.", None
+
+    n_ref = ref.GetNumAtoms()
+    n_pose = pose.GetNumAtoms()
+
+    if n_ref == 0:
+        return None, "Reference ligand contains no heavy atoms.", None
+
+    if n_pose == 0:
+        return None, "Docked pose contains no heavy atoms.", None
+
+    if n_ref != n_pose:
+        return None, (
+            f"Heavy-atom count mismatch: reference={n_ref}, "
+            f"pose={n_pose}. Re-docking RMSD requires the same ligand."
+        ), None
+
+    debug = []  # human-readable per-stage diagnostics, surfaced on total failure
+
+    # ---------------------------------------------------------------
+    # STAGE 1 - primary sPyRMSD symmetry-aware graph matching
+    # ---------------------------------------------------------------
+    try:
+        value = _spyrmsd(ref, pose)
+
+        return (
+            value,
+            None,
+            "sPyRMSD symmetry-corrected graph matching "
+            "(primary validation)"
+        )
+
+    except Exception as exc1:
+        debug.append(f"stage1 (sPyRMSD, raw): {exc1}")
+
+    # ---------------------------------------------------------------
+    # STAGE 2 - bond-graph repair + sPyRMSD
+    # ---------------------------------------------------------------
+    # RDKit sanitize/normalize (cheap, unchanged from before) — fixes
+    # cases where the raw parse just wasn't sanitized correctly
+    # (valence/aromaticity flags), not genuine connectivity
+    # differences. If the reference's and the pose's independently
+    # perceived bond graphs are still not isomorphic after this, that
+    # is treated as a genuine failure rather than papered over with a
+    # spatial (non-graph-verified) atom correspondence.
+    # ---------------------------------------------------------------
+    try:
+        ref_norm = _normalize_bonds(ref)
+        pose_norm = _normalize_bonds(pose)
+
+        value = _spyrmsd(ref_norm, pose_norm)
+
+        return (
+            value,
+            None,
+            "sPyRMSD symmetry-corrected graph matching "
+            "(after RDKit graph normalization)"
+        )
+
+    except Exception as exc2a:
+        debug.append(f"stage2a (sPyRMSD, normalized): {exc2a}")
+
+    return None, (
+        "No atom correspondence could be established after sPyRMSD "
+        "(raw) or RDKit graph normalization. RMSD was not "
+        "calculated. Per-stage diagnostics: " + " | ".join(debug)
+    ), "NO RMSD"
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# BINDING-SITE CONTACT ANALYSIS
+# (geometric, distance-based residue/interaction mapping for the pose viewer
+#  and for figure/caption generation -- same spirit as Schrodinger's ligand
+#  interaction diagram, built without any external interaction-analysis
+#  dependency. This is a HEURISTIC: distance-only, no donor/acceptor angle
+#  geometry, no salt-bridge/pi-cation detection. Treat flagged interactions
+#  as candidates for a figure, not as a validated substitute for a tool like
+#  PLIP if the manuscript needs a rigorously defined interaction footprint.)
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Side-chain atoms capable of acting as H-bond donors / acceptors, by residue.
+# Backbone N (donor) and O (acceptor) apply to every residue and are added
+# automatically in compute_ligand_contacts().
+_AA_DONOR_ATOMS = {
+    "SER": {"OG"}, "THR": {"OG1"}, "TYR": {"OH"}, "CYS": {"SG"},
+    "HIS": {"ND1", "NE2"}, "TRP": {"NE1"}, "LYS": {"NZ"},
+    "ARG": {"NE", "NH1", "NH2"}, "ASN": {"ND2"}, "GLN": {"NE2"},
+}
+_AA_ACCEPTOR_ATOMS = {
+    "SER": {"OG"}, "THR": {"OG1"}, "TYR": {"OH"},
+    "ASP": {"OD1", "OD2"}, "GLU": {"OE1", "OE2"},
+    "ASN": {"OD1"}, "GLN": {"OE1"},
+    "HIS": {"ND1", "NE2"}, "MET": {"SD"}, "CYS": {"SG"},
+}
+_HYDROPHOBIC_RES = {"ALA", "VAL", "LEU", "ILE", "MET", "PHE", "TRP", "PRO", "CYS"}
+# Ring atoms used for aromatic-ring centroid (pi-stacking proxy). TRP's
+# 6-membered ring only (indole benzo ring) is used for simplicity.
+_AROMATIC_RING_ATOMS = {
+    "PHE": ["CG", "CD1", "CD2", "CE1", "CE2", "CZ"],
+    "TYR": ["CG", "CD1", "CD2", "CE1", "CE2", "CZ"],
+    "TRP": ["CD2", "CE2", "CE3", "CZ2", "CZ3", "CH2"],
+    "HIS": ["CG", "ND1", "CD2", "CE1", "NE2"],
+}
+# Side-chain atoms that carry a formal charge at physiological pH, used for
+# salt-bridge detection against a formally-charged ligand atom (from RDKit;
+# unavailable in the PDB-fallback path, which has no bond/charge info).
+# HIS is included as a weak base -- it's often neutral, so a HIS "salt
+# bridge" here is a softer call than LYS/ARG and worth a second look.
+_AA_BASIC_ATOMS  = {"LYS": {"NZ"}, "ARG": {"NE", "NH1", "NH2"}, "HIS": {"ND1", "NE2"}}
+_AA_ACIDIC_ATOMS = {"ASP": {"OD1", "OD2"}, "GLU": {"OE1", "OE2"}}
+
+_CONTACT_COLORS = {
+    "H-bond": "#e63946",
+    "salt-bridge": "#2a9d8f",
+    "hydrophobic": "#f4a300",
+    "pi-stacking": "#8338ec",
+    "contact": "#adb5bd",
+}
+
+
+def _parse_receptor_pdb_residues(pdb_text: str) -> dict:
+    """Parse ATOM records into {(chain, resnum, resname): [atoms]}."""
+    residues: dict = {}
+    for line in pdb_text.splitlines():
+        if not line.startswith("ATOM"):
+            continue
+        try:
+            atom_name = line[12:16].strip()
+            resname   = line[17:20].strip()
+            chain     = line[21].strip() or "A"
+            resnum    = int(line[22:26])
+            x = float(line[30:38]); y = float(line[38:46]); z = float(line[46:54])
+            element   = (line[76:78].strip() or atom_name[0]).strip().capitalize()
+        except (ValueError, IndexError):
+            continue
+        if atom_name.startswith("H") or element == "H":
+            continue
+        residues.setdefault((chain, resnum, resname), []).append(
+            {"name": atom_name, "element": element, "x": x, "y": y, "z": z}
+        )
+    return residues
+
+
+def _ligand_atoms_from_sdf(sdf_text: str):
+    """Return (atoms, aromatic_ring_centroids) parsed via RDKit, or None on
+    failure. RDKit gives correct bond orders/aromaticity, so donor/acceptor
+    and ring perception is far more reliable than a coordinate-only guess."""
+    if not _RMSD_DEPS_OK or not sdf_text.strip():
+        return None
+    try:
+        mol = _Chem.MolFromMolBlock(sdf_text, sanitize=True, removeHs=False)
+        if mol is None:
+            mol = _Chem.MolFromMolBlock(sdf_text, sanitize=False, removeHs=False)
+        if mol is None:
+            return None
+        conf = mol.GetConformer()
+        atoms = []
+        for atom in mol.GetAtoms():
+            if atom.GetSymbol() == "H":
+                continue
+            idx = atom.GetIdx()
+            pos = conf.GetAtomPosition(idx)
+            sym = atom.GetSymbol()
+            try:
+                n_h = atom.GetTotalNumHs()
+            except Exception:
+                n_h = 0
+            try:
+                formal_charge = atom.GetFormalCharge()
+            except Exception:
+                formal_charge = 0
+            atoms.append({
+                "symbol": sym, "x": pos.x, "y": pos.y, "z": pos.z,
+                "is_donor": sym in ("N", "O") and n_h > 0,
+                "is_acceptor": sym in ("N", "O", "F"),
+                "formal_charge": formal_charge,
+            })
+        ring_centroids = []
+        try:
+            ri = mol.GetRingInfo()
+            for ring in ri.AtomRings():
+                if all(mol.GetAtomWithIdx(i).GetIsAromatic() for i in ring):
+                    pts = np.array([[conf.GetAtomPosition(i).x,
+                                      conf.GetAtomPosition(i).y,
+                                      conf.GetAtomPosition(i).z] for i in ring])
+                    ring_centroids.append(pts.mean(axis=0))
+        except Exception:
+            pass
+        return atoms, ring_centroids
+    except Exception:
+        return None
+
+
+def _ligand_atoms_from_pdb_fallback(pdb_text: str):
+    """Coordinate-only fallback when SDF/RDKit isn't available. Donor/acceptor
+    flags are a crude element-based guess (no bond info to check H count)."""
+    atoms = []
+    for line in pdb_text.splitlines():
+        if not (line.startswith("ATOM") or line.startswith("HETATM")):
+            continue
+        try:
+            atom_name = line[12:16].strip()
+            x = float(line[30:38]); y = float(line[38:46]); z = float(line[46:54])
+            element = (line[76:78].strip() or atom_name[0]).strip().capitalize()
+        except (ValueError, IndexError):
+            continue
+        if element == "H":
+            continue
+        atoms.append({
+            "symbol": element, "x": x, "y": y, "z": z,
+            "is_donor": element in ("N", "O"),
+            "is_acceptor": element in ("N", "O"),
+        })
+    return atoms
+
+
+def compute_ligand_contacts(receptor_pdb_text: str, ligand_text: str, lig_format: str,
+                             pocket_cutoff: float = 4.5, hbond_cutoff: float = 3.5,
+                             backbone_hbond_cutoff: float = 3.0,
+                             pi_cutoff: float = 5.5,
+                             salt_bridge_cutoff: float = 4.0) -> list:
+    """Distance-based binding-site contact analysis. Returns one dict per
+    contact residue, sorted by closest approach:
+
+        {chain, resnum, resname, residue, min_dist, interaction, detail,
+         centroid, hbond_pair}
+
+    interaction is one of "salt-bridge", "H-bond", "pi-stacking",
+    "hydrophobic", "contact", chosen by whichever category has the closest
+    qualifying atom pair (salt-bridge wins ties against a plain H-bond,
+    since a charge-complementary polar contact is the more specific label).
+
+    Backbone N/O is present in EVERY residue, so it is by far the biggest
+    source of false-positive "H-bond" calls once a generic distance cutoff
+    is applied across an entire pocket (a backbone amide that merely
+    happens to pass within range of some ligand heteroatom, with no check
+    on whether it's actually oriented to donate/accept, looks identical to
+    a real one). Side-chain donor/acceptor atoms (SER-OG, ASN-ND2, etc.)
+    are a much more specific signal -- a residue's side chain pointing at
+    the ligand is comparatively rare -- so they keep the full hbond_cutoff
+    while bare backbone N/O is held to a tighter backbone_hbond_cutoff.
+    This does not add real donor-H...acceptor angle geometry (PDB files
+    generally lack explicit backbone H coordinates), it just stops treating
+    "any backbone atom within 3.5 A" as equally strong evidence as a
+    genuine side-chain H-bond.
+
+    Salt-bridge detection needs RDKit-derived formal charges on the ligand
+    (the SDF path); the PDB-fallback path has no bond/charge info, so this
+    category will simply never fire there. HIS is included as a basic
+    residue but is often neutral at physiological pH -- treat a HIS
+    salt-bridge call as a softer, worth-checking-manually result.
+
+    hbond_pair (if not None) is {"res":[x,y,z], "lig":[x,y,z]} for drawing
+    a dashed line in the viewer -- used for both "H-bond" and "salt-bridge".
+    """
+    residues = _parse_receptor_pdb_residues(receptor_pdb_text)
+    if not residues:
+        return []
+
+    parsed = _ligand_atoms_from_sdf(ligand_text) if lig_format == "sdf" else None
+    if parsed is not None:
+        lig_atoms, lig_ring_centroids = parsed
+    else:
+        lig_atoms, lig_ring_centroids = _ligand_atoms_from_pdb_fallback(ligand_text), []
+
+    if not lig_atoms:
+        return []
+
+    lig_xyz = np.array([[a["x"], a["y"], a["z"]] for a in lig_atoms])
+
+    contacts = []
+    for (chain, resnum, resname), atoms in residues.items():
+        res_xyz = np.array([[a["x"], a["y"], a["z"]] for a in atoms])
+        dmat = np.linalg.norm(res_xyz[:, None, :] - lig_xyz[None, :, :], axis=-1)
+        min_dist = float(dmat.min())
+        if min_dist > pocket_cutoff:
+            continue
+        i_res, i_lig = np.unravel_index(np.argmin(dmat), dmat.shape)
+
+        # Find the single BEST (minimum-distance) qualifying pair in each
+        # candidate category, then classify by whichever category is
+        # actually closest -- not by which category was checked first.
+        # (Checking H-bond first and breaking on the first cutoff-satisfying
+        # pair let a distant, marginal backbone contact outrank an obviously
+        # dominant close hydrophobic contact; this compares real distances.)
+        best = {"salt-bridge": (np.inf, None, None), "H-bond": (np.inf, None, None),
+                "pi-stacking": (np.inf, None, None), "hydrophobic": (np.inf, None, None)}
+        # Tie-break order when two categories land on the identical closest
+        # pair (a charge-complementary polar contact satisfies both the
+        # generic H-bond search and the salt-bridge search at the same
+        # distance) -- prefer the more chemically specific label.
+        _priority = {"salt-bridge": 0, "H-bond": 1, "pi-stacking": 2, "hydrophobic": 3}
+
+        donor_names    = {"N"} | _AA_DONOR_ATOMS.get(resname, set())
+        acceptor_names = {"O"} | _AA_ACCEPTOR_ATOMS.get(resname, set())
+        polar_names    = donor_names | acceptor_names
+        sidechain_polar_names = polar_names - {"N", "O"}  # side-chain-specific atoms only
+        for ai, ra in enumerate(atoms):
+            if ra["name"] not in polar_names:
+                continue
+            # Backbone N/O gets the tighter cutoff; side-chain donor/acceptor
+            # atoms (more specific, less prone to coincidental proximity)
+            # keep the full hbond_cutoff.
+            this_cutoff = hbond_cutoff if ra["name"] in sidechain_polar_names else backbone_hbond_cutoff
+            for aj, la in enumerate(lig_atoms):
+                if not (la.get("is_donor") or la.get("is_acceptor")):
+                    continue
+                d = float(np.linalg.norm(res_xyz[ai] - lig_xyz[aj]))
+                if d <= this_cutoff and d < best["H-bond"][0]:
+                    best["H-bond"] = (d, ai, aj)
+
+        # --- Salt bridge: basic residue atom + anionic ligand atom, or
+        # acidic residue atom + cationic ligand atom. Requires RDKit-derived
+        # formal charges on the ligand (SDF path); the PDB-fallback path has
+        # no charge info, so every ligand atom reads formal_charge=0 and this
+        # search simply finds nothing there -- same limitation as elsewhere.
+        basic_names, acidic_names = _AA_BASIC_ATOMS.get(resname), _AA_ACIDIC_ATOMS.get(resname)
+        if basic_names or acidic_names:
+            for ai, ra in enumerate(atoms):
+                if basic_names and ra["name"] in basic_names:
+                    want_negative_lig = True
+                elif acidic_names and ra["name"] in acidic_names:
+                    want_negative_lig = False
+                else:
+                    continue
+                for aj, la in enumerate(lig_atoms):
+                    fc = la.get("formal_charge", 0)
+                    if want_negative_lig and fc >= 0:
+                        continue
+                    if not want_negative_lig and fc <= 0:
+                        continue
+                    d = float(np.linalg.norm(res_xyz[ai] - lig_xyz[aj]))
+                    if d <= salt_bridge_cutoff and d < best["salt-bridge"][0]:
+                        best["salt-bridge"] = (d, ai, aj)
+
+        if resname in _AROMATIC_RING_ATOMS and lig_ring_centroids:
+            ring_names = _AROMATIC_RING_ATOMS[resname]
+            ring_pts = np.array([[a["x"], a["y"], a["z"]] for a in atoms if a["name"] in ring_names])
+            if len(ring_pts) >= 3:
+                res_centroid = ring_pts.mean(axis=0)
+                for lc in lig_ring_centroids:
+                    d = float(np.linalg.norm(res_centroid - lc))
+                    if d <= pi_cutoff and d < best["pi-stacking"][0]:
+                        best["pi-stacking"] = (d, res_centroid, lc)
+
+        if resname in _HYDROPHOBIC_RES:
+            for ai, ra in enumerate(atoms):
+                if ra["element"] != "C":
+                    continue
+                for aj, la in enumerate(lig_atoms):
+                    if la["symbol"] != "C":
+                        continue
+                    d = float(np.linalg.norm(res_xyz[ai] - lig_xyz[aj]))
+                    if d <= 4.5 and d < best["hydrophobic"][0]:
+                        best["hydrophobic"] = (d, ai, aj)
+
+        # Pick the category with the smallest qualifying distance; ties
+        # (identical closest pair found by two searches) break by _priority.
+        interaction = "contact"
+        detail = f"{atoms[i_res]['name']} \u2194 nearest ligand atom ({min_dist:.2f} \u00c5)"
+        hbond_pair = None
+        best_cat, (best_d, ref1, ref2) = min(best.items(), key=lambda kv: (kv[1][0], _priority[kv[0]]))
+        if best_d < np.inf:
+            interaction = best_cat
+            min_dist = min(min_dist, best_d)
+            if best_cat in ("H-bond", "salt-bridge"):
+                tag = "ionic pair" if best_cat == "salt-bridge" else "lig. atom"
+                detail = f"{atoms[ref1]['name']} \u2194 {tag} ({best_d:.2f} \u00c5)"
+                hbond_pair = {"res": res_xyz[ref1].tolist(), "lig": lig_xyz[ref2].tolist()}
+            elif best_cat == "pi-stacking":
+                detail = f"ring centroid \u2194 ring centroid ({best_d:.2f} \u00c5)"
+            elif best_cat == "hydrophobic":
+                detail = f"{atoms[ref1]['name']} \u2194 lig. C ({best_d:.2f} \u00c5)"
+
+        contacts.append({
+            "chain": chain, "resnum": resnum, "resname": resname,
+            "residue": f"{resname}{resnum}",
+            "min_dist": round(min_dist, 2),
+            "interaction": interaction,
+            "detail": detail,
+            "centroid": res_xyz.mean(axis=0).tolist(),
+            "hbond_pair": hbond_pair,
+        })
+
+    contacts.sort(key=lambda c: c["min_dist"])
+    return contacts
+
+
+def filter_pdb_to_residues(pdb_text: str, keys: set) -> str:
+    """Return only the ATOM lines of pdb_text whose (chain, resnum) is in
+    keys, preserving original formatting (used to build the 3D highlight
+    layer without reconstructing PDB records by hand)."""
+    lines = []
+    for line in pdb_text.splitlines():
+        if not line.startswith("ATOM"):
+            continue
+        try:
+            chain  = line[21].strip() or "A"
+            resnum = int(line[22:26])
+        except (ValueError, IndexError):
+            continue
+        if (chain, resnum) in keys:
+            lines.append(line)
+    return "\n".join(lines)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1132,17 +1981,37 @@ def compute_rmsd_from_lines(ref_lines: list, pose_lines: list):
 def build_viewer_html(receptor_pdb: str, ligand_pdb: str,
                       protein_name: str, ligand_name: str,
                       affinity: float | None,
-                      lig_format: str = "pdb") -> str:
+                      lig_format: str = "pdb",
+                      contacts: list | None = None,
+                      contact_pdb: str = "") -> str:
     """Build a self-contained py3Dmol HTML viewer.
 
     lig_format should be 'sdf' when ligand string was converted via Open Babel
     (preserves bond orders so py3Dmol renders the correct structure).
     Falls back to 'pdb' if SDF conversion was unavailable.
+
+    contacts / contact_pdb (optional): output of compute_ligand_contacts() /
+    filter_pdb_to_residues(). When provided, adds a third model containing
+    just the binding-site residues, colour-coded and labelled by interaction
+    type (H-bond / hydrophobic / pi-stacking / contact), with dashed lines
+    for H-bond pairs -- a Schrodinger-style interaction overlay on the pose.
     """
     aff_str  = f"{affinity:.2f} kcal/mol" if affinity is not None else "N/A"
     rec_js      = receptor_pdb.replace("\\","\\\\").replace("'","\\'").replace("\n","\\n")
     lig_js      = ligand_pdb.replace("\\","\\\\").replace("'","\\'").replace("\n","\\n")
     lig_fmt_js  = lig_format  # 'sdf' or 'pdb'
+
+    has_contacts = bool(contacts) and bool(contact_pdb.strip())
+    contact_js   = contact_pdb.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
+    # Strip the raw 'atoms' payload isn't present here (compute_ligand_contacts
+    # already omits it); dump only what the viewer needs.
+    contact_json = json.dumps([
+        {k: c[k] for k in ("chain", "resnum", "resname", "residue",
+                            "min_dist", "interaction", "detail",
+                            "centroid", "hbond_pair")}
+        for c in (contacts or [])
+    ])
+    contact_colors_json = json.dumps(_CONTACT_COLORS)
 
     return f"""<!DOCTYPE html><html>
 <head>
@@ -1224,36 +2093,87 @@ def build_viewer_html(receptor_pdb: str, ligand_pdb: str,
   <button onclick="viewer.zoomTo();">Reset View</button>
   <button onclick="viewer.spin(!spinning); spinning=!spinning; this.textContent=spinning?'Stop':'Spin';">Spin</button>
   <button onclick="downloadPosePNG();">Download PNG</button>
+  {'''<label style="display:flex;align-items:center;gap:4px;font-size:11px;color:#666;margin-left:6px;cursor:pointer;">
+    <input type="checkbox" id="show_contacts" checked style="cursor:pointer;">
+    Binding-site residues
+  </label>''' if has_contacts else ''}
   <span class="badge">AutoDock Vina &nbsp;&middot;&nbsp; {aff_str}</span>
 </div>
 <div id="info">
   <b>Protein:</b> {protein_name} &nbsp;&middot;&nbsp; <b>Ligand:</b> {ligand_name}
   &nbsp;&middot;&nbsp; <b>Best affinity:</b> {aff_str}
   &nbsp;&middot;&nbsp; <span style="color:#999;font-size:10px;">Drag to rotate &middot; Scroll to zoom &middot; Right-drag to translate</span>
+  {f'''&nbsp;&middot;&nbsp;
+  <span style="color:#e63946;">&#9632;</span> H-bond
+  <span style="color:#2a9d8f;">&#9632;</span> Salt bridge
+  <span style="color:#f4a300;">&#9632;</span> Hydrophobic
+  <span style="color:#8338ec;">&#9632;</span> &pi;-stacking
+  <span style="color:#adb5bd;">&#9632;</span> Contact''' if has_contacts else ''}
 </div>
 <script>
 var viewer = $3Dmol.createViewer("viewer", {{backgroundColor:"#1a1f2e"}});
 var spinning = false;
+viewer.addModel('{rec_js}', 'pdb');
+viewer.addModel('{lig_js}', '{lig_fmt_js}');
+var hasContacts = {str(has_contacts).lower()};
+if (hasContacts) {{
+  viewer.addModel('{contact_js}', 'pdb');
+}}
+var models = viewer.getModelList();
+var recModel = models[0];
+var ligModel = models[1];
+
+var contactData   = {contact_json};
+var contactColors = {contact_colors_json};
+
+function applyContactOverlay(show) {{
+  if (!hasContacts) return;
+  viewer.setStyle({{model: 2}}, {{}});
+  viewer.removeAllLabels();
+  if (show) {{
+    contactData.forEach(function(c) {{
+      var color = contactColors[c.interaction] || contactColors["contact"];
+      viewer.setStyle({{model: 2, chain: c.chain, resi: c.resnum}},
+                       {{stick: {{color: color, radius: 0.11}}}});
+      viewer.addLabel(c.residue, {{
+        position: {{x: c.centroid[0], y: c.centroid[1], z: c.centroid[2]}},
+        backgroundColor: color, backgroundOpacity: 0.75,
+        fontColor: "white", fontSize: 10, borderThickness: 0, inFront: true,
+      }});
+      if (c.hbond_pair) {{
+        viewer.addLine({{
+          start: {{x: c.hbond_pair.res[0], y: c.hbond_pair.res[1], z: c.hbond_pair.res[2]}},
+          end:   {{x: c.hbond_pair.lig[0], y: c.hbond_pair.lig[1], z: c.hbond_pair.lig[2]}},
+          color: color, dashed: true, linewidth: 2,
+        }});
+      }}
+    }});
+  }}
+  viewer.render();
+}}
+if (hasContacts) {{
+  var contactToggle = document.getElementById("show_contacts");
+  if (contactToggle) contactToggle.onchange = function() {{ applyContactOverlay(this.checked); }};
+}}
 
 function downloadPosePNG() {{
   try {{
-    var img = viewer.pngURI();
+    var uri = viewer.pngURI();
     var a = document.createElement("a");
-    a.href = img;
-    a.download = "IBDock_Pose_Viewer.png";
+    a.href = uri;
+    a.download = "IBDock_pose_view.png";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   }} catch (e) {{
-    console.error("Pose PNG download failed:", e);
-    alert("Unable to download the Pose Viewer image.");
+    alert("PNG export failed: " + e);
   }}
 }}
-viewer.addModel('{rec_js}', 'pdb');
-viewer.addModel('{lig_js}', '{lig_fmt_js}');
-var models = viewer.getModelList();
-var recModel = models[0];
-var ligModel = models[1];
+
+document.getElementById("viewer_bg").onchange = function() {{
+  viewer.setBackgroundColor(this.value);
+  viewer.render();
+}};
 
 function applyStyles() {{
   var rs = document.getElementById("rec_style").value;
@@ -1280,13 +2200,8 @@ function applyStyles() {{
 document.getElementById("rec_style").onchange = applyStyles;
 document.getElementById("lig_style").onchange = applyStyles;
 document.getElementById("rec_color").onchange = applyStyles;
-
-document.getElementById("viewer_bg").onchange = function() {{
-  viewer.setBackgroundColor(this.value);
-  viewer.render();
-}};
-
 applyStyles();
+applyContactOverlay(true);
 viewer.zoomTo({{model: 1}});
 viewer.zoom(0.9);
 viewer.render();
@@ -1360,14 +2275,16 @@ vina_path   = st.sidebar.text_input("AutoDock Vina executable", _cfg["vina_path"
 obabel_path = st.sidebar.text_input("Open Babel (obabel)",      _cfg["obabel_path"])
 
 st.sidebar.markdown("---")
+st.sidebar.caption("Portable build: bundled native tools are detected automatically from the application's `tools` folder. No external subsystem is required.")
+
 st.sidebar.markdown("**Pocket Detection** *(optional)*")
 fpocket_path = st.sidebar.text_input(
-    "fpocket (bundled native tool preferred)", _cfg["fpocket_path"],
+    "fpocket (bundled native tool)", _cfg["fpocket_path"],
     help="Used when pocket detection is selected in Protein Prep.",
 )
 p2rank_path = st.sidebar.text_input(
     "P2Rank (bundled native tool)", _cfg["p2rank_path"],
-    help="P2Rank uses the bundled native Windows tool; fpocket is the fallback in Auto mode.",
+    help="P2Rank and fpocket use bundled native Windows tools.",
 )
 
 st.sidebar.markdown("---")
@@ -1542,7 +2459,7 @@ with tab1:
                 "**Auto**: tries co-crystallised ligand → P2Rank → fpocket → blind docking.\n\n"
                 "**Co-crystallised ligand**: uses HETATM atoms in the PDB as the binding site centre.\n\n"
                 "**P2Rank**: machine-learning pocket prediction using the bundled native Windows tool.\n\n"
-                "**fpocket**: geometric pocket detection (bundled native tool preferred; WSL fallback supported).\n\n"
+                "**fpocket**: geometric pocket detection (bundled native Windows tool).\n\n"
                 "**Blind docking**: centres on the whole protein — use for unknown binding sites."
             ),
         )
@@ -1777,7 +2694,6 @@ with tab2:
             randomize_pose = st.checkbox("Randomise input pose",        False, key="lig_rand")
             rigid_ligand   = st.checkbox("Treat as rigid (no torsions)", False, key="lig_rigid")
         with c2:
-            add_hydrogens         = st.checkbox("Add hydrogens",                True,  key="lig_addh")
             generate_3d           = st.checkbox("Generate 3D coordinates",      True,  key="lig_3d")
             calc_lig_charges      = st.checkbox("Calculate Gasteiger charges",  True,  key="lig_charges")
             remove_nonpolar_h_lig = st.checkbox("Remove non-polar hydrogens",   True,  key="lig_nph")
@@ -1801,12 +2717,36 @@ with tab2:
                 pdb_file  = prep_lig_dir / f"{lig_file.stem}.pdb"
                 pdbqt_out = prep_lig_dir / f"{lig_file.stem}.pdbqt"
 
-                # Step 1: Open Babel → PDB
-                cmd = [str(obabel_path), str(lig_file), "-O", str(pdb_file)]
-                if add_hydrogens:    cmd.append("--addhydrogens")
+                # Step 1a: Open Babel — pH-based protonation FIRST, as its own
+                # call. Combining -p with --gen3d in a single Open Babel
+                # invocation silently discards the pH-based protonation
+                # (verified directly: acetic acid stays protonated as -COOH
+                # at pH 7.4 when -p and --gen3d are combined, regardless of
+                # flag order, but correctly deprotonates to -COO- when -p is
+                # run alone). Running -p as its own step, then generating 3D
+                # coordinates on the ALREADY-protonated structure, preserves
+                # the correct protonation state.
+                if correct_ph:
+                    pdb_protonated = prep_lig_dir / f"{lig_file.stem}_protonated.pdb"
+                    cmd_ph = [str(obabel_path), str(lig_file), "-O", str(pdb_protonated),
+                              "-p", str(ph_value)]
+                    run_cmd(cmd_ph)
+                    if not pdb_protonated.exists():
+                        raise RuntimeError("Open Babel did not generate a protonated PDB file")
+                    step1_input = pdb_protonated
+                else:
+                    step1_input = lig_file
+
+                # Step 1b: Open Babel — 3D embedding, charges, etc. on top of
+                # the (optionally) already-protonated structure.
+                # NOTE: --addhydrogens is not a real Open Babel option (it is
+                # silently ignored — verified empirically: atom count is
+                # identical with or without it) and has been removed. Standard
+                # hydrogens are added by --gen3d / -p above and by MGLTools'
+                # -A checkhydrogens in Step 2 below.
+                cmd = [str(obabel_path), str(step1_input), "-O", str(pdb_file)]
                 if generate_3d:      cmd.append("--gen3d")
                 if calc_lig_charges: cmd += ["--partialcharge", "gasteiger"]
-                if correct_ph:       cmd += ["-p", str(ph_value)]
                 if randomize_pose:   cmd.append("--randomize")
                 run_cmd(cmd)
 
@@ -1978,6 +2918,17 @@ with tab3:
             cores_per_job = st.number_input(
                 "CPU cores per job", 1, total_cores,
                 max(1, total_cores // 2), key="vina_cores",
+            )
+            use_fixed_seed = st.checkbox(
+                "Use fixed random seed (reproducible results)", True, key="vina_use_seed",
+                help="Vina's search is stochastic. Without a fixed seed, re-running the "
+                     "same job produces different poses each time. Enable this — and "
+                     "report the seed value in your Methods section — for reproducible, "
+                     "publication-quality results.",
+            )
+            vina_seed = st.number_input(
+                "Random seed", 0, 2**31 - 1, 42, key="vina_seed_val",
+                disabled=not use_fixed_seed,
             )
             st.caption(
                 f"**{int(cpu_workers)} jobs × {int(cores_per_job)} cores "
@@ -2231,7 +3182,8 @@ viewer.zoomTo(); viewer.render(); viewer.zoom(0.85);
                     continue
                 jobs.append((rec, lig, cfg, vina_path,
                              int(exhaustiveness), int(num_modes), int(energy_range),
-                             int(cores_per_job), dock_dir, result_dir))
+                             int(cores_per_job), dock_dir, result_dir,
+                             int(vina_seed) if use_fixed_seed else None))
 
         if not jobs:
             st.error("❌ No valid docking jobs. Check protein/ligand files and grid configs.")
@@ -2362,7 +3314,7 @@ with tab4:
                 n_heavy = _count_heavy_first_pose(_src)
                 if n_heavy:
                     break
-        le = round(mode1_aff / n_heavy, 3) if (mode1_aff is not None and n_heavy and n_heavy > 0) else None
+        le = round(-mode1_aff / n_heavy, 3) if (mode1_aff is not None and n_heavy and n_heavy > 0) else None
 
         rows.append({
             "Protein":               protein,
@@ -2451,7 +3403,7 @@ with tab4:
         st.caption(
             "**Best Affinity** = Vina mode 1 score · "
             "**ΔE Mode1→2** = energy gap (larger = more selective pose) · "
-            "**Ligand Efficiency** = Best Affinity ÷ Heavy Atoms"
+            "**Ligand Efficiency** = −(Best Affinity) ÷ Heavy Atoms"
         )
 
         # ── Download buttons ───────────────────────────────────────────────
@@ -2689,6 +3641,17 @@ with tab5:
                 st.error(f"❌ Could not read pose files: {exc}")
                 st.stop()
 
+            # Binding-site contact analysis (residues within 4.5 Å, classified
+            # by interaction type). Uses the same rec_pdb/lig_pdb/lig_format
+            # already built above, so no extra file conversion is needed.
+            try:
+                pose_contacts = compute_ligand_contacts(rec_pdb, lig_pdb, lig_format)
+                _contact_keys = {(c["chain"], c["resnum"]) for c in pose_contacts}
+                pose_contact_pdb = filter_pdb_to_residues(rec_pdb, _contact_keys)
+            except Exception as _contact_exc:
+                pose_contacts, pose_contact_pdb = [], ""
+                st.caption(f"⚠️ Binding-site contact analysis unavailable: {_contact_exc}")
+
             # Engine badge
             st.markdown(
                 '<span style="font-family:\'IBM Plex Mono\',monospace; font-size:0.72rem; color:#444;'
@@ -2698,7 +3661,8 @@ with tab5:
             st.markdown("")
 
             # 3D viewer
-            viewer_html = build_viewer_html(rec_pdb, lig_pdb, protein_name, ligand_name, affinity, lig_format)
+            viewer_html = build_viewer_html(rec_pdb, lig_pdb, protein_name, ligand_name, affinity,
+                                             lig_format, contacts=pose_contacts, contact_pdb=pose_contact_pdb)
             _components.html(viewer_html, height=580, scrolling=False)
 
             # Stats row
@@ -2707,6 +3671,38 @@ with tab5:
             s1.metric("Protein",  protein_name)
             s2.metric("Ligand",   ligand_name)
             s3.metric("Best affinity", f"{affinity:.2f} kcal/mol" if affinity else "—")
+
+            # Binding-site residue table (Schrodinger-style interaction summary)
+            st.markdown("")
+            if pose_contacts:
+                st.markdown("#### Binding-site residues")
+                st.caption(
+                    "Distance-based contact analysis (\u2264 4.5 \u00c5 heavy-atom distance). "
+                    "H-bond / salt-bridge / hydrophobic / \u03c0-stacking flags are geometric "
+                    "heuristics (no donor/acceptor angle check, no \u03c0-cation detection; "
+                    "salt bridges need RDKit-parsed formal charges, so they only resolve when "
+                    "the ligand loaded as SDF, and a HIS salt-bridge call is a softer, "
+                    "worth-checking-manually result since HIS is often neutral) "
+                    "-- treat as a starting point for a figure, not a validated replacement "
+                    "for a tool like PLIP if your Methods section needs a rigorously defined footprint."
+                )
+                _contacts_df = pd.DataFrame([{
+                    "Residue": c["residue"],
+                    "Chain": c["chain"],
+                    "Interaction": c["interaction"],
+                    "Min. distance (Å)": c["min_dist"],
+                    "Detail": c["detail"],
+                } for c in pose_contacts])
+                st.dataframe(_contacts_df, use_container_width=True, hide_index=True)
+                st.download_button(
+                    "⬇ Download binding-site residue table (CSV)",
+                    data=_contacts_df.to_csv(index=False),
+                    file_name=f"{protein_name}_{ligand_name}_binding_site_residues.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                )
+            else:
+                st.caption("No binding-site residues resolved within 4.5 Å (check receptor/ligand parsing above).")
 
             # Downloads
             st.markdown("")
@@ -2785,14 +3781,20 @@ with tab6:
         key="val_ref_upload",
     )
 
-    # Strict atom-count tolerance for re-docking: exact match only (±0)
-    # The ±1 tolerance in compute_rmsd_from_lines is for self-consistency
-    # comparisons of the same molecule. For re-docking, even 1-atom difference
-    # means a different molecule — we block it here before calling the function.
-    _REDOCK_ATOM_TOL = 0
-
     if uploaded_refs and docked_pdbqts:
         redock_rows = []
+        pairs_evaluated = 0
+
+        def _status_band(v):
+            if v < 1.0:
+                return "✅ Excellent (< 1 Å)"
+            elif v < 2.0:
+                return "✅ Pass (< 2 Å)"
+            elif v < 3.0:
+                return "🟡 Borderline (2–3 Å)"
+            else:
+                return "🔴 Fail (≥ 3 Å)"
+
         for ref_file in uploaded_refs:
             ref_text  = ref_file.read().decode("utf-8", errors="replace")
             ref_lines = ref_text.splitlines(keepends=True)
@@ -2800,12 +3802,17 @@ with tab6:
                          if l.startswith(("ATOM", "HETATM")) and not _is_hydrogen(l)]
 
             if not ref_heavy:
+                pairs_evaluated += 1
                 redock_rows.append({
                     "Reference File": ref_file.name,
                     "Protein": "—", "Ligand": "—",
-                    "RMSD vs Reference (Å)": None,
+                    "Method": "—",
+                    "Top-1 RMSD (Å)": None,
+                    "Best Pose RMSD (Å)": None,
+                    "Best Pose #": None,
                     "Ref Heavy Atoms": 0,
                     "Pose Heavy Atoms": None,
+                    "Used as Final": "",
                     "Status": "⚠️ No heavy atoms in reference file",
                 })
                 continue
@@ -2817,6 +3824,11 @@ with tab6:
             ref_stem = Path(ref_file.name).stem.lower()
             for suffix in ("_ref", "-ref", "_crystal", "-crystal", "_native", "-native"):
                 ref_stem = ref_stem.replace(suffix, "")
+
+            # Convert the reference ligand to SDF once per reference file (bond
+            # perception via Open Babel), for graph-based RMSD matching that
+            # doesn't depend on atom naming — see compute_rmsd_from_sdf().
+            ref_sdf_text = pdb_to_sdf_text(ref_text, obabel_path)
 
             # Match ONLY docked pairs whose protein ID appears in the reference filename.
             # e.g. "6C9H.pdb" → only 6C9H_*.pdbqt; "6C9H1.pdb" → only 6C9H1_*.pdbqt
@@ -2838,12 +3850,17 @@ with tab6:
                         break  # stop after first matching protein
 
             if not matched:
+                pairs_evaluated += 1
                 redock_rows.append({
                     "Reference File": ref_file.name,
                     "Protein": "—", "Ligand": "—",
-                    "RMSD vs Reference (Å)": None,
+                    "Method": "—",
+                    "Top-1 RMSD (Å)": None,
+                    "Best Pose RMSD (Å)": None,
+                    "Best Pose #": None,
                     "Ref Heavy Atoms": len(ref_heavy),
                     "Pose Heavy Atoms": None,
+                    "Used as Final": "",
                     "Status": (
                         f"ℹ️ No matching docked pair found for '{ref_file.name}'. "
                         "Name your reference file as PROTEINID.pdb (e.g. 6C9H.pdb) "
@@ -2853,6 +3870,7 @@ with tab6:
                 continue
 
             for dpdbqt in matched:
+                pairs_evaluated += 1
                 stem = dpdbqt.stem
                 protein_names = [r.stem.replace("_receptor", "")
                                  for r in prep_rec_dir.glob("*_receptor.pdbqt")]
@@ -2868,9 +3886,13 @@ with tab6:
                     redock_rows.append({
                         "Reference File": ref_file.name,
                         "Protein": prot, "Ligand": lig,
-                        "RMSD vs Reference (Å)": None,
+                        "Method": "—",
+                        "Top-1 RMSD (Å)": None,
+                        "Best Pose RMSD (Å)": None,
+                        "Best Pose #": None,
                         "Ref Heavy Atoms": len(ref_heavy),
                         "Pose Heavy Atoms": None,
+                        "Used as Final": "",
                         "Status": "⚠️ Pose 1 missing",
                     })
                     continue
@@ -2878,85 +3900,228 @@ with tab6:
                 pose_heavy = [l for l in pose1
                               if l.startswith(("ATOM", "HETATM")) and not _is_hydrogen(l)]
 
-                n_ref  = len(ref_heavy)
-                n_pose = len(pose_heavy)
+                # Fast pre-check only (line-count based) — catches obviously
+                # different molecules before we bother with Open Babel/RDKit.
+                # NOTE: passing this check does NOT mean the RMSD below is
+                # valid — the real correspondence check happens either via
+                # the coordinate bridge below or compute_rmsd_from_sdf()'s
+                # graph matching.
+                n_ref, n_pose, count_err = compute_rmsd_from_lines(ref_heavy, pose_heavy)
 
-                # Strict atom count check — different molecule, skip RMSD entirely
-                if abs(n_ref - n_pose) > _REDOCK_ATOM_TOL:
-                    status = (
-                        f"❌ Different molecule — ref has {n_ref} heavy atoms, "
-                        f"pose has {n_pose}. Re-docking RMSD requires the same "
-                        f"ligand in both reference and docked pose."
-                    )
+                if count_err:
                     redock_rows.append({
                         "Reference File":        ref_file.name,
                         "Protein":               prot,
                         "Ligand":                lig,
-                        "RMSD vs Reference (Å)": None,
+                        "Method":                "—",
+                        "Top-1 RMSD (Å)":        None,
+                        "Best Pose RMSD (Å)":    None,
+                        "Best Pose #":           None,
                         "Ref Heavy Atoms":       n_ref,
                         "Pose Heavy Atoms":      n_pose,
-                        "Status":                status,
+                        "Used as Final":         "",
+                        "Status":                f"❌ {count_err}",
                     })
                     continue
 
-                rmsd_val, err = compute_rmsd_from_lines(ref_heavy, pose_heavy)
+                # ---------------------------------------------------------------
+                # Compute BOTH validation methods for every complex, rather than
+                # short-circuiting on whichever succeeds first. The coordinate
+                # bridge (ligand-prep provenance, optionally symmetry-refined)
+                # remains the authoritative RMSD whenever it applies, since it
+                # carries the strongest correspondence guarantee in the
+                # pipeline -- but the graph-based sPyRMSD result is now always
+                # computed alongside it too, so every complex gets a genuine,
+                # independent second measurement. Each method gets its OWN row
+                # in the table (rather than extra columns crammed into one
+                # row) so it's clear at a glance which method produced which
+                # number; exactly one row per complex is marked "Used as
+                # Final" -- that is the value counted in the summary metrics,
+                # the bar chart, and the PDF report.
+                # ---------------------------------------------------------------
+                bridge_result = _coordinate_bridge_rmsd(
+                    ref_heavy, pose_heavy, lig, prep_lig_dir,
+                    ref_sdf_text=ref_sdf_text,
+                )
+                bridge_rmsd, bridge_note = (None, "")
+                if bridge_result is not None:
+                    bridge_rmsd, bridge_note = bridge_result
 
-                if err:
-                    status = f"⚠️ {err}"
-                elif rmsd_val < 1.0:
-                    status = "✅ Excellent (< 1 Å)"
-                elif rmsd_val < 2.0:
-                    status = "✅ Pass (< 2 Å)"
-                elif rmsd_val < 3.0:
-                    status = "🟡 Borderline (2–3 Å)"
+                graph_rmsd, graph_err, graph_note = (None, None, "")
+                if not ref_sdf_text.strip():
+                    graph_err = "Could not convert reference ligand to SDF (Open Babel failed)"
                 else:
-                    status = "🔴 Fail (≥ 3 Å)"
+                    pose_sdf_text = pdbqt_to_sdf_text(str(dpdbqt), obabel_path, first_pose_only=True, add_hydrogens=False)
+                    if not pose_sdf_text.strip():
+                        graph_err = "Could not convert docked pose to SDF (Open Babel failed)"
+                    else:
+                        graph_rmsd, graph_err, graph_note = compute_rmsd_from_sdf(ref_sdf_text, pose_sdf_text)
 
+                # -----------------------------------------------------------
+                # BEST-POSE sweep: in addition to pose 1 (Vina's top-ranked
+                # mode, "Top-1"), also try every other returned pose and keep
+                # whichever gives the lowest RMSD per method ("Best Pose") --
+                # the standard second re-docking metric alongside top-1
+                # success rate. Both methods are swept independently, using
+                # the exact same per-pose logic as pose 1 above, just looped.
+                # -----------------------------------------------------------
+                n_poses = _count_pdbqt_models(str(dpdbqt))
+
+                bridge_best_rmsd, bridge_best_pose = bridge_rmsd, (1 if bridge_rmsd is not None else None)
+                graph_best_rmsd,  graph_best_pose  = graph_rmsd,  (1 if graph_rmsd  is not None else None)
+
+                if n_poses > 1:
+                    for mode_num in range(2, n_poses + 1):
+                        pose_n_lines = extract_vina_pose_by_mode(str(dpdbqt), mode_num)
+                        if not pose_n_lines:
+                            continue
+                        pose_n_heavy = [l for l in pose_n_lines
+                                        if l.startswith(("ATOM", "HETATM")) and not _is_hydrogen(l)]
+
+                        # Bridge: cheap, pure-Python -- re-run per pose directly.
+                        if len(pose_n_heavy) == n_ref:
+                            res_n = _coordinate_bridge_rmsd(
+                                ref_heavy, pose_n_heavy, lig, prep_lig_dir,
+                                ref_sdf_text=ref_sdf_text,
+                            )
+                            if res_n is not None:
+                                v = res_n[0]
+                                if bridge_best_rmsd is None or v < bridge_best_rmsd:
+                                    bridge_best_rmsd, bridge_best_pose = v, mode_num
+
+                        # Graph: needs a fresh Open Babel conversion per pose
+                        # (bond perception is geometry-dependent per pose), so
+                        # write this mode's atom lines to a small temp PDBQT
+                        # and reuse the same pdbqt_to_sdf_text() + sPyRMSD path
+                        # pose 1 already went through above.
+                        if ref_sdf_text.strip():
+                            import tempfile as _tempfile
+                            tmp_pose = _tempfile.NamedTemporaryFile(
+                                suffix=".pdbqt", delete=False, mode="w")
+                            tmp_pose.write("MODEL 1\n")
+                            tmp_pose.writelines(pose_n_lines)
+                            tmp_pose.write("ENDMDL\n")
+                            tmp_pose.close()
+                            try:
+                                sdf_n = pdbqt_to_sdf_text(
+                                    tmp_pose.name, obabel_path,
+                                    first_pose_only=True, add_hydrogens=False,
+                                )
+                                if sdf_n.strip():
+                                    v_n, _, _ = compute_rmsd_from_sdf(ref_sdf_text, sdf_n)
+                                    if v_n is not None and (graph_best_rmsd is None or v_n < graph_best_rmsd):
+                                        graph_best_rmsd, graph_best_pose = v_n, mode_num
+                            finally:
+                                try:
+                                    os.unlink(tmp_pose.name)
+                                except Exception:
+                                    pass
+
+                # The bridge is authoritative whenever it applies (strongest
+                # guarantee, see _coordinate_bridge_rmsd docstring); the graph
+                # match is only ever the FINAL value when the bridge does not
+                # apply at all. It is never chosen over a successful bridge
+                # result just because the two happen to disagree.
+                if bridge_rmsd is not None:
+                    final_method = "Coordinate bridge"
+                elif graph_rmsd is not None:
+                    final_method = "Graph isomorphism (sPyRMSD)"
+                else:
+                    final_method = None
+
+                common = {
+                    "Reference File":   ref_file.name,
+                    "Protein":          prot,
+                    "Ligand":           lig,
+                    "Ref Heavy Atoms":  n_ref,
+                    "Pose Heavy Atoms": n_pose,
+                }
+
+                # One row for the coordinate bridge, only if it was actually
+                # attempted (skipped silently when no prepared-ligand PDBQT
+                # was retained for this ligand -- that's "not applicable",
+                # not a failure worth a row).
+                if bridge_result is not None:
+                    b_status = _status_band(bridge_rmsd)
+                    if bridge_note:
+                        b_status += f"  [{bridge_note}]"
+                    redock_rows.append({
+                        **common,
+                        "Method":             "Coordinate bridge",
+                        "Top-1 RMSD (Å)":     bridge_rmsd,
+                        "Best Pose RMSD (Å)": bridge_best_rmsd,
+                        "Best Pose #":        bridge_best_pose,
+                        "Used as Final":      "✓" if final_method == "Coordinate bridge" else "",
+                        "Status":             b_status,
+                    })
+
+                # One row for the graph-based method, whether it succeeded or
+                # failed -- showing why sPyRMSD didn't produce a comparable
+                # number is itself useful diagnostic information, not noise.
+                if graph_rmsd is not None:
+                    g_status = _status_band(graph_rmsd)
+                    if graph_note:
+                        g_status += f"  [{graph_note}]"
+                else:
+                    g_status = f"⚠️ {graph_err}" if graph_err else "⚠️ Graph match failed"
                 redock_rows.append({
-                    "Reference File":        ref_file.name,
-                    "Protein":               prot,
-                    "Ligand":                lig,
-                    "RMSD vs Reference (Å)": rmsd_val,
-                    "Ref Heavy Atoms":       n_ref,
-                    "Pose Heavy Atoms":      n_pose,
-                    "Status":                status,
+                    **common,
+                    "Method":             "Graph isomorphism (sPyRMSD)",
+                    "Top-1 RMSD (Å)":     graph_rmsd,
+                    "Best Pose RMSD (Å)": graph_best_rmsd,
+                    "Best Pose #":        graph_best_pose,
+                    "Used as Final":      "✓" if final_method == "Graph isomorphism (sPyRMSD)" else "",
+                    "Status":             g_status,
                 })
 
-        if redock_rows:
-            # Save only rows with a real RMSD value for the PDF report
-            st.session_state["_pdf_redock_rows"] = [
-                r for r in redock_rows
-                if r.get("RMSD vs Reference (Å)") is not None
-                and not str(r.get("Status","")).startswith(("❌","ℹ️","⚠️"))
-            ]
-            df_redock = pd.DataFrame(redock_rows)
-            valid_rd  = df_redock["RMSD vs Reference (Å)"].dropna()
+                # Neither method produced a usable value -- nothing more to
+                # add; both rows above already carry the failure reasons.
 
-            rd1, rd2, rd3 = st.columns(3)
-            rd1.metric("Pairs evaluated",  len(redock_rows))
-            rd2.metric("✅ Pass (< 2 Å)",  int((valid_rd < 2.0).sum()))
-            rd3.metric("🔴 Fail (≥ 3 Å)",  int((valid_rd >= 3.0).sum()),
-                       delta=int(-(valid_rd >= 3.0).sum()) if (valid_rd >= 3.0).any() else None,
+        if redock_rows:
+            df_redock = pd.DataFrame(redock_rows)
+
+            # Summary metrics, the bar chart, and the PDF export all count
+            # each COMPLEX once -- using only the row marked "Used as Final"
+            # -- even though the table itself shows one row per method for
+            # transparency. Without this filter, a complex where both
+            # methods succeeded would be double-counted.
+            df_final = df_redock[df_redock["Used as Final"] == "✓"].copy()
+
+            # Save only the final rows with a real RMSD value for the PDF report
+            st.session_state["_pdf_redock_rows"] = [
+                r for r in df_final.to_dict("records")
+                if r.get("Top-1 RMSD (Å)") is not None
+            ]
+
+            valid_top1 = df_final["Top-1 RMSD (Å)"].dropna()
+            valid_best = df_final["Best Pose RMSD (Å)"].dropna()
+
+            rd1, rd2, rd3, rd4 = st.columns(4)
+            rd1.metric("Pairs evaluated",       pairs_evaluated)
+            rd2.metric("✅ Top-1 Pass (< 2 Å)", int((valid_top1 < 2.0).sum()))
+            rd3.metric("🔴 Top-1 Fail (≥ 3 Å)", int((valid_top1 >= 3.0).sum()),
+                       delta=int(-(valid_top1 >= 3.0).sum()) if (valid_top1 >= 3.0).any() else None,
                        delta_color="inverse")
+            rd4.metric("✅ Best-Pose Pass (< 2 Å)", int((valid_best < 2.0).sum()))
 
             st.dataframe(df_redock, use_container_width=True, hide_index=True)
 
-            if not valid_rd.empty:
-                df_rp = df_redock.dropna(subset=["RMSD vs Reference (Å)"]).copy()
+            if not valid_top1.empty:
+                df_rp = df_final.dropna(subset=["Top-1 RMSD (Å)"]).copy()
                 df_rp["Label"] = df_rp["Protein"] + "\n" + df_rp["Ligand"]
                 rc = [
                     "#1a9e75" if v < 2.0 else "#f0a500" if v < 3.0 else "#d63030"
-                    for v in df_rp["RMSD vs Reference (Å)"]
+                    for v in df_rp["Top-1 RMSD (Å)"]
                 ]
                 fig3, ax3 = plt.subplots(figsize=(8, max(3, len(df_rp) * 0.45)))
-                ax3.barh(df_rp["Label"], df_rp["RMSD vs Reference (Å)"],
+                ax3.barh(df_rp["Label"], df_rp["Top-1 RMSD (Å)"],
                          color=rc, alpha=0.82)
                 ax3.axvline(2.0, color="#1a9e75", linestyle="--",
                             linewidth=1.2, label="2 Å pass threshold")
                 ax3.axvline(3.0, color="#f0a500", linestyle="--",
                             linewidth=1.2, label="3 Å fail threshold")
-                ax3.set_xlabel("RMSD vs Reference (Å)", fontsize=9)
-                ax3.set_title("Re-Docking RMSD vs Reference Ligand",
+                ax3.set_xlabel("Top-1 RMSD (Å)", fontsize=9)
+                ax3.set_title("Re-Docking RMSD vs Reference Ligand (Top-1 pose)",
                               fontsize=10, fontweight="bold")
                 ax3.legend(fontsize=8)
                 ax3.invert_yaxis()
@@ -3106,6 +4271,8 @@ with tab6:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+
+
 # TAB 7 — ABOUT & CITATION
 # ══════════════════════════════════════════════════════════════════════════════
 with tab7:
@@ -3139,9 +4306,8 @@ writing scripts or managing command-line flags.
 <h4>Platform</h4>
 <p>
 Windows &middot; macOS &middot; Linux<br>
-The packaged Windows build bundles MGLTools, Vina, Open Babel, and P2Rank. P2Rank uses the bundled native Windows implementation.
-fpocket uses the validated WSL implementation.
-Pocket detection uses bundled native P2Rank. The validated WSL implementation is retained for fpocket only.
+The packaged Windows build bundles MGLTools, Vina, Open Babel, P2Rank, and fpocket as native Windows tools.
+Pocket detection uses the bundled native P2Rank and fpocket executables.
 </p>
 </div>
         """, unsafe_allow_html=True)
