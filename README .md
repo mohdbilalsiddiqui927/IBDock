@@ -1,9 +1,7 @@
 # IBDock Provenire
 
-<!-- TODO: optional badges once the repo is live, e.g.:
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
--->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23663435.svg)](https://doi.org/10.5281/zenodo.23663435)
 
 ![IBDock Provenire](docs/screenshots/00_logo.png)
 
@@ -39,7 +37,7 @@ benchmark.
 ## Features
 
 - **Automated and manual search-space selection** — a reproducible
-  auto-cascade (co-crystallized ligand → P2Rank → fpocket → blind docking)
+  auto-cascade (co-crystallized ligand →fpocket → P2Rank →  blind docking)
   or explicit, user-directed selection of crystallographic ligand instances.
 - **Persistent search-space provenance** — every generated grid is stored
   together with the method and ligand instances that produced it
@@ -101,26 +99,20 @@ likely compatible but have not been benchmarked.
 | P2Rank | 2.5.1 | Pocket prediction |
 | fpocket | 4.0 | Pocket prediction |
 
-<!-- TODO: add download/install links for each external tool above, e.g.:
-- AutoDock Vina: https://vina.scripps.edu/
-- MGLTools: https://ccsb.scripps.edu/mgltools/
-- Open Babel: https://openbabel.org/
-- P2Rank: https://github.com/rdk/p2rank
-- fpocket: https://github.com/Discngine/fpocket
--->
+- [AutoDock Vina](https://vina.scripps.edu/)
+- [MGLTools](https://ccsb.scripps.edu/mgltools/)
+- [Open Babel](https://openbabel.org/)
+- [P2Rank](https://github.com/rdk/p2rank)
+- [fpocket](https://github.com/Discngine/fpocket)
 
 ## Installation
 
 ### Option 1 — Packaged Windows build (no setup required)
 
-<!-- TODO: PLACEHOLDER — link to the portable Windows archive once uploaded
-     to the GitHub release / Zenodo archive, per the manuscript's Data and
-     Software Availability section. -->
-
 Download the portable Windows archive from the
-[latest release](TODO: release URL) and run `IBDock_Suite.exe` (or the
-standalone app executable) directly — MGLTools, Vina, Open Babel, P2Rank,
-and fpocket are bundled.
+[v1.0.0 release](https://github.com/mohdbilalsiddiqui927/IBDock/releases/tag/v1.0.0)
+and run the bundled executable directly — MGLTools, Vina, Open Babel,
+P2Rank, and fpocket are bundled, no separate installation required.
 
 ### Option 2 — Run from source (Windows / macOS / Linux)
 
@@ -138,14 +130,8 @@ app — tool paths are persisted in `IBDock_config.json`).
 ## Usage
 
 ```bash
-streamlit run IBDock_Provenire_1.py
+streamlit run "IBDock provenire.py"
 ```
-
-<!-- TODO: confirm this is the correct entry-point filename/path for the
-     published repository — update if the script is renamed or moved into
-     a subfolder (e.g. src/IBDock_Provenire.py). If the suite launcher
-     (IBDock_Suite.py) is the intended entry point instead, replace the
-     command above accordingly. -->
 
 This opens IBDock Provenire in your default web browser. Enter your project
 directory path in the sidebar — IBDock Provenire creates all required
@@ -167,14 +153,11 @@ Each screening campaign is represented by a project directory containing:
 
 ## Reproducing the Astex Benchmark
 
-<!-- TODO: fill in once the benchmark scripts/dataset are finalized in the
-     repository, e.g. a `benchmark/` folder with the Astex Diverse Set
-     protocol, statistical-analysis scripts, and the 85×4 dataset referenced
-     in the manuscript's Supporting Information (Table S2). -->
-
 The complete 85×4 Astex Diverse Set benchmark dataset, statistical-analysis
 inputs and scripts, and the exact external-tool version identifiers used in
-the manuscript are available at `TODO: path within this repo, e.g. benchmark/`.
+the manuscript are available in [`benchmark/`](benchmark/) — see
+[`benchmark/README.md`](benchmark/README.md) for dataset schema and
+instructions to reproduce Tables 2–4 and the in-text statistics.
 
 ## Citation
 
@@ -261,3 +244,4 @@ for terms.
 Developed by Bilal Siddiqui, Sakshi Tiwari, Imran A. Khan, and M. Z. Abdin
 (Jamia Hamdard, New Delhi). The authors thank Jamia Hamdard for providing
 resources and facilities.
+
