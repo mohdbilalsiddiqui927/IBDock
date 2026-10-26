@@ -1,193 +1,263 @@
-# IBDock
+# IBDock Provenire
 
-[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)]()
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+<!-- TODO: optional badges once the repo is live, e.g.:
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+-->
 
-IBDock is a browser-based GUI for running AutoDock Vina docking jobs without touching the command line. It handles everything in one place — protein and ligand preparation, grid box generation, batch docking across multiple receptor–ligand pairs, 3D pose visualisation, and re-docking RMSD validation — and exports a PDF report when you are done.
+![IBDock Provenire](docs/screenshots/00_logo.png)
 
-It was built because setting up Vina manually is fragmented across too many tools, and because existing GUIs either cap you at one ligand at a time or break silently on real-world IUPAC chemical names.
+**IBDock Provenire** is a browser-based graphical interface for batch molecular
+docking using AutoDock Vina. It integrates the full virtual-screening
+pipeline — protein preparation, ligand preparation, grid-box generation,
+parallel docking, and results analysis — into a single zero-command-line
+application, while recording search-space provenance as persistent project
+state and validating poses through two independent atom-correspondence
+routes (symmetry-aware graph correspondence via sPyRMSD, and a
+provenance-aware coordinate bridge).
 
-![IBDock Results tab showing docking scores, affinity heatmap, and per-ligand distributions for six protein-ligand pairs](docs/screenshots/tab4_results.png)
+On the 85-complex Astex Diverse Set, four search-space strategies evaluated
+under an otherwise fixed Vina protocol gave Top-1 success rates of 60.0%
+(co-crystallized ligand), 51.8% (fpocket), 36.5% (P2Rank), and 23.5% (blind
+docking) — demonstrating that search-space definition can materially
+influence docking outcomes. See the accompanying manuscript for the full
+benchmark.
 
----
+## Table of Contents
+
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [System Requirements](#system-requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Reproducing the Astex Benchmark](#reproducing-the-astex-benchmark)
+- [Citation](#citation)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
 
 ## Features
 
-- **Batch docking** — dock any number of ligands against one or more receptors in a single session, running all jobs in parallel via `concurrent.futures`
-- **Automated grid box derivation** — five selectable modes covering co-crystallised ligand extraction, P2Rank, fpocket, blind docking, and manual entry; the Auto mode cascades through them automatically
-- **Multi-chain-safe grid centring** — when a structure contains multiple crystallographic copies of the same complex (common in the PDB), ligand coordinates are restricted to a single representative chain rather than pooled across copies, avoiding a grid centre that corresponds to no real binding site
-- **Built-in RMSD validation** — symmetric heavy-atom RMSD against crystal reference poses, with Excellent / Pass / Borderline / Fail classification following Warren et al. (2006)
-- **Interactive 3D pose viewer** — powered by 3Dmol.js, embedded directly in the browser; no PyMOL or external viewer required
-- **PDF report export** — formatted multi-page validation report generated automatically from your results
-- **Cross-platform** — runs on Windows, macOS, and Linux
-- **No command-line required** — the entire workflow is GUI-driven from a browser tab
+- **Automated and manual search-space selection** — a reproducible
+  auto-cascade (co-crystallized ligand → P2Rank → fpocket → blind docking)
+  or explicit, user-directed selection of crystallographic ligand instances.
+- **Persistent search-space provenance** — every generated grid is stored
+  together with the method and ligand instances that produced it
+  (`grid_config.txt`, `grid_source.txt`), independently of the graphical
+  interface.
+- **Batch docking** with AutoDock Vina, dispatched in parallel via a
+  thread-pool execution layer; configurable exhaustiveness, saved modes,
+  energy range, worker count, CPU allocation, and random seed.
+- **Interactive 3D pose viewer** (py3Dmol / 3Dmol.js) with a binding-site
+  contact layer and exportable 2D interaction diagrams.
+- **Dual-route, reference-based pose validation** — symmetry-aware graph
+  correspondence (sPyRMSD) and a provenance-aware coordinate bridge; cases
+  with no complete correspondence are retained as unresolved rather than
+  assigned approximate mappings.
+- **Downloadable PDF reports** summarizing search-space strategy, docking
+  scores, and reference-based RMSD outcomes for a selected run.
+- **Cross-platform**: Windows, macOS, Linux. The packaged Windows build
+  bundles MGLTools, Vina, Open Babel, P2Rank, and fpocket as native Windows
+  tools, with no separate installation required.
 
----
+## Screenshots
 
-## Requirements
+![Home screen](docs/screenshots/01_home.png)
+*Landing page: project-directory setup, tool-path configuration, and the expected input folder structure.*
 
-**Python 3.9 or later.**
+The application workflow runs across seven tabs: **Protein Prep → Ligand
+Prep → Docking → Results → Pose Viewer → Validation → About & Cite**.
 
-```bash
-pip install -r requirements.txt
-```
+| | |
+|---|---|
+| ![Protein Prep tab — cleaning options, grid-box settings, and the five search-space strategies (Auto, Co-crystallised ligand, fpocket, P2Rank, Blind docking)](docs/screenshots/02_protein_prep.png) | ![Ligand Prep tab — protonation state, pH, 3D-coordinate generation, PDBQT conversion settings](docs/screenshots/03_ligand_prep.png) |
+| ![Docking tab — pre-docking checklist, Vina parameters (exhaustiveness, modes, parallel jobs, fixed seed)](docs/screenshots/04_docking.png) | ![Results tab — ranked docking results table with best affinity, energy gap, and ligand efficiency](docs/screenshots/05_results.png) |
+| ![Pose Viewer tab — interactive 3D pose viewer with binding-site residues and H-bond/contact annotations](docs/screenshots/06_pose_viewer.png) | ![Validation tab — re-docking RMSD vs. reference ligand, sPyRMSD and coordinate-bridge agreement](docs/screenshots/07_validation.png) |
 
-Four external tools must be installed separately:
+The Pose Viewer tab also generates publication-ready 2D ligand-interaction
+diagrams, and the Results tab includes an affinity-heatmap/plots view,
+both with PNG/SVG/PDF export from the same session:
 
-| Tool | Version | Download |
-|------|---------|----------|
-| MGLTools | 1.5.7 | https://ccsb.scripps.edu/mgltools/downloads/ |
-| AutoDock Vina | ≥ 1.2.0 | https://github.com/ccsb-scripps/AutoDock-Vina/releases |
-| Open Babel | ≥ 3.1.0 | https://openbabel.org/wiki/Category:Installation |
-| P2Rank | 2.4 | https://github.com/rdk/p2rank/releases *(optional)* |
-| fpocket | ≥ 4.0 | https://github.com/Discngine/fpocket *(optional)* |
+| | |
+|---|---|
+| ![2D ligand-interaction diagram — residue contacts, H-bonds, and π-π stacking, generated from the Pose Viewer tab](docs/screenshots/08_2d_interaction.png) | ![Results tab — Plots sub-view: binding-affinity heatmap and per-ligand affinity bar charts across all search-space strategies](docs/screenshots/09_results_plots.png) |
 
-P2Rank and fpocket are only needed if you want automated pocket prediction. On Windows,
-both must be run through WSL — IBDock handles this automatically if you prefix the
-executable paths with `wsl` in the Settings panel.
+## System Requirements
 
----
+IBDock Provenire orchestrates several external tools that are **not**
+installed via `pip` — these must be available on your system path (or
+bundled, in the packaged Windows build). Versions below match the
+environment used for the Astex Diverse Set benchmark reported in the
+manuscript (see SI Table S3); other recent versions of these tools are
+likely compatible but have not been benchmarked.
+
+| Tool | Version used in benchmark | Role |
+|---|---|---|
+| Python | 3.11.9 | Application runtime |
+| AutoDock Vina | 1.2.7 | Docking engine |
+| MGLTools / AutoDockTools | 1.5.7 | Receptor/ligand PDBQT preparation |
+| Open Babel | 3.1.1 | Chemical-format conversion |
+| Meeko | 0.7.1 | Ligand-preparation fallback (on MGLTools failure) |
+| P2Rank | 2.5.1 | Pocket prediction |
+| fpocket | 4.0 | Pocket prediction |
+
+<!-- TODO: add download/install links for each external tool above, e.g.:
+- AutoDock Vina: https://vina.scripps.edu/
+- MGLTools: https://ccsb.scripps.edu/mgltools/
+- Open Babel: https://openbabel.org/
+- P2Rank: https://github.com/rdk/p2rank
+- fpocket: https://github.com/Discngine/fpocket
+-->
 
 ## Installation
 
+### Option 1 — Packaged Windows build (no setup required)
+
+<!-- TODO: PLACEHOLDER — link to the portable Windows archive once uploaded
+     to the GitHub release / Zenodo archive, per the manuscript's Data and
+     Software Availability section. -->
+
+Download the portable Windows archive from the
+[latest release](TODO: release URL) and run `IBDock_Suite.exe` (or the
+standalone app executable) directly — MGLTools, Vina, Open Babel, P2Rank,
+and fpocket are bundled.
+
+### Option 2 — Run from source (Windows / macOS / Linux)
+
 ```bash
 git clone https://github.com/mohdbilalsiddiqui927/IBDock.git
-cd ibdock
+cd IBDock
 pip install -r requirements.txt
-streamlit run IBDock.py
 ```
 
-This opens IBDock in your browser at `http://localhost:8501`. On first launch, open
-the **⚙ Settings** panel in the sidebar and point IBDock at your MGLTools, Vina, and
-Open Babel executables. Paths are saved to `IBDock_config.json` and remembered across
-sessions.
+Then install the external tools listed in
+[System Requirements](#system-requirements) separately and ensure they are
+reachable on your system path (or configure their paths from within the
+app — tool paths are persisted in `IBDock_config.json`).
 
-**Note (Windows):** if the `python` command does not work in your terminal, use the
-Python launcher instead: `py -3 -m pip install -r requirements.txt` and `py -3 -m streamlit run IBDock.py`.
-
----
-
-## Quick Start
-
-The `example/` folder contains a prepared 1HNN system (human PNMT, bound to the
-inhibitor SK&F 29661) ready to dock:
-
-```
-example/
-├── receptor/   1HNN.pdb          raw PDB file as downloaded from RCSB
-├── ligand/     1HNN_ligand.pdb   co-crystallised ligand
-└── reference/  1HNN_ligand.pdb   crystal pose for RMSD validation
-```
-
-1. Upload `1HNN.pdb` in **Protein Prep** — the grid box is detected automatically
-2. Upload `1HNN_ligand.pdb` in **Ligand Prep**
-3. Click **Run Docking** in the Docking tab
-4. Upload `1HNN_ligand.pdb` (reference copy) in **Validation** and compute RMSD
-
-**Expected result:** RMSD ≈ 1.02 Å (Pass)
-
----
-
-## Workflow
-
-IBDock is organised around seven sequential tabs:
-
-| Tab | What it does |
-|-----|-------------|
-| **Protein Prep** | Upload PDB, remove waters/HETATM, compute grid box, generate PDBQT |
-| **Ligand Prep** | Convert SDF / MOL2 / PDB to PDBQT with Gasteiger charges |
-| **Docking** | Run all receptor–ligand pairs in parallel via AutoDock Vina |
-| **Results** | Sortable results table with affinity, ΔE, ligand efficiency; heatmap; CSV export |
-| **Pose Viewer** | Interactive 3D viewer; download receptor / ligand / complex as PDB |
-| **Validation** | Symmetric RMSD vs crystal poses; colour-coded classification; PDF export |
-| **About & Cite** | Version info, dependency list, formatted citation |
-
-Annotated screenshots of every tab are in [`docs/screenshots/`](docs/screenshots/).
-
----
-
-## Grid Box Modes
-
-IBDock offers five modes for defining the Vina search space, selectable from the
-radio button in the Protein Prep tab:
-
-| Mode | When to use |
-|------|-------------|
-| **Auto (recommended)** | Default — cascades through co-crystallised ligand → P2Rank → fpocket → blind docking, with a warning at each fallback |
-| **Co-crystallised ligand** | Crystal structure with a known drug-like co-crystallised ligand |
-| **P2Rank pocket prediction** | Apo structure or when no co-crystallised ligand is present |
-| **fpocket pocket prediction** | Geometry-based alternative to P2Rank |
-| **Blind docking** | Unknown binding site; covers the full protein extent |
-
-For structures containing multiple crystallographic copies of the same complex
-(e.g. several chains each with their own bound ligand), grid derivation is
-automatically restricted to a single representative chain rather than pooling
-ligand coordinates across copies — see Features above.
-
-All modes write the final grid parameters to `grid_config.txt` alongside your results
-for full reproducibility.
-
----
-
-## Validation
-
-Re-docking was performed across the full 85-complex Astex Diverse Set (Hartshorn et
-al., 2007), using AutoDock Vina 1.2.3, exhaustiveness = 16, MGLTools 1.5.7, Open Babel
-3.1.1. Top-scored (Top-1) pose pass rate: **42/85 (49.4%)** at the standard RMSD ≤ 2.0 Å
-criterion, consistent with published AutoDock Vina performance on the same benchmark
-(Buttenschoen et al., 2024).
-
-A worked example is provided in the `example/` folder using 1HNN (human
-phenylethanolamine N-methyltransferase, PNMT), co-crystallised with its inhibitor
-1,2,3,4-tetrahydroisoquinoline-7-sulfonamide (SK&F 29661). Re-docking this system with
-IBDock using the co-crystallised ligand for automated grid box derivation yielded an
-RMSD of 1.020 Å against the crystal pose (Pass, < 2.0 Å threshold).
-
----
-
-## Tests
+## Usage
 
 ```bash
-pip install pytest
-pytest Tests/test_ibdock.py -v
+streamlit run IBDock_Provenire_1.py
 ```
 
----
+<!-- TODO: confirm this is the correct entry-point filename/path for the
+     published repository — update if the script is renamed or moved into
+     a subfolder (e.g. src/IBDock_Provenire.py). If the suite launcher
+     (IBDock_Suite.py) is the intended entry point instead, replace the
+     command above accordingly. -->
 
-## Contributing
+This opens IBDock Provenire in your default web browser. Enter your project
+directory path in the sidebar — IBDock Provenire creates all required
+subfolders automatically.
 
-Bug reports, feature requests, and pull requests are welcome.
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting.
+## Project Structure
 
----
+Each screening campaign is represented by a project directory containing:
+
+```
+<project_dir>/
+├── IBDock_config.json      # persisted tool paths
+├── grid_config.txt         # per-protein grid definition (Vina-compatible)
+├── grid_source.txt         # search-space method, selection mode, ligand labels
+├── dock/                   # docking-stage configs and outputs
+├── grid/                   # pocket-prediction scratch outputs (P2Rank/fpocket runs)
+└── ...                     # prepared structures, logs, result tables
+```
+
+## Reproducing the Astex Benchmark
+
+<!-- TODO: fill in once the benchmark scripts/dataset are finalized in the
+     repository, e.g. a `benchmark/` folder with the Astex Diverse Set
+     protocol, statistical-analysis scripts, and the 85×4 dataset referenced
+     in the manuscript's Supporting Information (Table S2). -->
+
+The complete 85×4 Astex Diverse Set benchmark dataset, statistical-analysis
+inputs and scripts, and the exact external-tool version identifiers used in
+the manuscript are available at `TODO: path within this repo, e.g. benchmark/`.
 
 ## Citation
 
-If IBDock is useful in your work, please cite:
+If you use IBDock Provenire in published research, see
+[`CITATION.cff`](CITATION.cff) or cite:
 
-```bibtex
-@article{ibdock2026,
-  author = {Bilal Siddiqui, Sakshi, Imran A Khan and MZ Abdin},
-  title  = {{IBDock}: Browser-Based Batch Docking and Automated Validation
-            with {AutoDock Vina}}
-}
+<!-- TODO: update once the manuscript is accepted/published — see the
+     preferred-citation block in CITATION.cff for the same TODO. -->
+
+> Siddiqui B., Tiwari S., Khan I. A., Abdin M. Z. IBDock Provenire:
+> Search-Space Capture and Pose Validation for Molecular Docking.
+> *J. Chem. Inf. Model.* (in review).
+
+IBDock Provenire orchestrates several third-party tools. If you use it in
+published research, please also cite the underlying tools it depends on:
+
+<details>
+<summary>AutoDock Vina</summary>
+
 ```
+Eberhardt J, Santos-Martins D, Tillack AF, Forli S. (2021).
+AutoDock Vina 1.2.0: New Docking Methods, Expanded Force Field,
+and Python Bindings. J Chem Inf Model. 61(8):3891-3898.
+DOI: 10.1021/acs.jcim.1c00203
 
-*(Full journal details will be added upon publication.)*
+Trott O, Olson AJ. (2010). AutoDock Vina: Improving the speed
+and accuracy of docking with a new scoring function, efficient
+optimization, and multithreading. J Comput Chem. 31(2):455-461.
+DOI: 10.1002/jcc.21334
+```
+</summary>
+</details>
 
-Please also cite the tools IBDock depends on:
+<details>
+<summary>MGLTools / AutoDockTools</summary>
 
-- **AutoDock Vina:** Trott & Olson (2010) *J. Comput. Chem.* 31:455–461 · Eberhardt et al. (2021) *J. Chem. Inf. Model.* 61:3891–3898
-- **MGLTools:** Morris et al. (2009) *J. Comput. Chem.* 30:2785–2791
-- **Open Babel:** O'Boyle et al. (2011) *J. Cheminform.* 3:33
-- **P2Rank:** Krivak & Hoksza (2018) *J. Cheminform.* 10:39
-- **fpocket:** Le Guilloux et al. (2009) *BMC Bioinformatics* 10:168
+```
+Morris GM, Huey R, Lindstrom W, Sanner MF, Belew RK, Goodsell DS, Olson AJ. (2009).
+AutoDock4 and AutoDockTools4: Automated docking with selective receptor flexibility.
+J Comput Chem. 30(16):2785-2791. DOI: 10.1002/jcc.21256
+```
+</details>
 
----
+<details>
+<summary>Open Babel</summary>
+
+```
+O'Boyle NM, Banck M, James CA, Morley C, Vandermeersch T, Hutchison GR. (2011).
+Open Babel: An open chemical toolbox. J Cheminform. 3:33.
+DOI: 10.1186/1758-2946-3-33
+```
+</details>
+
+<details>
+<summary>P2Rank</summary>
+
+```
+Krivák R, Hoksza D. (2018). P2Rank: machine learning based tool
+for rapid and accurate prediction of ligand binding sites from
+protein structure. J Cheminform. 10:39. DOI: 10.1186/s13321-018-0285-8
+```
+</details>
+
+<details>
+<summary>fpocket</summary>
+
+```
+Le Guilloux V, Schmidtke P, Tuffery P. (2009). Fpocket: An open
+source platform for ligand pocket detection. BMC Bioinformatics. 10:168.
+DOI: 10.1186/1471-2105-10-168
+```
+</details>
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+IBDock Provenire is released under the [MIT License](LICENSE).
 
+AutoDock Vina, MGLTools, Open Babel, P2Rank, and fpocket are each subject to
+their own respective licenses — see each tool's own repository/distribution
+for terms.
+
+## Acknowledgments
+
+Developed by Bilal Siddiqui, Sakshi Tiwari, Imran A. Khan, and M. Z. Abdin
+(Jamia Hamdard, New Delhi). The authors thank Jamia Hamdard for providing
+resources and facilities.
