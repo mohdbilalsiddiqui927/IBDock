@@ -1,27 +1,31 @@
-# IBDock — Python Dependencies
-# Install with: pip install -r requirements.txt
-# Requires Python >= 3.9
-
-# ── Core application ──────────────────────────────────────────────────────────
-streamlit>=1.32.0
-
-# ── Numerical / data ──────────────────────────────────────────────────────────
-numpy>=1.24.0
-pandas>=2.0.0
-
-# ── Visualisation ─────────────────────────────────────────────────────────────
-matplotlib>=3.7.0
-seaborn>=0.12.0
-
-# ── Notes ─────────────────────────────────────────────────────────────────────
-# The following are NOT pip-installable and must be installed separately.
-# Platform-specific download links are provided in the README.
+# Python dependencies for IBDock Provenire
 #
-#   MGLTools 1.5.7       https://ccsb.scripps.edu/mgltools/downloads/
-#   Open Babel 3.1.x     https://openbabel.org/wiki/Category:Installation
-#   AutoDock Vina 1.2.x  https://github.com/ccsb-scripps/AutoDock-Vina/releases
-#   P2Rank 2.4           https://github.com/rdk/p2rank/releases       (optional)
-#   fpocket 4.0          https://github.com/Discngine/fpocket         (optional)
+# The four packages below are pinned to the exact versions used in the
+# environment for the Astex Diverse Set benchmark reported in the manuscript
+# (SI Table S3: Python 3.11.9).
 #
-# On Windows, P2Rank and fpocket must be run via WSL.
-# See README.md for full installation instructions per platform.
+# numpy / pandas / matplotlib / seaborn / Pillow were NOT individually
+# version-locked in that table. The versions pinned below are each
+# package's latest release on PyPI as of this file's last update —
+# NOT the versions actually used in the original benchmark run, which were
+# not recorded. If you need a byte-for-byte reproduction of that
+# environment, run `pip freeze` there and replace these five lines.
+#
+# This file covers PYTHON packages only. IBDock Provenire also requires
+# several external tool binaries that are NOT installed via pip — see the
+# "System Requirements" section of README.md for AutoDock Vina, Open Babel,
+# MGLTools/AutoDockTools, P2Rank, and fpocket.
+
+# --- pinned (verified against SI Table S3 benchmark environment) ---
+streamlit==1.53.1
+rdkit==2025.09.5
+spyrmsd==0.9.0
+meeko==0.7.1
+
+# --- pinned to latest PyPI release as of 2026-10-26 (not independently
+#     verified against the original benchmark environment) ---
+numpy==2.5.4
+pandas==3.1.0
+matplotlib==3.11.2
+seaborn==0.13.2
+Pillow==13.0.0
