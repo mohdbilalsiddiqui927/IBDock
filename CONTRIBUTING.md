@@ -1,45 +1,47 @@
-# Contributing to IBDock
+# Contributing to IBDock Provenire
 
-Contributions are welcome — bug reports, fixes, and feature suggestions all help.
+Thanks for your interest in IBDock Provenire. This project accompanies a
+peer-reviewed manuscript, so the focus is on correctness and reproducibility
+of the docking/validation pipeline described there.
 
-## Found a bug?
+## Reporting issues
 
-Open an issue and include:
+If you hit a bug, a crash, or unexpected behavior:
 
-- Your OS, Python version, and the versions of MGLTools, Vina, and Open Babel
-- What you did and what you expected to happen
-- The full error message or traceback from the terminal or Streamlit panel
-- The input PDB or ligand file if the bug is file-specific (strip any confidential data)
+1. Check that you're on the version described in [`requirements.txt`](requirements.txt)
+   and the [System Requirements](README.md#system-requirements) table in the README.
+2. Open a [GitHub Issue](../../issues) including:
+   - Your OS and Python version
+   - The exact steps that triggered the problem
+   - Any error message or traceback, in full
+   - If relevant, the input files (or a minimal example) that reproduce it
 
-The most common issues are wrong tool paths in `IBDock_config.json`, WSL path
-formatting on Windows, and ligand filenames with special characters. Worth checking
-those first.
+## Suggesting features
 
-## Want to suggest a feature?
+Open an issue describing the use case before submitting a pull request, so
+the change can be discussed first — this avoids wasted effort on features
+that don't fit the project's scope (batch AutoDock Vina docking with
+search-space provenance and reference-based pose validation).
 
-Open an issue describing what you want to do and why. If it is a significant change,
-discuss it before writing code — it saves everyone time.
+## Submitting changes
 
-## Submitting a fix or feature
+1. Fork the repository and create a branch from `main`.
+2. Keep changes focused — one feature or fix per pull request.
+3. Test your changes locally before submitting (`streamlit run IBDock_Provenire_1.py`,
+   and if relevant, `python benchmark/scripts/statistical_analysis.py --write-template`
+   to confirm the analysis pipeline still runs).
+4. Describe what the change does and why in the pull request description.
+5. Be responsive to review feedback — this keeps the pipeline's outputs
+   consistent with what's reported in the accompanying manuscript.
 
-```bash
-git clone https://github.com/mohdbilalsiddiqui927/IBDock.git
-cd IBDock
-pip install -r requirements.txt
-pip install pytest
-pytest Tests/   # make sure everything passes before you start
-```
+## Code of conduct
 
-Keep pull requests small and focused. One thing per PR. Add or update a test in
-`Tests/test_ibdock.py` if your change touches a computational function.
-
-A few things that will make review straightforward:
-
-- Keep UI logic (Streamlit calls) and computation logic in separate functions — the computational ones need to be testable without a running Streamlit session
-- Use type hints on new functions, consistent with the existing code
-- Do not add new pip dependencies without raising it in an issue first
+Be respectful and constructive. This is an academic research tool used by a
+small team; keep discussion focused on the software and the science.
 
 ## Questions
 
-Open a GitHub Discussion rather than an issue if you are not sure about something
-or want to talk through an approach before writing code.
+For questions about the methodology behind IBDock Provenire (search-space
+strategies, pose validation routes, benchmarking approach), see the
+accompanying manuscript, cited in [`CITATION.cff`](CITATION.cff). For
+questions about using the software itself, open an issue.
