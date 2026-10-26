@@ -39,7 +39,7 @@ benchmark.
 ## Features
 
 - **Automated and manual search-space selection** — a reproducible
-  auto-cascade (co-crystallized ligand → P2Rank → fpocket → blind docking)
+  auto-cascade (co-crystallized ligand → fpocket → P2Rank → blind docking)
   or explicit, user-directed selection of crystallographic ligand instances.
 - **Persistent search-space provenance** — every generated grid is stored
   together with the method and ligand instances that produced it
