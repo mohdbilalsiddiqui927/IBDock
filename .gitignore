@@ -1,49 +1,41 @@
-# IBDock — .gitignore
-
-# ── Runtime config (contains local machine paths) ─────────────────────────────
-IBDock_config.json
-
-# ── IBDock output folders generated at runtime ────────────────────────────────
-prepared/
-docked/
-results/
-grid/
-logs/
-
-# ── Common docking file formats ───────────────────────────────────────────────
-*.pdbqt
-*.log
-*.dlg
-
-# ── Python ────────────────────────────────────────────────────────────────────
+# Byte-compiled / optimized files
 __pycache__/
 *.py[cod]
-*.pyo
-.pytest_cache/
-*.egg-info/
-dist/
-build/
-.eggs/
+*$py.class
 
-# ── Virtual environments ──────────────────────────────────────────────────────
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
 venv/
 .venv/
 env/
+ENV/
 
-# ── OS ────────────────────────────────────────────────────────────────────────
+# IBDock Provenire project data (user-generated, not source)
+# Rename/adjust these if your default project folder name differs.
+IBDock_config.json
+grid_config.txt
+grid_source.txt
+dock/
+grid/
+projects/
+*.pdbqt
+*.log
+
+# OS / editor cruft
 .DS_Store
 Thumbs.db
-desktop.ini
-
-# ── Editors ───────────────────────────────────────────────────────────────────
 .vscode/
 .idea/
 *.swp
-*.swo
 
-# ── Streamlit ─────────────────────────────────────────────────────────────────
-.streamlit/
+# Streamlit
+.streamlit/secrets.toml
 
-# ── Jupyter (if any notebooks added later) ────────────────────────────────────
+# Jupyter
 .ipynb_checkpoints/
+
 
