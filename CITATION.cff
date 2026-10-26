@@ -1,0 +1,74 @@
+# This CITATION.cff file lets GitHub show a "Cite this repository" button
+# and lets Zenodo auto-populate author/title metadata when this repository
+# is archived on release.
+#
+# Validate this file before publishing at https://citation-file-format.github.io/cff-initializer-javascript/
+
+cff-version: 1.2.0
+message: "If you use IBDock Provenire in published research, please cite it as below."
+title: "IBDock Provenire"
+version: 1.0.0
+date-released: "2026-10-26"
+authors:
+  - family-names: "Siddiqui"
+    given-names: "Bilal"
+    orcid: "https://orcid.org/0000-0001-6945-9600"
+  - family-names: "Tiwari"
+    given-names: "Sakshi"
+    orcid: "https://orcid.org/0000-0001-6594-5345"
+  - family-names: "Khan"
+    given-names: "Imran A."
+    orcid: "https://orcid.org/0000-0002-2014-4277"
+  - family-names: "Abdin"
+    given-names: "M. Z."
+    orcid: "https://orcid.org/0000-0001-7346-0719"
+repository-code: "https://github.com/mohdbilalsiddiqui927/IBDock"
+license: MIT
+type: software
+keywords:
+  - molecular docking
+  - AutoDock Vina
+  - reproducibility
+  - search-space provenance
+  - pose validation
+  - RMSD
+  - sPyRMSD
+  - cheminformatics
+abstract: >-
+  IBDock Provenire is a reproducibility-oriented AutoDock Vina workflow
+  that records search-space provenance as persistent project state and
+  makes atom correspondence explicit during reference-based pose
+  validation. Search spaces can be derived from automatically or manually
+  selected co-crystallized ligands, P2Rank, fpocket, or the receptor
+  envelope, and every generated grid is stored together with the method
+  and ligand instances that produced it. Pose validation combines
+  symmetry-aware graph correspondence (sPyRMSD) with a provenance-aware
+  coordinate bridge, and cases for which no complete correspondence can
+  be established are retained as unresolved rather than assigned
+  approximate mappings.
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.23663435"
+    description: "Zenodo archive of the v1.0.0 release"
+
+preferred-citation:
+  type: article
+  title: "IBDock Provenire: Search-Space Capture and Pose Validation for Molecular Docking"
+  authors:
+    - family-names: "Siddiqui"
+      given-names: "Bilal"
+      orcid: "https://orcid.org/0000-0001-6945-9600"
+    - family-names: "Tiwari"
+      given-names: "Sakshi"
+      orcid: "https://orcid.org/0000-0001-6594-5345"
+    - family-names: "Khan"
+      given-names: "Imran A."
+      orcid: "https://orcid.org/0000-0002-2014-4277"
+    - family-names: "Abdin"
+      given-names: "M. Z."
+      orcid: "https://orcid.org/0000-0001-7346-0719"
+  journal: "Journal of Chemical Information and Modeling"
+  year: 2026
+  volume: "TODO: fill in once accepted/published"
+  doi: "TODO: fill in once accepted/published"
+  notes: "Manuscript under review as of October 2026; update this block once JCIM assigns volume/pages/DOI."
