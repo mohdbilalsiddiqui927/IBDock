@@ -27,7 +27,7 @@ search-space provenance and reference-based pose validation).
 
 1. Fork the repository and create a branch from `main`.
 2. Keep changes focused — one feature or fix per pull request.
-3. Test your changes locally before submitting (`streamlit run IBDock_Provenire_1.py`,
+3. Test your changes locally before submitting (`streamlit run "IBDock provenire.py"`,
    and if relevant, `python benchmark/scripts/statistical_analysis.py --write-template`
    to confirm the analysis pipeline still runs).
 4. Describe what the change does and why in the pull request description.
