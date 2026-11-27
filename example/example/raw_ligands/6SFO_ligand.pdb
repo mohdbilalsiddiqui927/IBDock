@@ -1,0 +1,73 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-09-10T10:48:26Z
+CRYST1   65.516   75.051   77.486  90.00  90.00  90.00 P212121    
+HETATM    1  C1  LBE A 402       5.261   1.077 -18.564  1.00 29.41           C  
+HETATM    2  C2  LBE A 402       4.129   1.661 -17.758  1.00 27.40           C  
+HETATM    3  C3  LBE A 402       4.381   2.424 -16.634  1.00 26.11           C  
+HETATM    4  C4  LBE A 402       3.343   2.984 -15.906  1.00 25.75           C  
+HETATM    5  C5  LBE A 402       2.026   2.758 -16.265  1.00 24.40           C  
+HETATM    6  C6  LBE A 402       0.853   3.179 -15.441  1.00 25.08           C  
+HETATM    7  C7  LBE A 402       0.048   4.539 -13.579  1.00 27.74           C  
+HETATM    8  C8  LBE A 402      -0.016   3.403 -12.552  1.00 32.01           C  
+HETATM    9  C9  LBE A 402      -1.160   3.457 -11.658  1.00 33.70           C  
+HETATM   10  C10 LBE A 402      -2.502   3.292 -12.284  1.00 29.16           C  
+HETATM   11  C12 LBE A 402      -4.971   3.446 -11.769  1.00 27.33           C  
+HETATM   12  C15 LBE A 402      -2.736   1.865 -12.785  1.00 27.46           C  
+HETATM   13  C16 LBE A 402       1.773   2.009 -17.401  1.00 28.18           C  
+HETATM   14  C17 LBE A 402       2.809   1.465 -18.135  1.00 26.36           C  
+HETATM   15  C21 LBE A 402       0.856  -1.536 -24.684  1.00 53.38           C  
+HETATM   16  C22 LBE A 402       0.179  -1.719 -25.880  1.00 55.36           C  
+HETATM   17  C23 LBE A 402       0.873  -1.990 -27.039  1.00 53.72           C  
+HETATM   18  C24 LBE A 402       2.248  -2.077 -27.014  1.00 54.59           C  
+HETATM   19  C25 LBE A 402       2.940  -1.895 -25.827  1.00 53.10           C  
+HETATM   20  C26 LBE A 402       3.566  -1.839 -21.441  1.00 39.00           C  
+HETATM   21  O1  LBE A 402      -0.245   2.654 -15.611  1.00 26.21           O  
+HETATM   22  N1  LBE A 402       1.052   4.157 -14.557  1.00 24.69           N  
+HETATM   23  C14 LBE A 402      -4.159   1.678 -13.281  1.00 26.39           C  
+HETATM   24  C13 LBE A 402      -5.162   2.033 -12.222  1.00 27.33           C  
+HETATM   25  C11 LBE A 402      -3.559   3.669 -11.265  1.00 28.31           C  
+HETATM   26  N   LBE A 402       4.787   0.140 -19.566  1.00 29.30           N  
+HETATM   27  C   LBE A 402       4.419   0.550 -20.781  1.00 31.32           C  
+HETATM   28  O   LBE A 402       4.491   1.733 -21.150  1.00 31.31           O  
+HETATM   29  C18 LBE A 402       3.900  -0.490 -21.672  1.00 36.75           C  
+HETATM   30  N4  LBE A 402       2.991  -2.396 -22.497  1.00 42.11           N  
+HETATM   31  N3  LBE A 402       2.946  -1.391 -23.439  1.00 45.53           N  
+HETATM   32  C19 LBE A 402       3.508  -0.242 -22.983  1.00 38.38           C  
+HETATM   33  N2  LBE A 402       3.625   0.866 -23.708  1.00 40.18           N  
+HETATM   34  C20 LBE A 402       2.241  -1.623 -24.660  1.00 48.06           C  
+TER      35      LBE A 402 
+CONECT    1    2   26
+CONECT    2    1    3   14
+CONECT    3    2    4
+CONECT    4    3    5
+CONECT    5    4    6   13
+CONECT    6    5   21   22
+CONECT    7    8   22
+CONECT    8    7    9
+CONECT    9    8   10
+CONECT   10    9   12   25
+CONECT   11   24   25
+CONECT   12   10   23
+CONECT   13    5   14
+CONECT   14    2   13
+CONECT   15   16   34
+CONECT   16   15   17
+CONECT   17   16   18
+CONECT   18   17   19
+CONECT   19   18   34
+CONECT   20   29   30
+CONECT   21    6
+CONECT   22    6    7
+CONECT   23   12   24
+CONECT   24   11   23
+CONECT   25   10   11
+CONECT   26    1   27
+CONECT   27   26   28   29
+CONECT   28   27
+CONECT   29   20   27   32
+CONECT   30   20   31
+CONECT   31   30   32   34
+CONECT   32   29   31   33
+CONECT   33   32
+CONECT   34   15   19   31
+END
