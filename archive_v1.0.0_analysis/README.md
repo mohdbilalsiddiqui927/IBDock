@@ -1,0 +1,2 @@
+# Archive: v1.0.0 analysis (superseded)
+These files are the original single-run Astex analysis released with v1.0.0 (one exhaustiveness, one seed; the 340-row `astex_diverse_set_85x4.csv`). They are kept for the record only. **The numbers in the current manuscript come from `../benchmark/`** (3 seeds x 3 exhaustiveness levels, 3,060 dockings), and the two sets of numbers differ. Do not combine them.

@@ -7,8 +7,8 @@
 cff-version: 1.2.0
 message: "If you use IBDock Provenire in published research, please cite it as below."
 title: "IBDock Provenire"
-version: 1.0.0
-date-released: "2026-10-26"
+version: 1.1.0   # update to match the release you publish
+date-released: "2026-11-26"   # update on release day
 authors:
   - family-names: "Siddiqui"
     given-names: "Bilal"
@@ -49,7 +49,7 @@ abstract: >-
 identifiers:
   - type: doi
     value: "10.5281/zenodo.23663435"
-    description: "Zenodo archive of the v1.0.0 release"
+    description: "Zenodo archive (v1.0.0). After releasing v1.1.0, replace with the concept DOI or the v1.1.0 version DOI."
 
 preferred-citation:
   type: article
@@ -71,4 +71,4 @@ preferred-citation:
   year: 2026
   volume: "TODO: fill in once accepted/published"
   doi: "TODO: fill in once accepted/published"
-  notes: "Manuscript under review as of October 2026; update this block once JCIM assigns volume/pages/DOI."
+  notes: "Manuscript submitted to JCIM (November 2026); update this block once volume/pages/DOI are assigned."

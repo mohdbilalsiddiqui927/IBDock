@@ -4479,6 +4479,14 @@ st.markdown("""
 # ──────────────────────────────────────────────────────────────────────────────
 # SIDEBAR — CONFIGURATION
 # ──────────────────────────────────────────────────────────────────────────────
+# IBDock Suite: return to the home page (only meaningful when launched through
+# IBDock_Suite.py; ignored if this file is run standalone).
+try:
+    if st.sidebar.button("← Home", key="vina_go_home", use_container_width=True):
+        st.switch_page("home.py")
+except Exception:
+    pass
+
 st.sidebar.markdown(
     _BUSY_CSS
     + '<div style="padding:0.6rem 0 0.5rem; border-bottom:1px solid #ccc; margin-bottom:0.7rem;'
@@ -4622,7 +4630,7 @@ if not project_dir.exists() or str(project_dir) == ".":
       &nbsp;&nbsp;&nbsp;&nbsp;raw_proteins/&nbsp;&nbsp;&nbsp;&nbsp;&larr; .pdb files<br>
       &nbsp;&nbsp;&nbsp;&nbsp;raw_ligands/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr; .sdf / .mol2 / .pdb files
     </code>
-    <div style="margin-top:0.5rem; font-size:0.77rem; color:#777; font-family:'Inter',sans-serif;">All other folders (prepared_receptors/, docking/, results/, &hellip;) are created automatically.</div>
+    <div style="margin-top:0.5rem; font-size:0.77rem; color:#777; font-family:'Inter',sans-serif;">Vina output goes to a <code>Vina/</code> folder (prepared_receptors/, prepared_ligands/, grid/, docking/, results/) that is created automatically.</div>
   </div>
 
 </div>
@@ -4638,13 +4646,37 @@ raw_prot_exists = raw_prot.exists()
 raw_lig_exists = raw_lig.exists()
 
 # Create output directories
-grid_dir     = project_dir / "grid"
-prep_rec_dir = project_dir / "prepared_receptors"
-prep_lig_dir = project_dir / "prepared_ligands"
-dock_dir     = project_dir / "docking"
-result_dir   = project_dir / "results"
+# All Vina output lives in <project>/Vina/ (AutoDock 4 uses <project>/AD4/); raw_* stay shared.
+vina_root    = project_dir / "Vina"
+grid_dir     = vina_root / "grid"
+prep_rec_dir = vina_root / "prepared_receptors"
+prep_lig_dir = vina_root / "prepared_ligands"
+dock_dir     = vina_root / "docking"
+result_dir   = vina_root / "results"
 for d in [grid_dir, prep_rec_dir, prep_lig_dir, dock_dir, result_dir]:
-    d.mkdir(exist_ok=True)
+    d.mkdir(parents=True, exist_ok=True)
+
+# One-time migration of projects created by older versions (outputs directly in the project folder).
+_legacy_names = ("grid", "prepared_receptors", "prepared_ligands", "docking", "results")
+_legacy_found = (any((project_dir / "grid").glob("*/grid_config.txt"))
+                 or any((project_dir / "docking").glob("*.pdbqt"))
+                 or any((project_dir / "results").glob("*.txt")))
+if _legacy_found:
+    st.info("📁 This project has Vina output from an older version directly in the project folder "
+            "(`grid/`, `prepared_receptors/`, `docking/`, …). Vina now keeps these in `Vina/`.")
+    if st.button("Move existing Vina folders into Vina/", key="vina_migrate_legacy"):
+        for _n in _legacy_names:
+            _src, _dst = project_dir / _n, vina_root / _n
+            if _src.exists():
+                for _item in list(_src.iterdir()):
+                    _target = _dst / _item.name
+                    if not _target.exists():
+                        shutil.move(str(_item), str(_target))
+                try:
+                    _src.rmdir()
+                except OSError:
+                    pass
+        st.rerun()
 
 # ── File counts (used in tab labels + preflight) ───────────────────────────
 _n_raw_prot  = len(list(raw_prot.glob("*.pdb")))
@@ -6347,7 +6379,7 @@ with tab6:
     st.markdown("### Docking Validation")
 
     # ── Load results CSV (needed for PDF report) ─────────────────────────────
-    results_csv = project_dir / "docking_results.csv"
+    results_csv = result_dir / "docking_results.csv"
     df_results  = None
     if results_csv.exists():
         try:
