@@ -1,0 +1,44 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# IBDock Provenire project data (user-generated, not source)
+# Rename/adjust these if your default project folder name differs.
+/IBDock_config.json
+/grid_config.txt
+/grid_source.txt
+/dock/
+/grid/
+/projects/
+*.pdbqt
+*.log
+
+# Benchmark data is part of the repository (raw docking outputs include .pdbqt, logs, config files)
+!benchmark/data/**/*.pdbqt
+!benchmark/data/**/*.log
+!benchmark/data/**/*.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Jupyter
+.ipynb_checkpoints/
