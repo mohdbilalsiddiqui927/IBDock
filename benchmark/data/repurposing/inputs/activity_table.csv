@@ -1,0 +1,5 @@
+kinase,pdb_for_docking,imatinib_activity,value,assay_type,source,status
+ABL1,1IEP,IC50,38 nM,biochemical,Chemical Probes Portal citing Nat Med 1996 (DOI 10.1038/nm0596-561),verify in primary paper / ChEMBL
+KIT,1T46,IC50,100 nM,biochemical,Chemical Probes Portal citing Nat Med 1996 (DOI 10.1038/nm0596-561),verify in primary paper / ChEMBL
+SRC,2SRC,IC50,>100 uM,biochemical,Chemical Probes Portal (SRC-family kinases),verify in primary paper / ChEMBL
+EGFR,1M17,not inhibited,,cellular,Chemical Probes Portal,find numeric IC50 in ChEMBL if possible
