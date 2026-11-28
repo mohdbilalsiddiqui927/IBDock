@@ -1,0 +1,44 @@
+REMARK  3 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: C9_10  and  C12_13 
+REMARK    2  A    between atoms: C12_13  and  C13_14 
+REMARK    3  A    between atoms: C12_13  and  C14_15 
+ROOT
+HETATM    1  C   FLP A 501       7.165  28.800  -3.419  1.00  0.00    -0.082 A 
+HETATM    2  C1  FLP A 501       7.996  29.908  -2.978  1.00  0.00    -0.072 A 
+HETATM    3  C2  FLP A 501       7.405  31.131  -2.409  1.00  0.00    -0.023 A 
+HETATM    4  C3  FLP A 501       5.918  31.186  -2.355  1.00  0.00    -0.072 A 
+HETATM    5  C4  FLP A 501       5.110  30.094  -2.794  1.00  0.00    -0.082 A 
+HETATM    6  C5  FLP A 501       5.733  28.920  -3.347  1.00  0.00    -0.083 A 
+HETATM    7  C6  FLP A 501       8.208  32.219  -1.923  1.00  0.00     0.013 C 
+HETATM    8  C7  FLP A 501       9.477  31.935  -1.184  1.00  0.00    -0.069 C 
+HETATM    9  C8  FLP A 501      10.293  32.997  -0.670  1.00  0.00    -0.075 C 
+HETATM   10  C9  FLP A 501       9.984  34.388  -0.968  1.00  0.00    -0.041 C 
+HETATM   11  C10 FLP A 501       8.772  34.689  -1.677  1.00  0.00    -0.038 C 
+HETATM   12  C11 FLP A 501       7.940  33.653  -2.226  1.00  0.00     0.128 C 
+HETATM   13  F   FLP A 501       6.813  34.090  -2.912  1.00  0.00    -0.205 F 
+HETATM   14  H   FLP A 501       7.598  27.936  -3.780  1.00  0.00     0.083 H 
+HETATM   15  H   FLP A 501       9.022  29.836  -3.065  1.00  0.00     0.084 H 
+HETATM   16  H   FLP A 501       5.459  32.036  -1.991  1.00  0.00     0.084 H 
+HETATM   17  H   FLP A 501       4.082  30.146  -2.715  1.00  0.00     0.083 H 
+HETATM   18  H   FLP A 501       5.142  28.150  -3.698  1.00  0.00     0.083 H 
+HETATM   19  H   FLP A 501       9.771  30.956  -1.041  1.00  0.00     0.085 H 
+HETATM   20  H   FLP A 501      11.110  32.772  -0.081  1.00  0.00     0.084 H 
+HETATM   21  H   FLP A 501       8.491  35.675  -1.796  1.00  0.00     0.089 H 
+ENDROOT
+BRANCH  10  22
+HETATM   22  C12 FLP A 501      10.854  35.588  -0.436  1.00  0.00     0.052 C 
+HETATM   23  H   FLP A 501      11.786  35.184  -0.101  1.00  0.00     0.063 H 
+BRANCH  22  24
+HETATM   24  C13 FLP A 501      10.210  36.301   0.807  1.00  0.00    -0.060 C 
+HETATM   25  H   FLP A 501       9.269  36.726   0.527  1.00  0.00     0.029 H 
+HETATM   26  H   FLP A 501      10.863  37.076   1.151  1.00  0.00     0.029 H 
+HETATM   27  H   FLP A 501      10.060  35.587   1.590  1.00  0.00     0.029 H 
+ENDBRANCH  22  24
+BRANCH  22  28
+HETATM   28  C14 FLP A 501      11.120  36.626  -1.611  1.00  0.00     0.181 C 
+HETATM   29  O   FLP A 501      10.588  37.740  -1.596  1.00  0.00    -0.647 OA
+HETATM   30  O1  FLP A 501      11.869  36.290  -2.555  1.00  0.00    -0.647 OA
+ENDBRANCH  22  28
+ENDBRANCH  10  22
+TORSDOF 3

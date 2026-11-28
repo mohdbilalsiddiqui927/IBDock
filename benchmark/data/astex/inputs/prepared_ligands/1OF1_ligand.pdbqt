@@ -1,0 +1,53 @@
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: O16_1  and  C12_12 
+REMARK    2  A    between atoms: O18_2  and  C10_8 
+REMARK    3  A    between atoms: N8_5  and  C17_10 
+REMARK    4  A    between atoms: C1_7  and  C12_12 
+REMARK    5  A    between atoms: C4_16  and  C3_18 
+ROOT
+HETATM    1  C1  SCT A 400      50.302  33.428  -0.146  1.00  0.00    -0.003 C 
+HETATM    2  C10 SCT A 400      50.033  33.764  -1.630  1.00  0.00     0.043 C 
+HETATM    3  C14 SCT A 400      48.505  34.058  -1.701  1.00  0.00    -0.016 C 
+HETATM    4  C17 SCT A 400      47.842  33.148  -0.637  1.00  0.00     0.048 A 
+HETATM    5  C13 SCT A 400      49.001  32.707   0.364  1.00  0.00    -0.019 A 
+HETATM    6  C15 SCT A 400      48.254  31.638  -0.401  1.00  0.00    -0.035 A 
+HETATM    7  H   SCT A 400      51.158  32.792  -0.055  1.00  0.00     0.047 H 
+HETATM    8  H   SCT A 400      50.616  34.599  -1.959  1.00  0.00     0.083 H 
+HETATM    9  H   SCT A 400      48.127  33.826  -2.675  1.00  0.00     0.040 H 
+HETATM   10  H   SCT A 400      48.297  35.091  -1.516  1.00  0.00     0.040 H 
+HETATM   11  H   SCT A 400      49.280  32.687   1.397  1.00  0.00     0.044 H 
+HETATM   12  H   SCT A 400      48.752  31.097  -1.178  1.00  0.00     0.037 H 
+HETATM   13  H   SCT A 400      47.720  30.755  -0.119  1.00  0.00     0.037 H 
+ENDROOT
+BRANCH   4  14
+HETATM   14  N8  SCT A 400      46.561  33.558   0.013  1.00  0.00    -0.297 N 
+HETATM   15  C11 SCT A 400      45.421  32.954  -0.345  1.00  0.00     0.352 A 
+HETATM   16  O9  SCT A 400      45.400  32.082  -1.217  1.00  0.00    -0.244 OA
+HETATM   17  N5  SCT A 400      44.262  33.280   0.247  1.00  0.00    -0.153 NA
+HETATM   18  C6  SCT A 400      44.185  34.210   1.193  1.00  0.00     0.278 A 
+HETATM   19  O7  SCT A 400      43.115  34.502   1.740  1.00  0.00    -0.265 OA
+HETATM   20  C4  SCT A 400      45.442  34.918   1.598  1.00  0.00     0.024 A 
+HETATM   21  C2  SCT A 400      46.574  34.518   0.954  1.00  0.00    -0.004 A 
+HETATM   22  H   SCT A 400      47.471  34.967   1.197  1.00  0.00     0.112 H 
+BRANCH  20  23
+HETATM   23  C3  SCT A 400      45.424  35.998   2.663  1.00  0.00    -0.045 C 
+HETATM   24  H   SCT A 400      44.423  36.133   3.017  1.00  0.00     0.033 H 
+HETATM   25  H   SCT A 400      45.781  36.916   2.246  1.00  0.00     0.033 H 
+HETATM   26  H   SCT A 400      46.054  35.707   3.477  1.00  0.00     0.033 H 
+ENDBRANCH  20  23
+ENDBRANCH   4  14
+BRANCH   2  27
+HETATM   27  O18 SCT A 400      50.415  32.686  -2.509  1.00  0.00    -0.395 OA
+HETATM   28  H   SCT A 400      51.370  32.533  -2.437  1.00  0.00     0.210 HD
+ENDBRANCH   2  27
+BRANCH   1  29
+HETATM   29  C12 SCT A 400      50.722  34.643   0.720  1.00  0.00     0.023 C 
+HETATM   30  H   SCT A 400      50.844  34.326   1.735  1.00  0.00     0.074 H 
+HETATM   31  H   SCT A 400      51.643  35.035   0.342  1.00  0.00     0.074 H 
+BRANCH  29  32
+HETATM   32  O16 SCT A 400      49.718  35.676   0.663  1.00  0.00    -0.400 OA
+HETATM   33  H   SCT A 400      49.996  36.428   1.209  1.00  0.00     0.209 HD
+ENDBRANCH  29  32
+ENDBRANCH   1  29
+TORSDOF 5

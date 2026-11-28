@@ -1,0 +1,79 @@
+REMARK  9 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: N5_6  and  C4_9 
+REMARK    2  A    between atoms: C6_11  and  C7_12 
+REMARK    3  A    between atoms: C2_14  and  C19_15 
+REMARK    4  A    between atoms: C1_16  and  O20_17 
+REMARK    5  A    between atoms: O20_17  and  C21_18 
+REMARK    6  A    between atoms: C24_21  and  C25_22 
+REMARK    7  A    between atoms: C25_22  and  C8_23 
+REMARK    8  A    between atoms: C25_22  and  C9_24 
+REMARK    9  A    between atoms: C26_25  and  O27_27 
+ROOT
+HETATM    1  C4  PFA A 462      19.299   5.407   4.443  1.00  0.00     0.065 A 
+HETATM    2  C5  PFA A 462      20.493   6.176   4.753  1.00  0.00    -0.046 A 
+HETATM    3  C6  PFA A 462      20.859   7.233   3.877  1.00  0.00    -0.025 A 
+HETATM    4  C3  PFA A 462      18.553   5.719   3.321  1.00  0.00    -0.046 A 
+HETATM    5  C2  PFA A 462      18.956   6.702   2.397  1.00  0.00    -0.025 A 
+HETATM    6  C1  PFA A 462      20.103   7.482   2.696  1.00  0.00     0.088 A 
+HETATM    7  H   PFA A 462      21.060   5.960   5.588  1.00  0.00     0.088 H 
+HETATM    8  H   PFA A 462      17.669   5.213   3.155  1.00  0.00     0.088 H 
+ENDROOT
+BRANCH   6   9
+HETATM    9  O20 PFA A 462      20.380   8.504   1.813  1.00  0.00    -0.310 OA
+BRANCH   9  10
+HETATM   10  C21 PFA A 462      21.419   8.339   0.910  1.00  0.00     0.076 A 
+HETATM   11  C31 PFA A 462      21.680   7.075   0.261  1.00  0.00    -0.048 A 
+HETATM   12  C29 PFA A 462      22.756   7.045  -0.637  1.00  0.00    -0.048 A 
+HETATM   13  H   PFA A 462      21.105   6.239   0.448  1.00  0.00     0.087 H 
+HETATM   14  C26 PFA A 462      23.583   8.175  -0.855  1.00  0.00     0.072 A 
+HETATM   15  H   PFA A 462      22.952   6.174  -1.155  1.00  0.00     0.087 H 
+HETATM   16  C24 PFA A 462      23.295   9.425  -0.257  1.00  0.00    -0.019 A 
+HETATM   17  C22 PFA A 462      22.220   9.512   0.664  1.00  0.00    -0.041 A 
+HETATM   18  H   PFA A 462      22.015  10.399   1.149  1.00  0.00     0.088 H 
+BRANCH  14  19
+HETATM   19  O27 PFA A 462      24.637   8.036  -1.731  1.00  0.00    -0.360 OA
+HETATM   20  H   PFA A 462      25.205   8.762  -1.900  1.00  0.00     0.217 HD
+ENDBRANCH  14  19
+BRANCH  16  21
+HETATM   21  C25 PFA A 462      24.211  10.646  -0.504  1.00  0.00    -0.033 C 
+HETATM   22  H   PFA A 462      24.837  10.550  -1.367  1.00  0.00     0.046 H 
+BRANCH  21  23
+HETATM   23  C8  PFA A 462      23.293  11.889  -0.716  1.00  0.00    -0.069 C 
+HETATM   24  H   PFA A 462      22.654  12.010   0.134  1.00  0.00     0.028 H 
+HETATM   25  H   PFA A 462      22.697  11.747  -1.593  1.00  0.00     0.028 H 
+HETATM   26  H   PFA A 462      23.898  12.763  -0.835  1.00  0.00     0.028 H 
+ENDBRANCH  21  23
+BRANCH  21  27
+HETATM   27  C9  PFA A 462      25.097  10.780   0.760  1.00  0.00    -0.069 C 
+HETATM   28  H   PFA A 462      24.473  10.876   1.624  1.00  0.00     0.028 H 
+HETATM   29  H   PFA A 462      25.718  11.647   0.670  1.00  0.00     0.028 H 
+HETATM   30  H   PFA A 462      25.711   9.910   0.859  1.00  0.00     0.028 H 
+ENDBRANCH  21  27
+ENDBRANCH  16  21
+ENDBRANCH   9  10
+ENDBRANCH   6   9
+BRANCH   3  31
+HETATM   31  C7  PFA A 462      22.040   8.059   4.115  1.00  0.00    -0.049 C 
+HETATM   32  H   PFA A 462      22.504   7.761   5.032  1.00  0.00     0.033 H 
+HETATM   33  H   PFA A 462      21.749   9.087   4.180  1.00  0.00     0.033 H 
+HETATM   34  H   PFA A 462      22.731   7.934   3.308  1.00  0.00     0.033 H 
+ENDBRANCH   3  31
+BRANCH   5  35
+HETATM   35  C19 PFA A 462      18.088   7.020   1.162  1.00  0.00    -0.049 C 
+HETATM   36  H   PFA A 462      17.276   6.325   1.108  1.00  0.00     0.033 H 
+HETATM   37  H   PFA A 462      18.684   6.941   0.277  1.00  0.00     0.033 H 
+HETATM   38  H   PFA A 462      17.702   8.015   1.244  1.00  0.00     0.033 H 
+ENDBRANCH   5  35
+BRANCH   1  39
+HETATM   39  N5  PFA A 462      19.023   4.410   5.400  1.00  0.00    -0.181 N 
+HETATM   40  C14 PFA A 462      18.023   4.377   6.268  1.00  0.00     0.372 A 
+HETATM   41  O9  PFA A 462      17.223   5.255   6.139  1.00  0.00    -0.242 OA
+HETATM   42  N6  PFA A 462      17.977   3.356   7.189  1.00  0.00    -0.151 NA
+HETATM   43  C10 PFA A 462      18.947   2.397   7.246  1.00  0.00     0.290 A 
+HETATM   44  O8  PFA A 462      18.955   1.489   8.047  1.00  0.00    -0.264 OA
+HETATM   45  C17 PFA A 462      20.019   2.446   6.252  1.00  0.00     0.089 A 
+HETATM   46  N3  PFA A 462      20.032   3.413   5.406  1.00  0.00    -0.170 NA
+HETATM   47  H   PFA A 462      20.750   1.718   6.231  1.00  0.00     0.126 H 
+ENDBRANCH   1  39
+TORSDOF 9
