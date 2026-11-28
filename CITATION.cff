@@ -1,3 +1,4 @@
+
 # This CITATION.cff file lets GitHub show a "Cite this repository" button
 # and lets Zenodo auto-populate author/title metadata when this repository
 # is archived on release.
@@ -7,8 +8,8 @@
 cff-version: 1.2.0
 message: "If you use IBDock Provenire in published research, please cite it as below."
 title: "IBDock Provenire"
-version: 1.1.0   # update to match the release you publish
-date-released: "2026-11-26"   # update on release day
+version: 1.1.0
+date-released: "2026-11-27"
 authors:
   - family-names: "Siddiqui"
     given-names: "Bilal"
@@ -48,8 +49,8 @@ abstract: >-
   approximate mappings.
 identifiers:
   - type: doi
-    value: "10.5281/zenodo.23663435"
-    description: "Zenodo archive (v1.0.0). After releasing v1.1.0, replace with the concept DOI or the v1.1.0 version DOI."
+    value: "10.5281/zenodo.24587694"
+    description: "Zenodo archive of the v1.1.0 release"
 
 preferred-citation:
   type: article
