@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="252pt"
+   height="255.60002pt"
+   viewBox="0 0 252 255.60002"
+   version="1.1"
+   id="svg76"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:date>2026-11-28T07:42:52.289180</dc:date>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1">
+    <style
+       type="text/css"
+       id="style1">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+  </defs>
+  <g
+     id="figure_1">
+    <g
+       id="patch_1">
+      <path
+         d="M 0,255.6 H 252 V 0 H 0 Z"
+         style="fill:#ffffff"
+         id="path1" />
+    </g>
+    <g
+       id="axes_1">
+      <g
+         id="patch_2">
+        <path
+           d="M 47.52,174.96 H 243.36 V 23.04 H 47.52 Z"
+           style="fill:#ffffff"
+           id="path2" />
+      </g>
+      <g
+         id="matplotlib.axis_1">
+        <g
+           id="xtick_1">
+          <g
+             id="line2d_1" />
+          <g
+             id="text_1">
+            <text
+               style="font-size:7px;font-family:'TeX Gyre Pagella', 'Palatino Linotype', 'DejaVu Serif'"
+               transform="translate(61.751771,183.542)"
+               id="text2">ABL1</text>
+            <!-- IC$_{50}$ 38 nM -->
+            <g
+               transform="translate(53.631224,190.591)"
+               id="g11">
+              <text
+                 id="text11"><tspan
+                   x="0"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan2">I</tspan><tspan
+                   x="2.358994"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan3">C</tspan><tspan
+                   x="12.480353"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan4"> </tspan><tspan
+                   x="14.230353"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan5">3</tspan><tspan
+                   x="17.730337"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan6">8</tspan><tspan
+                   x="21.230322"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan7"> </tspan><tspan
+                   x="22.980322"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan8">n</tspan><tspan
+                   x="27.054312"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan9">M</tspan><tspan
+                   x="7.388968"
+                   y="1.018747"
+                   style="font-size:4.9px;font-family:'TeX Gyre Pagella'"
+                   id="tspan10">5</tspan><tspan
+                   x="9.8389568"
+                   y="1.018747"
+                   style="font-size:4.9px;font-family:'TeX Gyre Pagella'"
+                   id="tspan11">0</tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           id="xtick_2">
+          <g
+             id="line2d_2" />
+          <g
+             id="text_2">
+            <text
+               style="font-size:7px;font-family:'TeX Gyre Pagella', 'Palatino Linotype', 'DejaVu Serif'"
+               transform="translate(114.59463,183.542)"
+               id="text12">KIT</text>
+            <!-- IC$_{50}$ 100 nM -->
+            <g
+               transform="translate(101.84041,190.591)"
+               id="g22">
+              <text
+                 id="text22"><tspan
+                   x="0"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan12">I</tspan><tspan
+                   x="2.358994"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan13">C</tspan><tspan
+                   x="12.480353"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan14"> </tspan><tspan
+                   x="14.230353"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan15">1</tspan><tspan
+                   x="17.730337"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan16">0</tspan><tspan
+                   x="21.230322"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan17">0</tspan><tspan
+                   x="24.730307"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan18"> </tspan><tspan
+                   x="26.480307"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan19">n</tspan><tspan
+                   x="30.554296"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan20">M</tspan><tspan
+                   x="7.388968"
+                   y="1.018747"
+                   style="font-size:4.9px;font-family:'TeX Gyre Pagella'"
+                   id="tspan21">5</tspan><tspan
+                   x="9.8389568"
+                   y="1.018747"
+                   style="font-size:4.9px;font-family:'TeX Gyre Pagella'"
+                   id="tspan22">0</tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           id="xtick_3">
+          <g
+             id="line2d_3" />
+          <g
+             id="text_3">
+            <text
+               style="font-size:7px;font-family:'TeX Gyre Pagella', 'Palatino Linotype', 'DejaVu Serif'"
+               transform="translate(163.90248,183.542)"
+               id="text23">SRC</text>
+            <!-- IC$_{50}$ &gt;100 µM -->
+            <g
+               transform="translate(148.78959,190.591)"
+               id="g34">
+              <text
+                 id="text34"><tspan
+                   x="0"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan23">I</tspan><tspan
+                   x="2.358994"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan24">C</tspan><tspan
+                   x="12.480353"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan25"> </tspan><tspan
+                   x="14.230353"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan26">&gt;</tspan><tspan
+                   x="19.599325"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan27">1</tspan><tspan
+                   x="23.09931"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan28">0</tspan><tspan
+                   x="26.599295"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan29">0</tspan><tspan
+                   x="30.099279"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan30"> </tspan><tspan
+                   x="31.849279"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan31">µ</tspan><tspan
+                   x="36.616264"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan32">M</tspan><tspan
+                   x="7.388968"
+                   y="1.018747"
+                   style="font-size:4.9px;font-family:'TeX Gyre Pagella'"
+                   id="tspan33">5</tspan><tspan
+                   x="9.8389568"
+                   y="1.018747"
+                   style="font-size:4.9px;font-family:'TeX Gyre Pagella'"
+                   id="tspan34">0</tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           id="xtick_4">
+          <g
+             id="line2d_4" />
+          <g
+             id="text_4">
+            <text
+               style="font-size:7px;font-family:'TeX Gyre Pagella', 'Palatino Linotype', 'DejaVu Serif'"
+               transform="translate(211.28643,183.542)"
+               id="text35">EGFR</text>
+            <!-- IC$_{50}$ &gt;100 µM -->
+            <g
+               transform="translate(198.74878,190.591)"
+               id="g46">
+              <text
+                 id="text46"><tspan
+                   x="0"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan35">I</tspan><tspan
+                   x="2.358994"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan36">C</tspan><tspan
+                   x="12.480353"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan37"> </tspan><tspan
+                   x="14.230353"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan38">&gt;</tspan><tspan
+                   x="19.599325"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan39">1</tspan><tspan
+                   x="23.09931"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan40">0</tspan><tspan
+                   x="26.599295"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan41">0</tspan><tspan
+                   x="30.099279"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan42"> </tspan><tspan
+                   x="31.849279"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan43">µ</tspan><tspan
+                   x="36.616264"
+                   y="-0.03125"
+                   style="font-size:7px;font-family:'TeX Gyre Pagella'"
+                   id="tspan44">M</tspan><tspan
+                   x="7.388968"
+                   y="1.018747"
+                   style="font-size:4.9px;font-family:'TeX Gyre Pagella'"
+                   id="tspan45">5</tspan><tspan
+                   x="9.8389568"
+                   y="1.018747"
+                   style="font-size:4.9px;font-family:'TeX Gyre Pagella'"
+                   id="tspan46">0</tspan></text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         id="matplotlib.axis_2">
+        <g
+           id="ytick_1">
+          <g
+             id="line2d_5">
+            <defs
+               id="defs46">
+              <path
+                 id="m993dbcca40"
+                 d="M 0,0 H -3"
+                 style="stroke:#000000;stroke-width:0.8" />
+            </defs>
+            <g
+               id="g47">
+              <use
+                 xlink:href="#m993dbcca40"
+                 x="47.52"
+                 y="174.96001"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use46" />
+            </g>
+          </g>
+          <g
+             id="text_5">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="177.57359"
+               id="text47">0</text>
+          </g>
+        </g>
+        <g
+           id="ytick_2">
+          <g
+             id="line2d_6">
+            <g
+               id="g48">
+              <use
+                 xlink:href="#m993dbcca40"
+                 x="47.52"
+                 y="154.00552"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use47" />
+            </g>
+          </g>
+          <g
+             id="text_6">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="156.61911"
+               id="text48">2</text>
+          </g>
+        </g>
+        <g
+           id="ytick_3">
+          <g
+             id="line2d_7">
+            <g
+               id="g49">
+              <use
+                 xlink:href="#m993dbcca40"
+                 x="47.52"
+                 y="133.05104"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use48" />
+            </g>
+          </g>
+          <g
+             id="text_7">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="135.66463"
+               id="text49">4</text>
+          </g>
+        </g>
+        <g
+           id="ytick_4">
+          <g
+             id="line2d_8">
+            <g
+               id="g50">
+              <use
+                 xlink:href="#m993dbcca40"
+                 x="47.52"
+                 y="112.09655"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use49" />
+            </g>
+          </g>
+          <g
+             id="text_8">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="114.71015"
+               id="text50">6</text>
+          </g>
+        </g>
+        <g
+           id="ytick_5">
+          <g
+             id="line2d_9">
+            <g
+               id="g51">
+              <use
+                 xlink:href="#m993dbcca40"
+                 x="47.52"
+                 y="91.142067"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use50" />
+            </g>
+          </g>
+          <g
+             id="text_9">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="93.755669"
+               id="text51">8</text>
+          </g>
+        </g>
+        <g
+           id="ytick_6">
+          <g
+             id="line2d_10">
+            <g
+               id="g52">
+              <use
+                 xlink:href="#m993dbcca40"
+                 x="47.52"
+                 y="70.187584"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use51" />
+            </g>
+          </g>
+          <g
+             id="text_10">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="72.801186"
+               id="text52">10</text>
+          </g>
+        </g>
+        <g
+           id="ytick_7">
+          <g
+             id="line2d_11">
+            <g
+               id="g53">
+              <use
+                 xlink:href="#m993dbcca40"
+                 x="47.52"
+                 y="49.233105"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use52" />
+            </g>
+          </g>
+          <g
+             id="text_11">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="51.846703"
+               id="text53">12</text>
+          </g>
+        </g>
+        <g
+           id="ytick_8">
+          <g
+             id="line2d_12">
+            <g
+               id="g54">
+              <use
+                 xlink:href="#m993dbcca40"
+                 x="47.52"
+                 y="28.278622"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use53" />
+            </g>
+          </g>
+          <g
+             id="text_12">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="30.892221"
+               id="text54">14</text>
+          </g>
+        </g>
+        <g
+           id="text_13">
+          <text
+             style="font-size:7.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+             x="27.628201"
+             y="99"
+             transform="rotate(-90,27.6282,99)"
+             id="text55">Top-1 Vina score (−kcal/mol)</text>
+        </g>
+      </g>
+      <g
+         id="patch_3">
+        <path
+           d="M 51.266939,174.96 H 59.76 V 45.985159 h -8.493061 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path55" />
+      </g>
+      <g
+         id="patch_4">
+        <path
+           d="m 61.258776,174.96 h 8.493061 V 64.110786 h -8.493061 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#18512f;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path56" />
+      </g>
+      <g
+         id="patch_5">
+        <path
+           d="m 71.250612,174.96 h 8.493061 V 63.377379 h -8.493061 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#550022;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path57" />
+      </g>
+      <g
+         id="patch_6">
+        <path
+           d="M 81.242449,174.96 H 89.73551 V 45.880386 h -8.493061 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#554400;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path58" />
+      </g>
+      <g
+         id="patch_7">
+        <path
+           d="m 101.22612,174.96 h 8.49306 V 42.841986 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path59" />
+      </g>
+      <g
+         id="patch_8">
+        <path
+           d="m 111.21796,174.96 h 8.49306 V 53.109683 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#18512f;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path60" />
+      </g>
+      <g
+         id="patch_9">
+        <path
+           d="m 121.2098,174.96 h 8.49306 V 55.205131 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#550022;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path61" />
+      </g>
+      <g
+         id="patch_10">
+        <path
+           d="m 131.20163,174.96 h 8.49306 V 72.911669 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#554400;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path62" />
+      </g>
+      <g
+         id="patch_11">
+        <path
+           d="m 151.18531,174.96 h 8.49306 V 75.11189 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path63" />
+      </g>
+      <g
+         id="patch_12">
+        <path
+           d="m 161.17714,174.96 h 8.49306 V 67.044414 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#18512f;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path64" />
+      </g>
+      <g
+         id="patch_13">
+        <path
+           d="m 171.16898,174.96 h 8.49306 V 69.768497 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#550022;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path65" />
+      </g>
+      <g
+         id="patch_14">
+        <path
+           d="m 181.16082,174.96 h 8.49306 V 71.968717 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#554400;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path66" />
+      </g>
+      <g
+         id="patch_15">
+        <path
+           d="m 201.14449,174.96 h 8.49306 V 74.168938 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path67" />
+      </g>
+      <g
+         id="patch_16">
+        <path
+           d="m 211.13633,174.96 h 8.49306 V 74.378483 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#18512f;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path68" />
+      </g>
+      <g
+         id="patch_17">
+        <path
+           d="m 221.12816,174.96 h 8.49306 V 74.588028 h -8.49306 z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#550022;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path69" />
+      </g>
+      <g
+         id="patch_18">
+        <path
+           d="m 231.12,174.96 h 8.49306 V 74.27371 H 231.12 Z"
+           clip-path="url(#p5d6d61d9d6)"
+           style="fill:#554400;stroke:#1a1a1a;stroke-width:0.6;stroke-linejoin:miter"
+           id="path70" />
+      </g>
+      <g
+         id="patch_19">
+        <path
+           d="M 47.52,174.96 V 23.04"
+           style="fill:none;stroke:#000000;stroke-width:0.8;stroke-linecap:square;stroke-linejoin:miter"
+           id="path71" />
+      </g>
+      <g
+         id="patch_20">
+        <path
+           d="M 47.52,174.96 H 243.36"
+           style="fill:none;stroke:#000000;stroke-width:0.8;stroke-linecap:square;stroke-linejoin:miter"
+           id="path72" />
+      </g>
+      <g
+         id="text_14">
+        <text
+           style="font-weight:700;font-size:11px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+           x="4.3200002"
+           y="14.442"
+           id="text72">b</text>
+      </g>
+      <g
+         id="legend_1">
+        <g
+           id="patch_21">
+          <path
+             d="m 107.5332,232.299 h 7.55999 v -4.41 h -7.55999 z"
+             style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.5;stroke-linejoin:miter"
+             id="path73" />
+        </g>
+        <g
+           id="text_15">
+          <text
+             style="font-size:6.3px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+             x="117.6132"
+             y="232.299"
+             id="text73">Co-crystal</text>
+        </g>
+        <g
+           id="patch_22">
+          <path
+             d="m 107.5332,240.55791 h 7.55999 v -4.41 h -7.55999 z"
+             style="fill:#18512f;stroke:#1a1a1a;stroke-width:0.5;stroke-linejoin:miter"
+             id="path74" />
+        </g>
+        <g
+           id="text_16">
+          <text
+             style="font-size:6.3px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+             x="117.6132"
+             y="240.55791"
+             id="text74">fpocket</text>
+        </g>
+        <g
+           id="patch_23">
+          <path
+             d="m 151.7838,232.299 h 7.56 v -4.41 h -7.56 z"
+             style="fill:#550022;stroke:#1a1a1a;stroke-width:0.5;stroke-linejoin:miter"
+             id="path75" />
+        </g>
+        <g
+           id="text_17">
+          <text
+             style="font-size:6.3px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+             x="161.8638"
+             y="232.299"
+             id="text75">P2Rank</text>
+        </g>
+        <g
+           id="patch_24">
+          <path
+             d="m 151.7838,240.5331 h 7.56 v -4.41 h -7.56 z"
+             style="fill:#554400;stroke:#1a1a1a;stroke-width:0.5;stroke-linejoin:miter"
+             id="path76" />
+        </g>
+        <g
+           id="text_18">
+          <text
+             style="font-size:6.3px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+             x="161.8638"
+             y="240.5331"
+             id="text76">Blind</text>
+        </g>
+      </g>
+    </g>
+  </g>
+  <defs
+     id="defs76">
+    <clipPath
+       id="p5d6d61d9d6">
+      <rect
+         x="47.52"
+         y="23.040001"
+         width="195.84"
+         height="151.92"
+         id="rect76" />
+    </clipPath>
+  </defs>
+</svg>

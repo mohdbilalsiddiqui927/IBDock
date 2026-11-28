@@ -1,0 +1,941 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="252pt"
+   height="255.60002pt"
+   viewBox="0 0 252 255.60002"
+   version="1.1"
+   id="svg68"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:date>2026-11-28T07:42:48.355985</dc:date>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1">
+    <style
+       type="text/css"
+       id="style1">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+  </defs>
+  <g
+     id="figure_1">
+    <g
+       id="patch_1">
+      <path
+         d="M 0,255.6 H 252 V 0 H 0 Z"
+         style="fill:#ffffff"
+         id="path1" />
+    </g>
+    <g
+       id="axes_1">
+      <g
+         id="patch_2">
+        <path
+           d="M 47.52,174.96 H 243.36 V 23.04 H 47.52 Z"
+           style="fill:#ffffff"
+           id="path2" />
+      </g>
+      <g
+         id="matplotlib.axis_1">
+        <g
+           id="xtick_1">
+          <g
+             id="line2d_1">
+            <defs
+               id="defs2">
+              <path
+                 id="me0f9e0bc8f"
+                 d="M 0,0 V 3"
+                 style="stroke:#000000;stroke-width:0.8" />
+            </defs>
+            <g
+               id="g2">
+              <use
+                 xlink:href="#me0f9e0bc8f"
+                 x="59.040001"
+                 y="174.96001"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use2" />
+            </g>
+          </g>
+          <g
+             id="text_1">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+               x="59.040001"
+               y="186.68719"
+               id="text2">8</text>
+          </g>
+        </g>
+        <g
+           id="xtick_2">
+          <g
+             id="line2d_2">
+            <g
+               id="g3">
+              <use
+                 xlink:href="#me0f9e0bc8f"
+                 x="105.12"
+                 y="174.96001"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use3" />
+            </g>
+          </g>
+          <g
+             id="text_2">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+               x="105.12"
+               y="186.68719"
+               id="text3">16</text>
+          </g>
+        </g>
+        <g
+           id="xtick_3">
+          <g
+             id="line2d_3">
+            <g
+               id="g4">
+              <use
+                 xlink:href="#me0f9e0bc8f"
+                 x="197.28"
+                 y="174.96001"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use4" />
+            </g>
+          </g>
+          <g
+             id="text_3">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+               x="197.28"
+               y="186.68719"
+               id="text4">32</text>
+          </g>
+        </g>
+        <g
+           id="text_4">
+          <text
+             style="font-size:7.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+             x="145.44"
+             y="198.3732"
+             id="text5">Vina exhaustiveness</text>
+        </g>
+      </g>
+      <g
+         id="matplotlib.axis_2">
+        <g
+           id="ytick_1">
+          <g
+             id="line2d_4">
+            <defs
+               id="defs5">
+              <path
+                 id="m8879e639ee"
+                 d="M 0,0 H -3"
+                 style="stroke:#000000;stroke-width:0.8" />
+            </defs>
+            <g
+               id="g5">
+              <use
+                 xlink:href="#m8879e639ee"
+                 x="47.52"
+                 y="174.96001"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use5" />
+            </g>
+          </g>
+          <g
+             id="text_5">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="177.57359"
+               id="text6">0</text>
+          </g>
+        </g>
+        <g
+           id="ytick_2">
+          <g
+             id="line2d_5">
+            <g
+               id="g6">
+              <use
+                 xlink:href="#m8879e639ee"
+                 x="47.52"
+                 y="155.97"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use6" />
+            </g>
+          </g>
+          <g
+             id="text_6">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="158.5836"
+               id="text7">10</text>
+          </g>
+        </g>
+        <g
+           id="ytick_3">
+          <g
+             id="line2d_6">
+            <g
+               id="g7">
+              <use
+                 xlink:href="#m8879e639ee"
+                 x="47.52"
+                 y="136.98"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use7" />
+            </g>
+          </g>
+          <g
+             id="text_7">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="139.5936"
+               id="text8">20</text>
+          </g>
+        </g>
+        <g
+           id="ytick_4">
+          <g
+             id="line2d_7">
+            <g
+               id="g8">
+              <use
+                 xlink:href="#m8879e639ee"
+                 x="47.52"
+                 y="117.99"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use8" />
+            </g>
+          </g>
+          <g
+             id="text_8">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="120.6036"
+               id="text9">30</text>
+          </g>
+        </g>
+        <g
+           id="ytick_5">
+          <g
+             id="line2d_8">
+            <g
+               id="g9">
+              <use
+                 xlink:href="#m8879e639ee"
+                 x="47.52"
+                 y="99"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use9" />
+            </g>
+          </g>
+          <g
+             id="text_9">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="101.6136"
+               id="text10">40</text>
+          </g>
+        </g>
+        <g
+           id="ytick_6">
+          <g
+             id="line2d_9">
+            <g
+               id="g10">
+              <use
+                 xlink:href="#m8879e639ee"
+                 x="47.52"
+                 y="80.010002"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use10" />
+            </g>
+          </g>
+          <g
+             id="text_10">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="82.623596"
+               id="text11">50</text>
+          </g>
+        </g>
+        <g
+           id="ytick_7">
+          <g
+             id="line2d_10">
+            <g
+               id="g11">
+              <use
+                 xlink:href="#m8879e639ee"
+                 x="47.52"
+                 y="61.02"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use11" />
+            </g>
+          </g>
+          <g
+             id="text_11">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="63.633598"
+               id="text12">60</text>
+          </g>
+        </g>
+        <g
+           id="ytick_8">
+          <g
+             id="line2d_11">
+            <g
+               id="g12">
+              <use
+                 xlink:href="#m8879e639ee"
+                 x="47.52"
+                 y="42.029999"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use12" />
+            </g>
+          </g>
+          <g
+             id="text_12">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="44.6436"
+               id="text13">70</text>
+          </g>
+        </g>
+        <g
+           id="ytick_9">
+          <g
+             id="line2d_12">
+            <g
+               id="g13">
+              <use
+                 xlink:href="#m8879e639ee"
+                 x="47.52"
+                 y="23.040001"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use13" />
+            </g>
+          </g>
+          <g
+             id="text_13">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="41.02"
+               y="25.653601"
+               id="text14">80</text>
+          </g>
+        </g>
+        <g
+           id="text_14">
+          <text
+             style="font-size:7.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+             x="27.628201"
+             y="99"
+             transform="rotate(-90,27.6282,99)"
+             id="text15">Best-pose success (%)</text>
+        </g>
+      </g>
+      <g
+         id="patch_3">
+        <path
+           d="M 47.52,174.96 V 23.04"
+           style="fill:none;stroke:#000000;stroke-width:0.8;stroke-linecap:square;stroke-linejoin:miter"
+           id="path15" />
+      </g>
+      <g
+         id="patch_4">
+        <path
+           d="M 47.52,174.96 H 243.36"
+           style="fill:none;stroke:#000000;stroke-width:0.8;stroke-linecap:square;stroke-linejoin:miter"
+           id="path16" />
+      </g>
+      <g
+         id="line2d_13">
+        <path
+           d="m 59.04,37.934118 46.08,-0.744706 h 92.16"
+           clip-path="url(#p4608dbf1b2)"
+           style="fill:none;stroke:#2b5aa0;stroke-width:1.3;stroke-linecap:square"
+           id="path17" />
+        <defs
+           id="defs17">
+          <path
+             id="m88c02dc7a0"
+             d="M 0,2.25 C 0.596707,2.25 1.169055,2.012926 1.59099,1.59099 2.012926,1.169055 2.25,0.596707 2.25,0 2.25,-0.596707 2.012926,-1.169055 1.59099,-1.59099 1.169055,-2.012926 0.596707,-2.25 0,-2.25 c -0.596707,0 -1.169055,0.237074 -1.59099,0.65901 C -2.012926,-1.169055 -2.25,-0.596707 -2.25,0 c 0,0.596707 0.237074,1.169055 0.65901,1.59099 C -1.169055,2.012926 -0.596707,2.25 0,2.25 Z"
+             style="stroke:#2b5aa0" />
+        </defs>
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g19">
+          <use
+             xlink:href="#m88c02dc7a0"
+             x="59.040001"
+             y="37.934116"
+             style="fill:#2b5aa0;stroke:#2b5aa0"
+             id="use17" />
+          <use
+             xlink:href="#m88c02dc7a0"
+             x="105.12"
+             y="37.189411"
+             style="fill:#2b5aa0;stroke:#2b5aa0"
+             id="use18" />
+          <use
+             xlink:href="#m88c02dc7a0"
+             x="197.28"
+             y="37.189411"
+             style="fill:#2b5aa0;stroke:#2b5aa0"
+             id="use19" />
+        </g>
+      </g>
+      <g
+         id="line2d_14">
+        <path
+           d="m 59.04,59.530588 46.08,-5.957647 92.16,-3.723529"
+           clip-path="url(#p4608dbf1b2)"
+           style="fill:none;stroke:#18512f;stroke-width:1.3;stroke-linecap:square"
+           id="path19" />
+        <defs
+           id="defs19">
+          <path
+             id="mbd52d1264f"
+             d="m -2.25,2.25 h 4.5 v -4.5 h -4.5 z"
+             style="stroke:#18512f;stroke-linejoin:miter" />
+        </defs>
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g22">
+          <use
+             xlink:href="#mbd52d1264f"
+             x="59.040001"
+             y="59.530586"
+             style="fill:#18512f;stroke:#18512f;stroke-linejoin:miter"
+             id="use20" />
+          <use
+             xlink:href="#mbd52d1264f"
+             x="105.12"
+             y="53.572941"
+             style="fill:#18512f;stroke:#18512f;stroke-linejoin:miter"
+             id="use21" />
+          <use
+             xlink:href="#mbd52d1264f"
+             x="197.28"
+             y="49.849411"
+             style="fill:#18512f;stroke:#18512f;stroke-linejoin:miter"
+             id="use22" />
+        </g>
+      </g>
+      <g
+         id="line2d_15">
+        <path
+           d="m 59.04,94.531765 46.08,-4.468236 92.16,-2.234117"
+           clip-path="url(#p4608dbf1b2)"
+           style="fill:none;stroke:#550022;stroke-width:1.3;stroke-linecap:square"
+           id="path22" />
+        <defs
+           id="defs22">
+          <path
+             id="m1c20d9b0d1"
+             d="m 0,-2.25 -2.25,4.5 h 4.5 z"
+             style="stroke:#550022;stroke-linejoin:miter" />
+        </defs>
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g25">
+          <use
+             xlink:href="#m1c20d9b0d1"
+             x="59.040001"
+             y="94.531769"
+             style="fill:#550022;stroke:#550022;stroke-linejoin:miter"
+             id="use23" />
+          <use
+             xlink:href="#m1c20d9b0d1"
+             x="105.12"
+             y="90.06353"
+             style="fill:#550022;stroke:#550022;stroke-linejoin:miter"
+             id="use24" />
+          <use
+             xlink:href="#m1c20d9b0d1"
+             x="197.28"
+             y="87.829414"
+             style="fill:#550022;stroke:#550022;stroke-linejoin:miter"
+             id="use25" />
+        </g>
+      </g>
+      <g
+         id="line2d_16">
+        <path
+           d="m 59.04,123.57529 46.08,-19.36235 92.16,-13.404705"
+           clip-path="url(#p4608dbf1b2)"
+           style="fill:none;stroke:#554400;stroke-width:1.3;stroke-linecap:square"
+           id="path25" />
+        <defs
+           id="defs25">
+          <path
+             id="me56e3e401e"
+             d="M 0,3.181981 3.181981,0 0,-3.181981 -3.181981,0 Z"
+             style="stroke:#554400;stroke-linejoin:miter" />
+        </defs>
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g28">
+          <use
+             xlink:href="#me56e3e401e"
+             x="59.040001"
+             y="123.57529"
+             style="fill:#554400;stroke:#554400;stroke-linejoin:miter"
+             id="use26" />
+          <use
+             xlink:href="#me56e3e401e"
+             x="105.12"
+             y="104.21294"
+             style="fill:#554400;stroke:#554400;stroke-linejoin:miter"
+             id="use27" />
+          <use
+             xlink:href="#me56e3e401e"
+             x="197.28"
+             y="90.808235"
+             style="fill:#554400;stroke:#554400;stroke-linejoin:miter"
+             id="use28" />
+        </g>
+      </g>
+      <g
+         id="text_15">
+        <text
+           style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start;fill:#1a1a1a"
+           x="206.496"
+           y="38.695717"
+           id="text28">Co-crystal</text>
+      </g>
+      <g
+         id="text_16">
+        <text
+           style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start;fill:#1a1a1a"
+           x="206.496"
+           y="51.369106"
+           id="text29">fpocket</text>
+      </g>
+      <g
+         id="text_17">
+        <text
+           style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start;fill:#1a1a1a"
+           x="206.496"
+           y="86.843925"
+           id="text30">P2Rank</text>
+      </g>
+      <g
+         id="text_18">
+        <text
+           style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start;fill:#1a1a1a"
+           x="206.496"
+           y="94.819725"
+           id="text31">Blind</text>
+      </g>
+      <g
+         id="text_19">
+        <text
+           style="font-weight:700;font-size:11px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+           x="4.3200002"
+           y="14.442"
+           id="text32">b</text>
+      </g>
+      <g
+         id="PathCollection_1">
+        <defs
+           id="defs32">
+          <path
+             id="m7173353bf9"
+             d="M 0,1.5 C 0.397805,1.5 0.77937,1.341951 1.06066,1.06066 1.341951,0.77937 1.5,0.397805 1.5,0 1.5,-0.397805 1.341951,-0.77937 1.06066,-1.06066 0.77937,-1.341951 0.397805,-1.5 0,-1.5 c -0.397805,0 -0.77937,0.158049 -1.06066,0.43934 C -1.341951,-0.77937 -1.5,-0.397805 -1.5,0 c 0,0.397805 0.158049,0.77937 0.43934,1.06066 C -0.77937,1.341951 -0.397805,1.5 0,1.5 Z"
+             style="stroke:#2b5aa0;stroke-width:0.7" />
+        </defs>
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g34">
+          <use
+             xlink:href="#m7173353bf9"
+             x="59.040001"
+             y="40.912941"
+             style="fill:#ffffff;stroke:#2b5aa0;stroke-width:0.7"
+             id="use32" />
+          <use
+             xlink:href="#m7173353bf9"
+             x="59.040001"
+             y="38.678825"
+             style="fill:#ffffff;stroke:#2b5aa0;stroke-width:0.7"
+             id="use33" />
+          <use
+             xlink:href="#m7173353bf9"
+             x="59.040001"
+             y="34.210587"
+             style="fill:#ffffff;stroke:#2b5aa0;stroke-width:0.7"
+             id="use34" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_2">
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g37">
+          <use
+             xlink:href="#m7173353bf9"
+             x="105.12"
+             y="36.444706"
+             style="fill:#ffffff;stroke:#2b5aa0;stroke-width:0.7"
+             id="use35" />
+          <use
+             xlink:href="#m7173353bf9"
+             x="105.12"
+             y="38.678825"
+             style="fill:#ffffff;stroke:#2b5aa0;stroke-width:0.7"
+             id="use36" />
+          <use
+             xlink:href="#m7173353bf9"
+             x="105.12"
+             y="36.444706"
+             style="fill:#ffffff;stroke:#2b5aa0;stroke-width:0.7"
+             id="use37" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_3">
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g40">
+          <use
+             xlink:href="#m7173353bf9"
+             x="197.28"
+             y="36.444706"
+             style="fill:#ffffff;stroke:#2b5aa0;stroke-width:0.7"
+             id="use38" />
+          <use
+             xlink:href="#m7173353bf9"
+             x="197.28"
+             y="38.678825"
+             style="fill:#ffffff;stroke:#2b5aa0;stroke-width:0.7"
+             id="use39" />
+          <use
+             xlink:href="#m7173353bf9"
+             x="197.28"
+             y="36.444706"
+             style="fill:#ffffff;stroke:#2b5aa0;stroke-width:0.7"
+             id="use40" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_4">
+        <defs
+           id="defs40">
+          <path
+             id="m0dc3afe04c"
+             d="M 0,1.5 C 0.397805,1.5 0.77937,1.341951 1.06066,1.06066 1.341951,0.77937 1.5,0.397805 1.5,0 1.5,-0.397805 1.341951,-0.77937 1.06066,-1.06066 0.77937,-1.341951 0.397805,-1.5 0,-1.5 c -0.397805,0 -0.77937,0.158049 -1.06066,0.43934 C -1.341951,-0.77937 -1.5,-0.397805 -1.5,0 c 0,0.397805 0.158049,0.77937 0.43934,1.06066 C -0.77937,1.341951 -0.397805,1.5 0,1.5 Z"
+             style="stroke:#18512f;stroke-width:0.7" />
+        </defs>
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g43">
+          <use
+             xlink:href="#m0dc3afe04c"
+             x="59.040001"
+             y="58.785881"
+             style="fill:#ffffff;stroke:#18512f;stroke-width:0.7"
+             id="use41" />
+          <use
+             xlink:href="#m0dc3afe04c"
+             x="59.040001"
+             y="63.25412"
+             style="fill:#ffffff;stroke:#18512f;stroke-width:0.7"
+             id="use42" />
+          <use
+             xlink:href="#m0dc3afe04c"
+             x="59.040001"
+             y="56.551765"
+             style="fill:#ffffff;stroke:#18512f;stroke-width:0.7"
+             id="use43" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_5">
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g46">
+          <use
+             xlink:href="#m0dc3afe04c"
+             x="105.12"
+             y="54.317646"
+             style="fill:#ffffff;stroke:#18512f;stroke-width:0.7"
+             id="use44" />
+          <use
+             xlink:href="#m0dc3afe04c"
+             x="105.12"
+             y="54.317646"
+             style="fill:#ffffff;stroke:#18512f;stroke-width:0.7"
+             id="use45" />
+          <use
+             xlink:href="#m0dc3afe04c"
+             x="105.12"
+             y="52.08353"
+             style="fill:#ffffff;stroke:#18512f;stroke-width:0.7"
+             id="use46" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_6">
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g49">
+          <use
+             xlink:href="#m0dc3afe04c"
+             x="197.28"
+             y="49.849411"
+             style="fill:#ffffff;stroke:#18512f;stroke-width:0.7"
+             id="use47" />
+          <use
+             xlink:href="#m0dc3afe04c"
+             x="197.28"
+             y="52.08353"
+             style="fill:#ffffff;stroke:#18512f;stroke-width:0.7"
+             id="use48" />
+          <use
+             xlink:href="#m0dc3afe04c"
+             x="197.28"
+             y="47.615295"
+             style="fill:#ffffff;stroke:#18512f;stroke-width:0.7"
+             id="use49" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_7">
+        <defs
+           id="defs49">
+          <path
+             id="m6ac7e0af5a"
+             d="M 0,1.5 C 0.397805,1.5 0.77937,1.341951 1.06066,1.06066 1.341951,0.77937 1.5,0.397805 1.5,0 1.5,-0.397805 1.341951,-0.77937 1.06066,-1.06066 0.77937,-1.341951 0.397805,-1.5 0,-1.5 c -0.397805,0 -0.77937,0.158049 -1.06066,0.43934 C -1.341951,-0.77937 -1.5,-0.397805 -1.5,0 c 0,0.397805 0.158049,0.77937 0.43934,1.06066 C -0.77937,1.341951 -0.397805,1.5 0,1.5 Z"
+             style="stroke:#550022;stroke-width:0.7" />
+        </defs>
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g52">
+          <use
+             xlink:href="#m6ac7e0af5a"
+             x="59.040001"
+             y="99"
+             style="fill:#ffffff;stroke:#550022;stroke-width:0.7"
+             id="use50" />
+          <use
+             xlink:href="#m6ac7e0af5a"
+             x="59.040001"
+             y="92.297646"
+             style="fill:#ffffff;stroke:#550022;stroke-width:0.7"
+             id="use51" />
+          <use
+             xlink:href="#m6ac7e0af5a"
+             x="59.040001"
+             y="92.297646"
+             style="fill:#ffffff;stroke:#550022;stroke-width:0.7"
+             id="use52" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_8">
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g55">
+          <use
+             xlink:href="#m6ac7e0af5a"
+             x="105.12"
+             y="92.297646"
+             style="fill:#ffffff;stroke:#550022;stroke-width:0.7"
+             id="use53" />
+          <use
+             xlink:href="#m6ac7e0af5a"
+             x="105.12"
+             y="92.297646"
+             style="fill:#ffffff;stroke:#550022;stroke-width:0.7"
+             id="use54" />
+          <use
+             xlink:href="#m6ac7e0af5a"
+             x="105.12"
+             y="85.595291"
+             style="fill:#ffffff;stroke:#550022;stroke-width:0.7"
+             id="use55" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_9">
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g58">
+          <use
+             xlink:href="#m6ac7e0af5a"
+             x="197.28"
+             y="87.829414"
+             style="fill:#ffffff;stroke:#550022;stroke-width:0.7"
+             id="use56" />
+          <use
+             xlink:href="#m6ac7e0af5a"
+             x="197.28"
+             y="87.829414"
+             style="fill:#ffffff;stroke:#550022;stroke-width:0.7"
+             id="use57" />
+          <use
+             xlink:href="#m6ac7e0af5a"
+             x="197.28"
+             y="87.829414"
+             style="fill:#ffffff;stroke:#550022;stroke-width:0.7"
+             id="use58" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_10">
+        <defs
+           id="defs58">
+          <path
+             id="mee9ec686ca"
+             d="M 0,1.5 C 0.397805,1.5 0.77937,1.341951 1.06066,1.06066 1.341951,0.77937 1.5,0.397805 1.5,0 1.5,-0.397805 1.341951,-0.77937 1.06066,-1.06066 0.77937,-1.341951 0.397805,-1.5 0,-1.5 c -0.397805,0 -0.77937,0.158049 -1.06066,0.43934 C -1.341951,-0.77937 -1.5,-0.397805 -1.5,0 c 0,0.397805 0.158049,0.77937 0.43934,1.06066 C -0.77937,1.341951 -0.397805,1.5 0,1.5 Z"
+             style="stroke:#554400;stroke-width:0.7" />
+        </defs>
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g61">
+          <use
+             xlink:href="#mee9ec686ca"
+             x="59.040001"
+             y="121.34118"
+             style="fill:#ffffff;stroke:#554400;stroke-width:0.7"
+             id="use59" />
+          <use
+             xlink:href="#mee9ec686ca"
+             x="59.040001"
+             y="128.04353"
+             style="fill:#ffffff;stroke:#554400;stroke-width:0.7"
+             id="use60" />
+          <use
+             xlink:href="#mee9ec686ca"
+             x="59.040001"
+             y="121.34118"
+             style="fill:#ffffff;stroke:#554400;stroke-width:0.7"
+             id="use61" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_11">
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g64">
+          <use
+             xlink:href="#mee9ec686ca"
+             x="105.12"
+             y="101.23412"
+             style="fill:#ffffff;stroke:#554400;stroke-width:0.7"
+             id="use62" />
+          <use
+             xlink:href="#mee9ec686ca"
+             x="105.12"
+             y="114.63882"
+             style="fill:#ffffff;stroke:#554400;stroke-width:0.7"
+             id="use63" />
+          <use
+             xlink:href="#mee9ec686ca"
+             x="105.12"
+             y="96.765884"
+             style="fill:#ffffff;stroke:#554400;stroke-width:0.7"
+             id="use64" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_12">
+        <g
+           clip-path="url(#p4608dbf1b2)"
+           id="g67">
+          <use
+             xlink:href="#mee9ec686ca"
+             x="197.28"
+             y="101.23412"
+             style="fill:#ffffff;stroke:#554400;stroke-width:0.7"
+             id="use65" />
+          <use
+             xlink:href="#mee9ec686ca"
+             x="197.28"
+             y="85.595291"
+             style="fill:#ffffff;stroke:#554400;stroke-width:0.7"
+             id="use66" />
+          <use
+             xlink:href="#mee9ec686ca"
+             x="197.28"
+             y="85.595291"
+             style="fill:#ffffff;stroke:#554400;stroke-width:0.7"
+             id="use67" />
+        </g>
+      </g>
+      <g
+         id="legend_1">
+        <g
+           id="line2d_17">
+          <defs
+             id="defs67">
+            <path
+               id="m6c582d00fa"
+               d="M 0,1.75 C 0.464105,1.75 0.909265,1.565609 1.237437,1.237437 1.565609,0.909265 1.75,0.464105 1.75,0 1.75,-0.464105 1.565609,-0.909265 1.237437,-1.237437 0.909265,-1.565609 0.464105,-1.75 0,-1.75 c -0.464105,0 -0.909265,0.184391 -1.237437,0.512563 C -1.565609,-0.909265 -1.75,-0.464105 -1.75,0 c 0,0.464105 0.184391,0.909265 0.512563,1.237437 C -0.909265,1.565609 -0.464105,1.75 0,1.75 Z"
+               style="stroke:#8c8c8c" />
+          </defs>
+          <g
+             id="g68">
+            <use
+               xlink:href="#m6c582d00fa"
+               x="122.39135"
+               y="208.8252"
+               style="fill:#ffffff;stroke:#8c8c8c"
+               id="use68" />
+          </g>
+        </g>
+        <g
+           id="text_20">
+          <text
+             style="font-size:6.3px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+             x="128.69135"
+             y="211.0302"
+             id="text68">Individual seed</text>
+        </g>
+      </g>
+    </g>
+  </g>
+  <defs
+     id="defs68">
+    <clipPath
+       id="p4608dbf1b2">
+      <rect
+         x="47.52"
+         y="23.040001"
+         width="195.84"
+         height="151.92"
+         id="rect68" />
+    </clipPath>
+  </defs>
+</svg>

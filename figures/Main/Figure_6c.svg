@@ -1,0 +1,1089 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="252pt"
+   height="338.39999pt"
+   viewBox="0 0 252 338.4"
+   version="1.1"
+   id="svg90"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:date>2026-11-28T07:42:48.609451</dc:date>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1">
+    <style
+       type="text/css"
+       id="style1">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+  </defs>
+  <g
+     id="figure_1">
+    <g
+       id="patch_1">
+      <path
+         d="M 0,338.4 H 252 V 0 H 0 Z"
+         style="fill:#ffffff"
+         id="path1" />
+    </g>
+    <g
+       id="axes_1">
+      <g
+         id="patch_2">
+        <path
+           d="M 72,270 H 244.8 V 32.4 H 72 Z"
+           style="fill:#ffffff"
+           id="path2" />
+      </g>
+      <g
+         id="patch_3">
+        <path
+           d="m 72,43.2 h 97.58118 V 55.631655 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path3" />
+      </g>
+      <g
+         id="patch_4">
+        <path
+           d="M 169.58118,43.2 H 175.68 v 12.431655 h -6.09882 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path4" />
+      </g>
+      <g
+         id="patch_5">
+        <path
+           d="M 175.68,43.2 H 244.8 V 55.631655 H 175.68 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path5" />
+      </g>
+      <g
+         id="patch_6">
+        <path
+           d="M 72,58.739568 H 173.64706 V 71.171223 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path6" />
+      </g>
+      <g
+         id="patch_7">
+        <path
+           d="M 173.64706,58.739568 H 175.68 v 12.431655 h -2.03294 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path7" />
+      </g>
+      <g
+         id="patch_8">
+        <path
+           d="M 175.68,58.739568 H 244.8 V 71.171223 H 175.68 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path8" />
+      </g>
+      <g
+         id="patch_9">
+        <path
+           d="m 72,74.279137 h 99.61412 V 86.710791 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path9" />
+      </g>
+      <g
+         id="patch_10">
+        <path
+           d="M 171.61412,74.279137 H 175.68 v 12.431654 h -4.06588 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path10" />
+      </g>
+      <g
+         id="patch_11">
+        <path
+           d="M 175.68,74.279137 H 244.8 V 86.710791 H 175.68 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path11" />
+      </g>
+      <g
+         id="patch_12">
+        <path
+           d="m 72,100.6964 h 83.35059 v 12.43166 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path12" />
+      </g>
+      <g
+         id="patch_13">
+        <path
+           d="m 155.35059,100.6964 h 6.09882 v 12.43166 h -6.09882 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path13" />
+      </g>
+      <g
+         id="patch_14">
+        <path
+           d="M 161.44941,100.6964 H 244.8 v 12.43166 h -83.35059 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path14" />
+      </g>
+      <g
+         id="patch_15">
+        <path
+           d="m 72,116.23597 h 87.41647 v 12.43166 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path15" />
+      </g>
+      <g
+         id="patch_16">
+        <path
+           d="m 159.41647,116.23597 h 4.06588 v 12.43166 h -4.06588 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path16" />
+      </g>
+      <g
+         id="patch_17">
+        <path
+           d="M 163.48235,116.23597 H 244.8 v 12.43166 h -81.31765 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path17" />
+      </g>
+      <g
+         id="patch_18">
+        <path
+           d="m 72,131.77554 h 87.41647 v 12.43165 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path18" />
+      </g>
+      <g
+         id="patch_19">
+        <path
+           d="m 159.41647,131.77554 h 4.06588 v 12.43165 h -4.06588 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path19" />
+      </g>
+      <g
+         id="patch_20">
+        <path
+           d="M 163.48235,131.77554 H 244.8 v 12.43165 h -81.31765 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path20" />
+      </g>
+      <g
+         id="patch_21">
+        <path
+           d="m 72,158.19281 h 56.92235 v 12.43165 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path21" />
+      </g>
+      <g
+         id="patch_22">
+        <path
+           d="m 128.92235,158.19281 h 6.09883 v 12.43165 h -6.09883 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path22" />
+      </g>
+      <g
+         id="patch_23">
+        <path
+           d="M 135.02118,158.19281 H 244.8 v 12.43165 H 135.02118 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path23" />
+      </g>
+      <g
+         id="patch_24">
+        <path
+           d="m 72,173.73237 h 63.02118 v 12.43166 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path24" />
+      </g>
+      <g
+         id="patch_25">
+        <path
+           d="m 135.02118,173.73237 h 2.03294 v 12.43166 h -2.03294 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path25" />
+      </g>
+      <g
+         id="patch_26">
+        <path
+           d="M 137.05412,173.73237 H 244.8 v 12.43166 H 137.05412 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path26" />
+      </g>
+      <g
+         id="patch_27">
+        <path
+           d="m 72,189.27194 h 60.98823 V 201.7036 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path27" />
+      </g>
+      <g
+         id="patch_28">
+        <path
+           d="m 132.98823,189.27194 h 2.03295 v 12.43166 h -2.03295 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path28" />
+      </g>
+      <g
+         id="patch_29">
+        <path
+           d="M 135.02118,189.27194 H 244.8 V 201.7036 H 135.02118 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path29" />
+      </g>
+      <g
+         id="patch_30">
+        <path
+           d="m 72,215.68921 h 16.263529 v 12.43165 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path30" />
+      </g>
+      <g
+         id="patch_31">
+        <path
+           d="M 88.263529,215.68921 H 141.12 v 12.43165 H 88.263529 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path31" />
+      </g>
+      <g
+         id="patch_32">
+        <path
+           d="M 141.12,215.68921 H 244.8 v 12.43165 H 141.12 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path32" />
+      </g>
+      <g
+         id="patch_33">
+        <path
+           d="m 72,231.22878 h 22.362353 v 12.43165 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path33" />
+      </g>
+      <g
+         id="patch_34">
+        <path
+           d="m 94.362353,231.22878 h 52.856467 v 12.43165 H 94.362353 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path34" />
+      </g>
+      <g
+         id="patch_35">
+        <path
+           d="M 147.21882,231.22878 H 244.8 v 12.43165 h -97.58118 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path35" />
+      </g>
+      <g
+         id="patch_36">
+        <path
+           d="m 72,246.76834 h 38.62588 V 259.2 H 72 Z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path36" />
+      </g>
+      <g
+         id="patch_37">
+        <path
+           d="m 110.62588,246.76834 h 34.56 V 259.2 h -34.56 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path37" />
+      </g>
+      <g
+         id="patch_38">
+        <path
+           d="M 145.18588,246.76834 H 244.8 V 259.2 h -99.61412 z"
+           clip-path="url(#p8aee29165d)"
+           style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+           id="path38" />
+      </g>
+      <g
+         id="matplotlib.axis_1">
+        <g
+           id="xtick_1">
+          <g
+             id="line2d_1">
+            <defs
+               id="defs38">
+              <path
+                 id="m878ffea44e"
+                 d="M 0,0 V 3"
+                 style="stroke:#000000;stroke-width:0.8" />
+            </defs>
+            <g
+               id="g38">
+              <use
+                 xlink:href="#m878ffea44e"
+                 x="72"
+                 y="270"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use38" />
+            </g>
+          </g>
+          <g
+             id="text_1">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+               x="72"
+               y="281.7272"
+               id="text38">0</text>
+          </g>
+        </g>
+        <g
+           id="xtick_2">
+          <g
+             id="line2d_2">
+            <g
+               id="g39">
+              <use
+                 xlink:href="#m878ffea44e"
+                 x="112.65882"
+                 y="270"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use39" />
+            </g>
+          </g>
+          <g
+             id="text_2">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+               x="112.65882"
+               y="281.7272"
+               id="text39">20</text>
+          </g>
+        </g>
+        <g
+           id="xtick_3">
+          <g
+             id="line2d_3">
+            <g
+               id="g40">
+              <use
+                 xlink:href="#m878ffea44e"
+                 x="153.31764"
+                 y="270"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use40" />
+            </g>
+          </g>
+          <g
+             id="text_3">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+               x="153.31764"
+               y="281.7272"
+               id="text40">40</text>
+          </g>
+        </g>
+        <g
+           id="xtick_4">
+          <g
+             id="line2d_4">
+            <g
+               id="g41">
+              <use
+                 xlink:href="#m878ffea44e"
+                 x="193.97647"
+                 y="270"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use41" />
+            </g>
+          </g>
+          <g
+             id="text_4">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+               x="193.97647"
+               y="281.7272"
+               id="text41">60</text>
+          </g>
+        </g>
+        <g
+           id="xtick_5">
+          <g
+             id="line2d_5">
+            <g
+               id="g42">
+              <use
+                 xlink:href="#m878ffea44e"
+                 x="234.6353"
+                 y="270"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use42" />
+            </g>
+          </g>
+          <g
+             id="text_5">
+            <text
+               style="font-size:7.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+               x="234.6353"
+               y="281.7272"
+               id="text42">80</text>
+          </g>
+        </g>
+        <g
+           id="text_6">
+          <text
+             style="font-size:7.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle"
+             x="158.39999"
+             y="293.55408"
+             id="text43">Complexes (n = 85)</text>
+        </g>
+      </g>
+      <g
+         id="matplotlib.axis_2">
+        <g
+           id="ytick_1">
+          <g
+             id="line2d_6">
+            <defs
+               id="defs43">
+              <path
+                 id="mdb13a2bdc1"
+                 d="M 0,0 H -3"
+                 style="stroke:#000000;stroke-width:0.8" />
+            </defs>
+            <g
+               id="g43">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="49.415829"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use43" />
+            </g>
+          </g>
+          <g
+             id="text_7">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="51.884228"
+               id="text44">ex 8</text>
+          </g>
+        </g>
+        <g
+           id="ytick_2">
+          <g
+             id="line2d_7">
+            <g
+               id="g44">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="64.955399"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use44" />
+            </g>
+          </g>
+          <g
+             id="text_8">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="67.423798"
+               id="text45">ex 16</text>
+          </g>
+        </g>
+        <g
+           id="ytick_3">
+          <g
+             id="line2d_8">
+            <g
+               id="g45">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="80.494965"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use45" />
+            </g>
+          </g>
+          <g
+             id="text_9">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="82.963364"
+               id="text46">ex 32</text>
+          </g>
+        </g>
+        <g
+           id="ytick_4">
+          <g
+             id="line2d_9">
+            <g
+               id="g46">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="106.91223"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use46" />
+            </g>
+          </g>
+          <g
+             id="text_10">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="109.38063"
+               id="text47">ex 8</text>
+          </g>
+        </g>
+        <g
+           id="ytick_5">
+          <g
+             id="line2d_10">
+            <g
+               id="g47">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="122.4518"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use47" />
+            </g>
+          </g>
+          <g
+             id="text_11">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="124.9202"
+               id="text48">ex 16</text>
+          </g>
+        </g>
+        <g
+           id="ytick_6">
+          <g
+             id="line2d_11">
+            <g
+               id="g48">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="137.99136"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use48" />
+            </g>
+          </g>
+          <g
+             id="text_12">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="140.45976"
+               id="text49">ex 32</text>
+          </g>
+        </g>
+        <g
+           id="ytick_7">
+          <g
+             id="line2d_12">
+            <g
+               id="g49">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="164.40863"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use49" />
+            </g>
+          </g>
+          <g
+             id="text_13">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="166.87703"
+               id="text50">ex 8</text>
+          </g>
+        </g>
+        <g
+           id="ytick_8">
+          <g
+             id="line2d_13">
+            <g
+               id="g50">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="179.9482"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use50" />
+            </g>
+          </g>
+          <g
+             id="text_14">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="182.4166"
+               id="text51">ex 16</text>
+          </g>
+        </g>
+        <g
+           id="ytick_9">
+          <g
+             id="line2d_14">
+            <g
+               id="g51">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="195.48776"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use51" />
+            </g>
+          </g>
+          <g
+             id="text_15">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="197.95618"
+               id="text52">ex 32</text>
+          </g>
+        </g>
+        <g
+           id="ytick_10">
+          <g
+             id="line2d_15">
+            <g
+               id="g52">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="221.90503"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use52" />
+            </g>
+          </g>
+          <g
+             id="text_16">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="224.37344"
+               id="text53">ex 8</text>
+          </g>
+        </g>
+        <g
+           id="ytick_11">
+          <g
+             id="line2d_16">
+            <g
+               id="g53">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="237.44461"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use53" />
+            </g>
+          </g>
+          <g
+             id="text_17">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="239.91301"
+               id="text54">ex 16</text>
+          </g>
+        </g>
+        <g
+           id="ytick_12">
+          <g
+             id="line2d_17">
+            <g
+               id="g54">
+              <use
+                 xlink:href="#mdb13a2bdc1"
+                 x="72"
+                 y="252.98418"
+                 style="stroke:#000000;stroke-width:0.8"
+                 id="use54" />
+            </g>
+          </g>
+          <g
+             id="text_18">
+            <text
+               style="font-size:6.8px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:end"
+               x="65.5"
+               y="255.45258"
+               id="text55">ex 32</text>
+          </g>
+        </g>
+      </g>
+      <g
+         id="patch_39">
+        <path
+           d="M 72,270 V 32.4"
+           style="fill:none;stroke:#000000;stroke-width:0.8;stroke-linecap:square;stroke-linejoin:miter"
+           id="path55" />
+      </g>
+      <g
+         id="patch_40">
+        <path
+           d="M 72,270 H 244.8"
+           style="fill:none;stroke:#000000;stroke-width:0.8;stroke-linecap:square;stroke-linejoin:miter"
+           id="path56" />
+      </g>
+      <g
+         id="text_19">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="120.79059"
+           y="50.795326"
+           id="text56">48</text>
+      </g>
+      <g
+         id="text_20">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="210.24001"
+           y="50.795326"
+           id="text57">34</text>
+      </g>
+      <g
+         id="text_21">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="122.82353"
+           y="66.334892"
+           id="text58">50</text>
+      </g>
+      <g
+         id="text_22">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="210.24001"
+           y="66.334892"
+           id="text59">34</text>
+      </g>
+      <g
+         id="text_23">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="121.80706"
+           y="81.874466"
+           id="text60">49</text>
+      </g>
+      <g
+         id="text_24">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="210.24001"
+           y="81.874466"
+           id="text61">34</text>
+      </g>
+      <g
+         id="text_25">
+        <text
+           style="font-weight:700;font-size:7.5px;font-family:'TeX Gyre Pagella', 'Palatino Linotype', 'DejaVu Serif'"
+           transform="rotate(-90,48.945823,33.465823)"
+           id="text62">Co-crystal</text>
+      </g>
+      <g
+         id="text_26">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="113.67529"
+           y="108.29173"
+           id="text63">41</text>
+      </g>
+      <g
+         id="text_27">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="203.12471"
+           y="108.29173"
+           id="text64">41</text>
+      </g>
+      <g
+         id="text_28">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="115.70824"
+           y="123.8313"
+           id="text65">43</text>
+      </g>
+      <g
+         id="text_29">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="204.14117"
+           y="123.8313"
+           id="text66">40</text>
+      </g>
+      <g
+         id="text_30">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="115.70824"
+           y="139.37086"
+           id="text67">43</text>
+      </g>
+      <g
+         id="text_31">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="204.14117"
+           y="139.37086"
+           id="text68">40</text>
+      </g>
+      <g
+         id="text_32">
+        <text
+           style="font-weight:700;font-size:7.5px;font-family:'TeX Gyre Pagella', 'Palatino Linotype', 'DejaVu Serif'"
+           transform="rotate(-90,75.395098,59.915098)"
+           id="text69">fpocket</text>
+      </g>
+      <g
+         id="text_33">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="100.46117"
+           y="165.78813"
+           id="text70">28</text>
+      </g>
+      <g
+         id="text_34">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="189.91058"
+           y="165.78813"
+           id="text71">54</text>
+      </g>
+      <g
+         id="text_35">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="103.51059"
+           y="181.3277"
+           id="text72">31</text>
+      </g>
+      <g
+         id="text_36">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="190.92706"
+           y="181.3277"
+           id="text73">53</text>
+      </g>
+      <g
+         id="text_37">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="102.49412"
+           y="196.86726"
+           id="text74">30</text>
+      </g>
+      <g
+         id="text_38">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="189.91058"
+           y="196.86726"
+           id="text75">54</text>
+      </g>
+      <g
+         id="text_39">
+        <text
+           style="font-weight:700;font-size:7.5px;font-family:'TeX Gyre Pagella', 'Palatino Linotype', 'DejaVu Serif'"
+           transform="rotate(-90,104.39818,88.918183)"
+           id="text76">P2Rank</text>
+      </g>
+      <g
+         id="text_40">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="80.131767"
+           y="223.28453"
+           id="text77">8</text>
+      </g>
+      <g
+         id="text_41">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="192.96001"
+           y="223.28453"
+           id="text78">51</text>
+      </g>
+      <g
+         id="text_42">
+        <text
+           style="font-size:6px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="114.69176"
+           y="223.24004"
+           id="text79">26</text>
+      </g>
+      <g
+         id="text_43">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="83.181175"
+           y="238.8241"
+           id="text80">11</text>
+      </g>
+      <g
+         id="text_44">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="196.00941"
+           y="238.8241"
+           id="text81">48</text>
+      </g>
+      <g
+         id="text_45">
+        <text
+           style="font-size:6px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="120.79059"
+           y="238.7796"
+           id="text82">26</text>
+      </g>
+      <g
+         id="text_46">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#ffffff"
+           x="91.312943"
+           y="254.36368"
+           id="text83">19</text>
+      </g>
+      <g
+         id="text_47">
+        <text
+           style="font-size:6.2px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="194.99294"
+           y="254.36368"
+           id="text84">49</text>
+      </g>
+      <g
+         id="text_48">
+        <text
+           style="font-size:6px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:middle;fill:#1a1a1a"
+           x="127.90588"
+           y="254.31917"
+           id="text85">17</text>
+      </g>
+      <g
+         id="text_49">
+        <text
+           style="font-weight:700;font-size:7.5px;font-family:'TeX Gyre Pagella', 'Palatino Linotype', 'DejaVu Serif'"
+           transform="rotate(-90,131.25263,115.77263)"
+           id="text86">Blind</text>
+      </g>
+      <g
+         id="text_50">
+        <text
+           style="font-weight:700;font-size:11px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+           x="4.3200002"
+           y="14.442"
+           id="text87">c</text>
+      </g>
+      <g
+         id="legend_1">
+        <g
+           id="patch_41">
+          <path
+             d="m 112.89431,304.0038 h 7.56 v -4.41 h -7.56 z"
+             style="fill:#2b5aa0;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+             id="path87" />
+        </g>
+        <g
+           id="text_51">
+          <text
+             style="font-size:6.3px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+             x="122.97431"
+             y="304.00381"
+             id="text88">Success in all 3 seeds</text>
+        </g>
+        <g
+           id="patch_42">
+          <path
+             d="m 112.89431,312.2503 h 7.56 v -4.41 h -7.56 z"
+             style="fill:#a9bbdb;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+             id="path88" />
+        </g>
+        <g
+           id="text_52">
+          <text
+             style="font-size:6.3px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+             x="122.97431"
+             y="312.25031"
+             id="text89">Outcome flips between seeds</text>
+        </g>
+        <g
+           id="patch_43">
+          <path
+             d="m 112.89431,320.4844 h 7.56 v -4.41 h -7.56 z"
+             style="fill:#cfcfcf;stroke:#1a1a1a;stroke-width:0.4;stroke-linejoin:miter"
+             id="path89" />
+        </g>
+        <g
+           id="text_53">
+          <text
+             style="font-size:6.3px;font-family:'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif;text-anchor:start"
+             x="122.97431"
+             y="320.48441"
+             id="text90">Failure in all 3 seeds</text>
+        </g>
+      </g>
+    </g>
+  </g>
+  <defs
+     id="defs90">
+    <clipPath
+       id="p8aee29165d">
+      <rect
+         x="72"
+         y="32.400002"
+         width="172.8"
+         height="237.60001"
+         id="rect90" />
+    </clipPath>
+  </defs>
+</svg>
