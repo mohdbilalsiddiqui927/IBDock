@@ -1,0 +1,3 @@
+method = blind (whole protein)
+ligand_selection = Automatic
+ligands = MC9
