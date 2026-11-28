@@ -1,0 +1,82 @@
+REMARK  9 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: C1_1  and  C13_15 
+REMARK    2  A    between atoms: C7_7  and  C13_15 
+REMARK    3  A    between atoms: N8_8  and  C17_19 
+REMARK    4  A    between atoms: C12_14  and  C14_16 
+REMARK    5  A    between atoms: C14_16  and  C15_17 
+REMARK    6  A    between atoms: C14_16  and  C16_18 
+REMARK    7  A    between atoms: C17_19  and  O17_20 
+REMARK    8  A    between atoms: O17_20  and  C18_21 
+REMARK    9  A    between atoms: C18_21  and  C19_22 
+ROOT
+HETATM    1  C7  TNK A 999      -1.826 -35.676  24.679  1.00  0.00     0.035 A 
+HETATM    2  N8  TNK A 999      -2.601 -34.807  23.874  1.00  0.00    -0.279 N 
+HETATM    3  C9  TNK A 999      -2.522 -34.843  22.462  1.00  0.00     0.353 A 
+HETATM    4  O9  TNK A 999      -3.202 -34.135  21.722  1.00  0.00    -0.244 OA
+HETATM    5  N10 TNK A 999      -1.643 -35.766  21.926  1.00  0.00    -0.153 NA
+HETATM    6  C11 TNK A 999      -0.841 -36.659  22.631  1.00  0.00     0.280 A 
+HETATM    7  O11 TNK A 999      -0.097 -37.424  22.020  1.00  0.00    -0.265 OA
+HETATM    8  C12 TNK A 999      -0.948 -36.612  24.076  1.00  0.00     0.039 A 
+ENDROOT
+BRANCH   2   9
+HETATM    9  C17 TNK A 999      -3.595 -33.857  24.460  1.00  0.00     0.088 C 
+HETATM   10  H   TNK A 999      -3.278 -32.853  24.270  1.00  0.00     0.108 H 
+HETATM   11  H   TNK A 999      -3.660 -34.028  25.514  1.00  0.00     0.108 H 
+BRANCH   9  12
+HETATM   12  O17 TNK A 999      -4.872 -34.061  23.881  1.00  0.00    -0.367 OA
+BRANCH  12  13
+HETATM   13  C18 TNK A 999      -5.915 -33.931  24.833  1.00  0.00     0.045 C 
+HETATM   14  H   TNK A 999      -6.267 -32.921  24.831  1.00  0.00     0.081 H 
+HETATM   15  H   TNK A 999      -5.533 -34.191  25.798  1.00  0.00     0.081 H 
+BRANCH  13  16
+HETATM   16  C19 TNK A 999      -7.052 -34.848  24.505  1.00  0.00    -0.035 A 
+HETATM   17  C20 TNK A 999      -6.953 -35.738  23.418  1.00  0.00    -0.075 A 
+HETATM   18  C21 TNK A 999      -7.970 -36.681  23.177  1.00  0.00    -0.082 A 
+HETATM   19  H   TNK A 999      -6.131 -35.699  22.795  1.00  0.00     0.084 H 
+HETATM   20  C22 TNK A 999      -9.093 -36.729  24.033  1.00  0.00    -0.083 A 
+HETATM   21  H   TNK A 999      -7.896 -37.333  22.380  1.00  0.00     0.083 H 
+HETATM   22  C23 TNK A 999      -9.189 -35.828  25.121  1.00  0.00    -0.082 A 
+HETATM   23  H   TNK A 999      -9.842 -37.419  23.866  1.00  0.00     0.083 H 
+HETATM   24  C24 TNK A 999      -8.164 -34.888  25.350  1.00  0.00    -0.075 A 
+HETATM   25  H   TNK A 999     -10.009 -35.860  25.746  1.00  0.00     0.083 H 
+HETATM   26  H   TNK A 999      -8.235 -34.230  26.141  1.00  0.00     0.084 H 
+ENDBRANCH  13  16
+ENDBRANCH  12  13
+ENDBRANCH   9  12
+ENDBRANCH   2   9
+BRANCH   1  27
+HETATM   27  C13 TNK A 999      -2.023 -35.580  26.203  1.00  0.00    -0.002 C 
+HETATM   28  H   TNK A 999      -3.077 -35.506  26.370  1.00  0.00     0.049 H 
+HETATM   29  H   TNK A 999      -1.515 -36.451  26.562  1.00  0.00     0.049 H 
+BRANCH  27  30
+HETATM   30  C1  TNK A 999      -1.378 -34.460  27.005  1.00  0.00    -0.053 A 
+HETATM   31  C2  TNK A 999      -2.139 -33.802  27.985  1.00  0.00    -0.076 A 
+HETATM   32  C3  TNK A 999      -1.530 -32.826  28.816  1.00  0.00    -0.082 A 
+HETATM   33  H   TNK A 999      -3.139 -34.028  28.101  1.00  0.00     0.084 H 
+HETATM   34  C4  TNK A 999      -0.152 -32.513  28.654  1.00  0.00    -0.083 A 
+HETATM   35  H   TNK A 999      -2.087 -32.343  29.538  1.00  0.00     0.083 H 
+HETATM   36  C5  TNK A 999       0.607 -33.172  27.666  1.00  0.00    -0.082 A 
+HETATM   37  H   TNK A 999       0.291 -31.804  29.259  1.00  0.00     0.083 H 
+HETATM   38  C6  TNK A 999      -0.012 -34.143  26.843  1.00  0.00    -0.076 A 
+HETATM   39  H   TNK A 999       1.607 -32.948  27.544  1.00  0.00     0.083 H 
+HETATM   40  H   TNK A 999       0.541 -34.624  26.117  1.00  0.00     0.084 H 
+ENDBRANCH  27  30
+ENDBRANCH   1  27
+BRANCH   8  41
+HETATM   41  C14 TNK A 999      -0.134 -37.707  24.795  1.00  0.00    -0.028 C 
+HETATM   42  H   TNK A 999       0.320 -38.261  24.000  1.00  0.00     0.046 H 
+BRANCH  41  43
+HETATM   43  C15 TNK A 999      -0.979 -38.784  25.502  1.00  0.00    -0.069 C 
+HETATM   44  H   TNK A 999      -1.493 -38.346  26.332  1.00  0.00     0.028 H 
+HETATM   45  H   TNK A 999      -0.339 -39.567  25.851  1.00  0.00     0.028 H 
+HETATM   46  H   TNK A 999      -1.692 -39.187  24.813  1.00  0.00     0.028 H 
+ENDBRANCH  41  43
+BRANCH  41  47
+HETATM   47  C16 TNK A 999       1.059 -37.190  25.571  1.00  0.00    -0.069 C 
+HETATM   48  H   TNK A 999       0.719 -36.611  26.404  1.00  0.00     0.028 H 
+HETATM   49  H   TNK A 999       1.661 -36.578  24.933  1.00  0.00     0.028 H 
+HETATM   50  H   TNK A 999       1.640 -38.016  25.924  1.00  0.00     0.028 H 
+ENDBRANCH  41  47
+ENDBRANCH   8  41
+TORSDOF 9
