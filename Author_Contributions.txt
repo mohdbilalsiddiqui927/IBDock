@@ -10,7 +10,3 @@ supporting information. I.A.K. conceived the original concept for the project an
 supervised the work. M.Z.A. supervised the project. All authors contributed to writing
 and reviewing the manuscript and approved the final version.
 
-Use of AI tools: an AI assistant (Claude, Anthropic) was used to help draft analysis and
-figure scripts, to check numbers and tables against the raw outputs, and to edit LaTeX.
-The authors reviewed and verified all analyses, results and text and take full
-responsibility for the content.
