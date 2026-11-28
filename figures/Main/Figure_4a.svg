@@ -1,0 +1,1399 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="252pt"
+   height="255.6pt"
+   viewBox="0 0 252 255.6"
+   version="1.1"
+   id="svg103"
+   sodipodi:docname="Figure_4a.svg"
+   inkscape:export-filename="Figure_4a.pdf"
+   inkscape:export-xdpi="900"
+   inkscape:export-ydpi="900"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview103"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="pt"
+     showgrid="false"
+     inkscape:zoom="2.1566901"
+     inkscape:cx="167.8498"
+     inkscape:cy="170.4"
+     inkscape:window-width="1920"
+     inkscape:window-height="974"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg103" />
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:date>2026-11-28T07:42:45.296895</dc:date>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1">
+    <style
+       type="text/css"
+       id="style1">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+  </defs>
+  <g
+     id="figure_1">
+    <g
+       id="patch_1">
+      <path
+         d="M 0 255.6  L 252 255.6  L 252 0  L 0 0  z "
+         style="fill: #ffffff"
+         id="path1" />
+    </g>
+    <g
+       id="axes_1">
+      <g
+         id="patch_2">
+        <path
+           d="M 47.52 174.96  L 243.36 174.96  L 243.36 23.04  L 47.52 23.04  z "
+           style="fill: #ffffff"
+           id="path2" />
+      </g>
+      <g
+         id="patch_3">
+        <path
+           d="M 57.778286 84.41568  L 74.564571 84.41568  L 74.564571 49.849412  L 57.778286 49.849412  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #e4e4e4; stroke: #1a1a1a; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path3" />
+      </g>
+      <g
+         id="patch_4">
+        <path
+           d="M 57.778286 49.849412  L 74.564571 49.849412  L 74.564571 23.04  L 57.778286 23.04  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: url(#hccf07b869e); stroke: #8c8c8c; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path4" />
+      </g>
+      <g
+         id="patch_5">
+        <path
+           d="M 76.429714 64.818  L 93.216 64.818  L 93.216 49.849412  L 76.429714 49.849412  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #e4e4e4; stroke: #1a1a1a; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path5" />
+      </g>
+      <g
+         id="patch_6">
+        <path
+           d="M 76.429714 49.849412  L 93.216 49.849412  L 93.216 23.04  L 76.429714 23.04  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: url(#hccf07b869e); stroke: #8c8c8c; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path6" />
+      </g>
+      <g
+         id="patch_7">
+        <path
+           d="M 104.406857 96.87312  L 121.193143 96.87312  L 121.193143 49.849412  L 104.406857 49.849412  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #e4e4e4; stroke: #1a1a1a; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path7" />
+      </g>
+      <g
+         id="patch_8">
+        <path
+           d="M 104.406857 49.849412  L 121.193143 49.849412  L 121.193143 23.04  L 104.406857 23.04  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: url(#hccf07b869e); stroke: #8c8c8c; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path8" />
+      </g>
+      <g
+         id="patch_9">
+        <path
+           d="M 123.058286 77.88312  L 139.844571 77.88312  L 139.844571 49.849412  L 123.058286 49.849412  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #e4e4e4; stroke: #1a1a1a; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path9" />
+      </g>
+      <g
+         id="patch_10">
+        <path
+           d="M 123.058286 49.849412  L 139.844571 49.849412  L 139.844571 23.04  L 123.058286 23.04  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: url(#hccf07b869e); stroke: #8c8c8c; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path10" />
+      </g>
+      <g
+         id="patch_11">
+        <path
+           d="M 151.035429 118.90152  L 167.821714 118.90152  L 167.821714 49.849412  L 151.035429 49.849412  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #e4e4e4; stroke: #1a1a1a; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path11" />
+      </g>
+      <g
+         id="patch_12">
+        <path
+           d="M 151.035429 49.849412  L 167.821714 49.849412  L 167.821714 23.04  L 151.035429 23.04  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: url(#hccf07b869e); stroke: #8c8c8c; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path12" />
+      </g>
+      <g
+         id="patch_13">
+        <path
+           d="M 169.686857 107.05176  L 186.473143 107.05176  L 186.473143 49.849412  L 169.686857 49.849412  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #e4e4e4; stroke: #1a1a1a; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path13" />
+      </g>
+      <g
+         id="patch_14">
+        <path
+           d="M 169.686857 49.849412  L 186.473143 49.849412  L 186.473143 23.04  L 169.686857 23.04  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: url(#hccf07b869e); stroke: #8c8c8c; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path14" />
+      </g>
+      <g
+         id="patch_15">
+        <path
+           d="M 197.664 130.9032  L 214.450286 130.9032  L 214.450286 50.445176  L 197.664 50.445176  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #e4e4e4; stroke: #1a1a1a; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path15" />
+      </g>
+      <g
+         id="patch_16">
+        <path
+           d="M 197.664 50.445176  L 214.450286 50.445176  L 214.450286 23.04  L 197.664 23.04  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: url(#hccf07b869e); stroke: #8c8c8c; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path16" />
+      </g>
+      <g
+         id="patch_17">
+        <path
+           d="M 216.315429 118.29384  L 233.101714 118.29384  L 233.101714 49.849412  L 216.315429 49.849412  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #e4e4e4; stroke: #1a1a1a; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path17" />
+      </g>
+      <g
+         id="patch_18">
+        <path
+           d="M 216.315429 49.849412  L 233.101714 49.849412  L 233.101714 23.04  L 216.315429 23.04  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: url(#hccf07b869e); stroke: #8c8c8c; stroke-width: 0.4; stroke-linejoin: miter"
+           id="path18" />
+      </g>
+      <g
+         id="matplotlib.axis_1">
+        <g
+           id="xtick_1">
+          <g
+             id="line2d_1" />
+          <g
+             id="text_1">
+            <text
+               style="font-weight: 700; font-size: 7.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+               x="75.497143"
+               y="192.144"
+               transform="rotate(-0 75.497143 192.144)"
+               id="text18">Co-crystal</text>
+          </g>
+        </g>
+        <g
+           id="xtick_2">
+          <g
+             id="line2d_2" />
+          <g
+             id="text_2">
+            <text
+               style="font-weight: 700; font-size: 7.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+               x="122.125714"
+               y="192.144"
+               transform="rotate(-0 122.125714 192.144)"
+               id="text19">fpocket</text>
+          </g>
+        </g>
+        <g
+           id="xtick_3">
+          <g
+             id="line2d_3" />
+          <g
+             id="text_3">
+            <text
+               style="font-weight: 700; font-size: 7.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+               x="168.754286"
+               y="192.144"
+               transform="rotate(-0 168.754286 192.144)"
+               id="text20">P2Rank</text>
+          </g>
+        </g>
+        <g
+           id="xtick_4">
+          <g
+             id="line2d_4" />
+          <g
+             id="text_4">
+            <text
+               style="font-weight: 700; font-size: 7.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+               x="215.382857"
+               y="192.144"
+               transform="rotate(-0 215.382857 192.144)"
+               id="text21">Blind</text>
+          </g>
+        </g>
+      </g>
+      <g
+         id="matplotlib.axis_2">
+        <g
+           id="ytick_1">
+          <g
+             id="line2d_5">
+            <defs
+               id="defs21">
+              <path
+                 id="m71659d9897"
+                 d="M 0 0  L -3 0  "
+                 style="stroke: #000000; stroke-width: 0.8" />
+            </defs>
+            <g
+               id="g21">
+              <use
+                 xlink:href="#m71659d9897"
+                 x="47.52"
+                 y="174.96"
+                 style="stroke: #000000; stroke-width: 0.8"
+                 id="use21" />
+            </g>
+          </g>
+          <g
+             id="text_5">
+            <text
+               style="font-size: 7.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: end"
+               x="41.02"
+               y="177.5736"
+               transform="rotate(-0 41.02 177.5736)"
+               id="text22">0</text>
+          </g>
+        </g>
+        <g
+           id="ytick_2">
+          <g
+             id="line2d_6">
+            <g
+               id="g22">
+              <use
+                 xlink:href="#m71659d9897"
+                 x="47.52"
+                 y="144.576"
+                 style="stroke: #000000; stroke-width: 0.8"
+                 id="use22" />
+            </g>
+          </g>
+          <g
+             id="text_6">
+            <text
+               style="font-size: 7.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: end"
+               x="41.02"
+               y="147.1896"
+               transform="rotate(-0 41.02 147.1896)"
+               id="text23">20</text>
+          </g>
+        </g>
+        <g
+           id="ytick_3">
+          <g
+             id="line2d_7">
+            <g
+               id="g23">
+              <use
+                 xlink:href="#m71659d9897"
+                 x="47.52"
+                 y="114.192"
+                 style="stroke: #000000; stroke-width: 0.8"
+                 id="use23" />
+            </g>
+          </g>
+          <g
+             id="text_7">
+            <text
+               style="font-size: 7.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: end"
+               x="41.02"
+               y="116.8056"
+               transform="rotate(-0 41.02 116.8056)"
+               id="text24">40</text>
+          </g>
+        </g>
+        <g
+           id="ytick_4">
+          <g
+             id="line2d_8">
+            <g
+               id="g24">
+              <use
+                 xlink:href="#m71659d9897"
+                 x="47.52"
+                 y="83.808"
+                 style="stroke: #000000; stroke-width: 0.8"
+                 id="use24" />
+            </g>
+          </g>
+          <g
+             id="text_8">
+            <text
+               style="font-size: 7.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: end"
+               x="41.02"
+               y="86.4216"
+               transform="rotate(-0 41.02 86.4216)"
+               id="text25">60</text>
+          </g>
+        </g>
+        <g
+           id="ytick_5">
+          <g
+             id="line2d_9">
+            <g
+               id="g25">
+              <use
+                 xlink:href="#m71659d9897"
+                 x="47.52"
+                 y="53.424"
+                 style="stroke: #000000; stroke-width: 0.8"
+                 id="use25" />
+            </g>
+          </g>
+          <g
+             id="text_9">
+            <text
+               style="font-size: 7.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: end"
+               x="41.02"
+               y="56.0376"
+               transform="rotate(-0 41.02 56.0376)"
+               id="text26">80</text>
+          </g>
+        </g>
+        <g
+           id="ytick_6">
+          <g
+             id="line2d_10">
+            <g
+               id="g26">
+              <use
+                 xlink:href="#m71659d9897"
+                 x="47.52"
+                 y="23.04"
+                 style="stroke: #000000; stroke-width: 0.8"
+                 id="use26" />
+            </g>
+          </g>
+          <g
+             id="text_10">
+            <text
+               style="font-size: 7.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: end"
+               x="41.02"
+               y="25.6536"
+               transform="rotate(-0 41.02 25.6536)"
+               id="text27">100</text>
+          </g>
+        </g>
+        <g
+           id="text_11">
+          <text
+             style="font-size: 7.8px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+             x="24.0282"
+             y="99"
+             transform="rotate(-90 24.0282 99)"
+             id="text28">Complexes (% of 85)</text>
+        </g>
+      </g>
+      <g
+         id="patch_19">
+        <path
+           d="M 57.778286 174.96  L 74.564571 174.96  L 74.564571 84.41568  L 57.778286 84.41568  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #2b5aa0; opacity: 0.55; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"
+           id="path28" />
+      </g>
+      <g
+         id="patch_20">
+        <path
+           d="M 76.429714 174.96  L 93.216 174.96  L 93.216 64.818  L 76.429714 64.818  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #2b5aa0; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"
+           id="path29" />
+      </g>
+      <g
+         id="patch_21">
+        <path
+           d="M 104.406857 174.96  L 121.193143 174.96  L 121.193143 96.87312  L 104.406857 96.87312  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #18512f; opacity: 0.55; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"
+           id="path30" />
+      </g>
+      <g
+         id="patch_22">
+        <path
+           d="M 123.058286 174.96  L 139.844571 174.96  L 139.844571 77.88312  L 123.058286 77.88312  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #18512f; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"
+           id="path31" />
+      </g>
+      <g
+         id="patch_23">
+        <path
+           d="M 151.035429 174.96  L 167.821714 174.96  L 167.821714 118.90152  L 151.035429 118.90152  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #550022; opacity: 0.55; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"
+           id="path32" />
+      </g>
+      <g
+         id="patch_24">
+        <path
+           d="M 169.686857 174.96  L 186.473143 174.96  L 186.473143 107.05176  L 169.686857 107.05176  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #550022; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"
+           id="path33" />
+      </g>
+      <g
+         id="patch_25">
+        <path
+           d="M 197.664 174.96  L 214.450286 174.96  L 214.450286 130.9032  L 197.664 130.9032  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #554400; opacity: 0.55; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"
+           id="path34" />
+      </g>
+      <g
+         id="patch_26">
+        <path
+           d="M 216.315429 174.96  L 233.101714 174.96  L 233.101714 118.29384  L 216.315429 118.29384  z "
+           clip-path="url(#p994a0f9744)"
+           style="fill: #554400; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"
+           id="path35" />
+      </g>
+      <g
+         id="patch_27">
+        <path
+           d="M 47.52 174.96  L 47.52 23.04  "
+           style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"
+           id="path36" />
+      </g>
+      <g
+         id="patch_28">
+        <path
+           d="M 47.52 174.96  L 243.36 174.96  "
+           style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"
+           id="path37" />
+      </g>
+      <g
+         id="text_12">
+        <text
+           style="font-size: 6.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+           x="66.171429"
+           y="182.4996"
+           transform="rotate(-0 66.171429 182.4996)"
+           id="text37">Top-1</text>
+      </g>
+      <g
+         id="text_13">
+        <text
+           style="font-size: 6.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+           x="84.822857"
+           y="182.4996"
+           transform="rotate(-0 84.822857 182.4996)"
+           id="text38">Best</text>
+      </g>
+      <g
+         id="text_14">
+        <text
+           style="font-size: 6.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+           x="112.8"
+           y="182.4996"
+           transform="rotate(-0 112.8 182.4996)"
+           id="text39">Top-1</text>
+      </g>
+      <g
+         id="text_15">
+        <text
+           style="font-size: 6.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+           x="131.451429"
+           y="182.4996"
+           transform="rotate(-0 131.451429 182.4996)"
+           id="text40">Best</text>
+      </g>
+      <g
+         id="text_16">
+        <text
+           style="font-size: 6.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+           x="159.428571"
+           y="182.4996"
+           transform="rotate(-0 159.428571 182.4996)"
+           id="text41">Top-1</text>
+      </g>
+      <g
+         id="text_17">
+        <text
+           style="font-size: 6.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+           x="178.08"
+           y="182.4996"
+           transform="rotate(-0 178.08 182.4996)"
+           id="text42">Best</text>
+      </g>
+      <g
+         id="text_18">
+        <text
+           style="font-size: 6.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+           x="206.057143"
+           y="182.4996"
+           transform="rotate(-0 206.057143 182.4996)"
+           id="text43">Top-1</text>
+      </g>
+      <g
+         id="text_19">
+        <text
+           style="font-size: 6.2px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle"
+           x="224.708571"
+           y="182.4996"
+           transform="rotate(-0 224.708571 182.4996)"
+           id="text44">Best</text>
+      </g>
+      <g
+         id="text_20">
+        <text
+           style="font-weight: 700; font-size: 11px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: start"
+           x="4.32"
+           y="14.442"
+           transform="rotate(-0 4.32 14.442)"
+           id="text45">a</text>
+      </g>
+      <g
+         id="LineCollection_1">
+        <path
+           d="M 66.171429 99.91152  L 66.171429 69.52752  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8"
+           id="path45" />
+      </g>
+      <g
+         id="line2d_11">
+        <defs
+           id="defs45">
+          <path
+             id="m34da3a31fa"
+             d="M 2 0  L -2 -0  "
+             style="stroke: #1a1a1a" />
+        </defs>
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g45">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="66.171429"
+             y="99.91152"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use45" />
+        </g>
+      </g>
+      <g
+         id="line2d_12">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g46">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="66.171429"
+             y="69.52752"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use46" />
+        </g>
+      </g>
+      <g
+         id="LineCollection_2">
+        <path
+           d="M 84.822857 79.09848  L 84.822857 50.99328  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8"
+           id="path46" />
+      </g>
+      <g
+         id="line2d_13">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g47">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="84.822857"
+             y="79.09848"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use47" />
+        </g>
+      </g>
+      <g
+         id="line2d_14">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g48">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="84.822857"
+             y="50.99328"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use48" />
+        </g>
+      </g>
+      <g
+         id="LineCollection_3">
+        <path
+           d="M 112.8 112.97664  L 112.8 81.37728  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8"
+           id="path48" />
+      </g>
+      <g
+         id="line2d_15">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g49">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="112.8"
+             y="112.97664"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use49" />
+        </g>
+      </g>
+      <g
+         id="line2d_16">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g50">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="112.8"
+             y="81.37728"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use50" />
+        </g>
+      </g>
+      <g
+         id="LineCollection_4">
+        <path
+           d="M 131.451429 93.37896  L 131.451429 62.99496  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8"
+           id="path50" />
+      </g>
+      <g
+         id="line2d_17">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g51">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="131.451429"
+             y="93.37896"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use51" />
+        </g>
+      </g>
+      <g
+         id="line2d_18">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g52">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="131.451429"
+             y="62.99496"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use52" />
+        </g>
+      </g>
+      <g
+         id="LineCollection_5">
+        <path
+           d="M 159.428571 133.78968  L 159.428571 102.798  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8"
+           id="path52" />
+      </g>
+      <g
+         id="line2d_19">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g53">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="159.428571"
+             y="133.78968"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use53" />
+        </g>
+      </g>
+      <g
+         id="line2d_20">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g54">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="159.428571"
+             y="102.798"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use54" />
+        </g>
+      </g>
+      <g
+         id="LineCollection_6">
+        <path
+           d="M 178.08 122.5476  L 178.08 90.94824  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8"
+           id="path54" />
+      </g>
+      <g
+         id="line2d_21">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g55">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="178.08"
+             y="122.5476"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use55" />
+        </g>
+      </g>
+      <g
+         id="line2d_22">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g56">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="178.08"
+             y="90.94824"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use56" />
+        </g>
+      </g>
+      <g
+         id="LineCollection_7">
+        <path
+           d="M 206.057143 142.14528  L 206.057143 118.90152  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8"
+           id="path56" />
+      </g>
+      <g
+         id="line2d_23">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g57">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="206.057143"
+             y="142.14528"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use57" />
+        </g>
+      </g>
+      <g
+         id="line2d_24">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g58">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="206.057143"
+             y="118.90152"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use58" />
+        </g>
+      </g>
+      <g
+         id="LineCollection_8">
+        <path
+           d="M 224.708571 130.9032  L 224.708571 105.22872  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8"
+           id="path58" />
+      </g>
+      <g
+         id="line2d_25">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g59">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="224.708571"
+             y="130.9032"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use59" />
+        </g>
+      </g>
+      <g
+         id="line2d_26">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g60">
+          <use
+             xlink:href="#m34da3a31fa"
+             x="224.708571"
+             y="105.22872"
+             style="fill: #1a1a1a; stroke: #1a1a1a"
+             id="use60" />
+        </g>
+      </g>
+      <g
+         id="line2d_27">
+        <path
+           d="M 66.171429 84.41568  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8; stroke-linecap: square"
+           id="path60" />
+      </g>
+      <g
+         id="line2d_28">
+        <path
+           d="M 84.822857 64.818  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8; stroke-linecap: square"
+           id="path61" />
+      </g>
+      <g
+         id="line2d_29">
+        <path
+           d="M 112.8 96.87312  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8; stroke-linecap: square"
+           id="path62" />
+      </g>
+      <g
+         id="line2d_30">
+        <path
+           d="M 131.451429 77.88312  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8; stroke-linecap: square"
+           id="path63" />
+      </g>
+      <g
+         id="line2d_31">
+        <path
+           d="M 159.428571 118.90152  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8; stroke-linecap: square"
+           id="path64" />
+      </g>
+      <g
+         id="line2d_32">
+        <path
+           d="M 178.08 107.05176  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8; stroke-linecap: square"
+           id="path65" />
+      </g>
+      <g
+         id="line2d_33">
+        <path
+           d="M 206.057143 130.9032  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8; stroke-linecap: square"
+           id="path66" />
+      </g>
+      <g
+         id="line2d_34">
+        <path
+           d="M 224.708571 118.29384  "
+           clip-path="url(#p994a0f9744)"
+           style="fill: none; stroke: #1a1a1a; stroke-width: 0.8; stroke-linecap: square"
+           id="path67" />
+      </g>
+      <g
+         id="PathCollection_1">
+        <defs
+           id="defs67">
+          <path
+             id="m709ac37a08"
+             d="M 0 1.322876  C 0.350831 1.322876 0.68734 1.183489 0.935414 0.935414  C 1.183489 0.68734 1.322876 0.350831 1.322876 0  C 1.322876 -0.350831 1.183489 -0.68734 0.935414 -0.935414  C 0.68734 -1.183489 0.350831 -1.322876 0 -1.322876  C -0.350831 -1.322876 -0.68734 -1.183489 -0.935414 -0.935414  C -1.183489 -0.68734 -1.322876 -0.350831 -1.322876 0  C -1.322876 0.350831 -1.183489 0.68734 -0.935414 0.935414  C -0.68734 1.183489 -0.350831 1.322876 0 1.322876  z "
+             style="stroke: #1a1a1a; stroke-width: 0.6" />
+        </defs>
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g69">
+          <use
+             xlink:href="#m709ac37a08"
+             x="66.171429"
+             y="83.808"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use67" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="66.171429"
+             y="83.808"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use68" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="66.171429"
+             y="85.595294"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use69" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_2">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g72">
+          <use
+             xlink:href="#m709ac37a08"
+             x="84.822857"
+             y="64.147765"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use70" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="84.822857"
+             y="65.935059"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use71" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="84.822857"
+             y="64.147765"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use72" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_3">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g75">
+          <use
+             xlink:href="#m709ac37a08"
+             x="112.8"
+             y="98.106353"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use73" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="112.8"
+             y="96.319059"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use74" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="112.8"
+             y="96.319059"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use75" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_4">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g78">
+          <use
+             xlink:href="#m709ac37a08"
+             x="131.451429"
+             y="78.446118"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use76" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="131.451429"
+             y="78.446118"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use77" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="131.451429"
+             y="76.658824"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use78" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_5">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g81">
+          <use
+             xlink:href="#m709ac37a08"
+             x="159.428571"
+             y="119.553882"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use79" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="159.428571"
+             y="117.766588"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use80" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="159.428571"
+             y="119.553882"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use81" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_6">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g84">
+          <use
+             xlink:href="#m709ac37a08"
+             x="178.08"
+             y="108.830118"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use82" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="178.08"
+             y="108.830118"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use83" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="178.08"
+             y="103.468235"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use84" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_7">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g87">
+          <use
+             xlink:href="#m709ac37a08"
+             x="206.057143"
+             y="130.277647"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use85" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="206.057143"
+             y="137.426824"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use86" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="206.057143"
+             y="124.915765"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use87" />
+        </g>
+      </g>
+      <g
+         id="PathCollection_8">
+        <g
+           clip-path="url(#p994a0f9744)"
+           id="g90">
+          <use
+             xlink:href="#m709ac37a08"
+             x="224.708571"
+             y="115.979294"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use88" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="224.708571"
+             y="126.703059"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use89" />
+          <use
+             xlink:href="#m709ac37a08"
+             x="224.708571"
+             y="112.404706"
+             style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6"
+             id="use90" />
+        </g>
+      </g>
+      <g
+         id="legend_1">
+        <g
+           id="patch_29">
+          <path
+             d="M 74.184047 221.487694  L 81.744047 221.487694  L 81.744047 217.077694  L 74.184047 217.077694  z "
+             style="fill: #8c8c8c; stroke: #1a1a1a; stroke-width: 0.5; stroke-linejoin: miter"
+             id="path90" />
+        </g>
+        <g
+           id="text_21">
+          <text
+             style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: start"
+             x="84.264047"
+             y="221.487694"
+             transform="rotate(-0 84.264047 221.487694)"
+             id="text90">Success (RMSD &lt; 2.0 Å)</text>
+        </g>
+        <g
+           id="patch_30">
+          <path
+             d="M 74.184047 229.721794  L 81.744047 229.721794  L 81.744047 225.311794  L 74.184047 225.311794  z "
+             style="fill: #e4e4e4; stroke: #1a1a1a; stroke-width: 0.5; stroke-linejoin: miter"
+             id="path91" />
+        </g>
+        <g
+           id="text_22">
+          <text
+             style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: start"
+             x="84.264047"
+             y="229.721794"
+             transform="rotate(-0 84.264047 229.721794)"
+             id="text91">Resolved, not success</text>
+        </g>
+        <g
+           id="patch_31">
+          <path
+             d="M 74.184047 237.955894  L 81.744047 237.955894  L 81.744047 233.545894  L 74.184047 233.545894  z "
+             style="fill: url(#hccf07b869e); stroke: #8c8c8c; stroke-width: 0.5; stroke-linejoin: miter"
+             id="path92" />
+        </g>
+        <g
+           id="text_23">
+          <text
+             style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: start"
+             x="84.264047"
+             y="237.955894"
+             transform="rotate(-0 84.264047 237.955894)"
+             id="text92">sPyRMSD unresolved</text>
+        </g>
+        <g
+           id="line2d_35">
+          <defs
+             id="defs92">
+            <path
+               id="ma35a7edafb"
+               d="M 0 1.75  C 0.464105 1.75 0.909265 1.565609 1.237437 1.237437  C 1.565609 0.909265 1.75 0.464105 1.75 0  C 1.75 -0.464105 1.565609 -0.909265 1.237437 -1.237437  C 0.909265 -1.565609 0.464105 -1.75 0 -1.75  C -0.464105 -1.75 -0.909265 -1.565609 -1.237437 -1.237437  C -1.565609 -0.909265 -1.75 -0.464105 -1.75 0  C -1.75 0.464105 -1.565609 0.909265 -1.237437 1.237437  C -0.909265 1.565609 -0.464105 1.75 0 1.75  z "
+               style="stroke: #1a1a1a" />
+          </defs>
+          <g
+             id="g92">
+            <use
+               xlink:href="#ma35a7edafb"
+               x="162.781734"
+               y="219.282694"
+               style="fill: #ffffff; stroke: #1a1a1a"
+               id="use92" />
+          </g>
+        </g>
+        <g
+           id="text_24">
+          <text
+             style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: start"
+             x="169.081734"
+             y="221.487694"
+             transform="rotate(-0 169.081734 221.487694)"
+             id="text93">Individual seed</text>
+        </g>
+        <g
+           id="line2d_36">
+          <path
+             d="M 159.001734 227.516794  L 162.781734 227.516794  L 166.561734 227.516794  "
+             style="fill: none; stroke: #1a1a1a; stroke-width: 0.8; stroke-linecap: square"
+             id="path93" />
+        </g>
+        <g
+           id="text_25">
+          <text
+             style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: start"
+             x="169.081734"
+             y="229.721794"
+             transform="rotate(-0 169.081734 229.721794)"
+             id="text94">95% bootstrap CI</text>
+        </g>
+      </g>
+      <g
+         id="text_26">
+        <g
+           id="patch_32">
+          <path
+             d="M 60.028929 68.33448  L 72.313929 68.33448  L 72.313929 60.73038  L 60.028929 60.73038  z "
+             style="fill: #ffffff; opacity: 0.85"
+             id="path94" />
+        </g>
+        <text
+           style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle; fill: #1a1a1a"
+           x="66.171429"
+           y="65.93418"
+           transform="rotate(-0 66.171429 65.93418)"
+           id="text95">59.6</text>
+      </g>
+      <g
+         id="text_27">
+        <g
+           id="patch_33">
+          <path
+             d="M 78.680357 49.80024  L 90.965357 49.80024  L 90.965357 42.19614  L 78.680357 42.19614  z "
+             style="fill: #ffffff; opacity: 0.85"
+             id="path95" />
+        </g>
+        <text
+           style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle; fill: #1a1a1a"
+           x="84.822857"
+           y="47.39994"
+           transform="rotate(-0 84.822857 47.39994)"
+           id="text96">72.5</text>
+      </g>
+      <g
+         id="text_28">
+        <g
+           id="patch_34">
+          <path
+             d="M 106.6575 80.18424  L 118.9425 80.18424  L 118.9425 72.58014  L 106.6575 72.58014  z "
+             style="fill: #ffffff; opacity: 0.85"
+             id="path96" />
+        </g>
+        <text
+           style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle; fill: #1a1a1a"
+           x="112.8"
+           y="77.78394"
+           transform="rotate(-0 112.8 77.78394)"
+           id="text97">51.4</text>
+      </g>
+      <g
+         id="text_29">
+        <g
+           id="patch_35">
+          <path
+             d="M 125.308929 61.80192  L 137.593929 61.80192  L 137.593929 54.19782  L 125.308929 54.19782  z "
+             style="fill: #ffffff; opacity: 0.85"
+             id="path97" />
+        </g>
+        <text
+           style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle; fill: #1a1a1a"
+           x="131.451429"
+           y="59.40162"
+           transform="rotate(-0 131.451429 59.40162)"
+           id="text98">63.9</text>
+      </g>
+      <g
+         id="text_30">
+        <g
+           id="patch_36">
+          <path
+             d="M 153.286071 101.60496  L 165.571071 101.60496  L 165.571071 94.00086  L 153.286071 94.00086  z "
+             style="fill: #ffffff; opacity: 0.85"
+             id="path98" />
+        </g>
+        <text
+           style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle; fill: #1a1a1a"
+           x="159.428571"
+           y="99.20466"
+           transform="rotate(-0 159.428571 99.20466)"
+           id="text99">36.9</text>
+      </g>
+      <g
+         id="text_31">
+        <g
+           id="patch_37">
+          <path
+             d="M 171.9375 89.7552  L 184.2225 89.7552  L 184.2225 82.1511  L 171.9375 82.1511  z "
+             style="fill: #ffffff; opacity: 0.85"
+             id="path99" />
+        </g>
+        <text
+           style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle; fill: #1a1a1a"
+           x="178.08"
+           y="87.3549"
+           transform="rotate(-0 178.08 87.3549)"
+           id="text100">44.7</text>
+      </g>
+      <g
+         id="text_32">
+        <g
+           id="patch_38">
+          <path
+             d="M 199.914643 117.70848  L 212.199643 117.70848  L 212.199643 110.10438  L 199.914643 110.10438  z "
+             style="fill: #ffffff; opacity: 0.85"
+             id="path100" />
+        </g>
+        <text
+           style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle; fill: #1a1a1a"
+           x="206.057143"
+           y="115.30818"
+           transform="rotate(-0 206.057143 115.30818)"
+           id="text101">29.0</text>
+      </g>
+      <g
+         id="text_33">
+        <g
+           id="patch_39">
+          <path
+             d="M 218.566071 104.03568  L 230.851071 104.03568  L 230.851071 96.43158  L 218.566071 96.43158  z "
+             style="fill: #ffffff; opacity: 0.85"
+             id="path101" />
+        </g>
+        <text
+           style="font-size: 6.3px; font-family: 'Palatino Linotype', Palatino, 'TeX Gyre Pagella', 'Book Antiqua', serif; text-anchor: middle; fill: #1a1a1a"
+           x="224.708571"
+           y="101.63538"
+           transform="rotate(-0 224.708571 101.63538)"
+           id="text102">37.3</text>
+      </g>
+    </g>
+  </g>
+  <defs
+     id="defs102">
+    <clipPath
+       id="p994a0f9744">
+      <rect
+         x="47.52"
+         y="23.04"
+         width="195.84"
+         height="151.92"
+         id="rect102" />
+    </clipPath>
+  </defs>
+  <defs
+     id="defs103">
+    <pattern
+       id="hccf07b869e"
+       patternUnits="userSpaceOnUse"
+       x="0"
+       y="0"
+       width="72"
+       height="72">
+      <rect
+         x="0"
+         y="0"
+         width="73"
+         height="73"
+         fill="#ffffff"
+         id="rect103" />
+      <path
+         d="M -36 36  L 36 -36  M -33 39  L 39 -33  M -30 42  L 42 -30  M -27 45  L 45 -27  M -24 48  L 48 -24  M -21 51  L 51 -21  M -18 54  L 54 -18  M -15 57  L 57 -15  M -12 60  L 60 -12  M -9 63  L 63 -9  M -6 66  L 66 -6  M -3 69  L 69 -3  M 0 72  L 72 0  M 3 75  L 75 3  M 6 78  L 78 6  M 9 81  L 81 9  M 12 84  L 84 12  M 15 87  L 87 15  M 18 90  L 90 18  M 21 93  L 93 21  M 24 96  L 96 24  M 27 99  L 99 27  M 30 102  L 102 30  M 33 105  L 105 33  M 36 108  L 108 36  "
+         style="fill: #8c8c8c; stroke: #8c8c8c; stroke-width: 1.0; stroke-linecap: butt; stroke-linejoin: miter"
+         id="path103" />
+    </pattern>
+  </defs>
+</svg>
