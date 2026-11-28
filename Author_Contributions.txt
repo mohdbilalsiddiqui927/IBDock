@@ -1,8 +1,16 @@
 Author Contributions
 
 B.S. designed and implemented the IBDock software, including the grid box derivation
-algorithm, batch docking pipeline, and symmetric RMSD validation module, and conducted
-the benchmark validation and data analysis. S.T. assisted with software development
-and performed validation experiments. I.A.K. conceived the original concept for the
-project and supervised the work. M.Z.A. supervised the project. All authors
-contributed to writing and reviewing the manuscript and approved the final version.
+algorithm, batch docking pipeline, and symmetric RMSD validation module. B.S. carried out
+the large majority of the docking runs (Astex benchmark, cross-docking, repurposing, and the
+aging-associated case study). S.T. performed the data analysis (pose-recovery scoring,
+seed-consensus and statistical analyses, cross-docking and repurposing analyses) and
+contributed to the docking runs. B.S. and S.T. jointly prepared the figures and the
+supporting information. I.A.K. conceived the original concept for the project and
+supervised the work. M.Z.A. supervised the project. All authors contributed to writing
+and reviewing the manuscript and approved the final version.
+
+Use of AI tools: an AI assistant (Claude, Anthropic) was used to help draft analysis and
+figure scripts, to check numbers and tables against the raw outputs, and to edit LaTeX.
+The authors reviewed and verified all analyses, results and text and take full
+responsibility for the content.
