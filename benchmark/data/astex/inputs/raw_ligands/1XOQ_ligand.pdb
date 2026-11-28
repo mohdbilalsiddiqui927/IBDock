@@ -1,0 +1,57 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-24T10:58:56Z
+CRYST1   78.899   60.116  163.996  90.00  90.00  90.00 P212121    
+HETATM    1  O24 ROF A 502      14.467  29.333  55.447  1.00 13.71           O  
+HETATM    2  C23 ROF A 502      12.294  34.011  50.524  1.00 21.66           C  
+HETATM    3  C22 ROF A 502      13.213  34.776  51.475  1.00 20.85           C  
+HETATM    4  C21 ROF A 502      13.488  33.398  51.088  1.00 19.81           C  
+HETATM    5  C8  ROF A 502      14.368  28.267  54.828  1.00 14.50           C  
+HETATM    6  C9  ROF A 502      14.173  28.335  53.363  1.00 12.38           C  
+HETATM    7  C10 ROF A 502      14.145  27.209  52.532  1.00 14.08           C  
+HETATM    8  C11 ROF A 502      13.940  27.356  51.149  1.00 12.58           C  
+HETATM    9  C12 ROF A 502      13.790  28.640  50.592  1.00 13.93           C  
+HETATM   10  O15 ROF A 502      13.590  28.874  49.259  1.00 13.88           O  
+HETATM   11  C16 ROF A 502      13.907  27.889  48.282  1.00 14.67           C  
+HETATM   12  F18 ROF A 502      13.038  26.894  48.390  1.00 14.78           F  
+HETATM   13  F17 ROF A 502      15.160  27.465  48.449  1.00 15.02           F  
+HETATM   14  C13 ROF A 502      13.804  29.751  51.416  1.00 13.25           C  
+HETATM   15  O19 ROF A 502      13.645  30.991  50.855  1.00 14.99           O  
+HETATM   16  C20 ROF A 502      13.957  32.106  51.684  1.00 18.25           C  
+HETATM   17  C14 ROF A 502      14.001  29.593  52.794  1.00 13.30           C  
+HETATM   18  N7  ROF A 502      14.457  27.087  55.459  1.00 13.35           N  
+HETATM   19  C6  ROF A 502      14.618  26.929  56.868  1.00 14.40           C  
+HETATM   20  C5  ROF A 502      15.750  26.328  57.425  1.00 14.14           C  
+HETATM   21 CL26 ROF A 502      17.039  25.821  56.407  1.00 14.55          CL  
+HETATM   22  C4  ROF A 502      15.843  26.157  58.808  1.00 14.94           C  
+HETATM   23  N3  ROF A 502      14.846  26.570  59.612  1.00 15.60           N  
+HETATM   24  C2  ROF A 502      13.738  27.136  59.122  1.00 15.78           C  
+HETATM   25  C1  ROF A 502      13.597  27.319  57.741  1.00 15.12           C  
+HETATM   26 CL25 ROF A 502      12.166  28.048  57.100  1.00 16.20          CL  
+TER      27      ROF A 502 
+CONECT    1    5
+CONECT    2    3    4
+CONECT    3    2    4
+CONECT    4    2    3   16
+CONECT    5    1    6   18
+CONECT    6    5    7   17
+CONECT    7    6    8
+CONECT    8    7    9
+CONECT    9    8   10   14
+CONECT   10    9   11
+CONECT   11   10   12   13
+CONECT   12   11
+CONECT   13   11
+CONECT   14    9   15   17
+CONECT   15   14   16
+CONECT   16    4   15
+CONECT   17    6   14
+CONECT   18    5   19
+CONECT   19   18   20   25
+CONECT   20   19   21   22
+CONECT   21   20
+CONECT   22   20   23
+CONECT   23   22   24
+CONECT   24   23   25
+CONECT   25   19   24   26
+CONECT   26   25
+END

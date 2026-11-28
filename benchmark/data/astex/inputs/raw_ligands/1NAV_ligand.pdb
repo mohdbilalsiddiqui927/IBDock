@@ -1,0 +1,51 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-23T10:44:51Z
+CRYST1  109.319  109.319  134.652  90.00  90.00 120.00 P6522      
+HETATM    1  O3  IH5 A 600      44.621  13.455  17.607  1.00 55.93           O  
+HETATM    2  C15 IH5 A 600      43.874  14.454  18.141  1.00 54.32           C  
+HETATM    3  O4  IH5 A 600      42.764  14.830  17.739  1.00 55.19           O  
+HETATM    4  C13 IH5 A 600      44.490  15.076  19.301  1.00 50.90           C  
+HETATM    5  C01 IH5 A 600      45.796  15.793  19.206  1.00 45.58           C  
+HETATM    6  C11 IH5 A 600      46.755  15.427  20.198  1.00 42.26           C  
+HETATM    7  C09 IH5 A 600      48.033  16.049  20.224  1.00 40.49           C  
+HETATM    8  C07 IH5 A 600      48.387  17.069  19.256  1.00 40.87           C  
+HETATM    9  O2  IH5 A 600      49.569  17.733  19.205  1.00 38.85           O  
+HETATM   10  C2  IH5 A 600      49.742  18.974  19.974  1.00 39.18           C  
+HETATM   11  C12 IH5 A 600      49.035  19.261  21.237  1.00 36.86           C  
+HETATM   12  C10 IH5 A 600      49.275  20.496  21.927  1.00 38.68           C  
+HETATM   13  C8  IH5 A 600      50.203  21.466  21.415  1.00 36.34           C  
+HETATM   14  O1  IH5 A 600      50.406  22.644  22.119  1.00 39.25           O  
+HETATM   15  C6  IH5 A 600      50.920  21.222  20.164  1.00 38.24           C  
+HETATM   16  C4  IH5 A 600      50.676  19.966  19.461  1.00 38.27           C  
+HETATM   17  C14 IH5 A 600      51.935  22.296  19.609  1.00 35.66           C  
+HETATM   18  C16 IH5 A 600      51.184  23.126  18.545  1.00 34.05           C  
+HETATM   19  C18 IH5 A 600      53.219  21.647  18.947  1.00 33.69           C  
+HETATM   20  C05 IH5 A 600      47.430  17.428  18.278  1.00 42.16           C  
+HETATM   21  C03 IH5 A 600      46.140  16.812  18.220  1.00 44.14           C  
+HETATM   22 CL5  IH5 A 600      47.779  18.625  17.120  1.00 47.37          CL  
+HETATM   23 CL6  IH5 A 600      49.138  15.569  21.386  1.00 41.28          CL  
+TER      24      IH5 A 600 
+CONECT    1    2
+CONECT    2    1    3    4
+CONECT    3    2
+CONECT    4    2    5
+CONECT    5    4    6   21
+CONECT    6    5    7
+CONECT    7    6    8   23
+CONECT    8    7    9   20
+CONECT    9    8   10
+CONECT   10    9   11   16
+CONECT   11   10   12
+CONECT   12   11   13
+CONECT   13   12   14   15
+CONECT   14   13
+CONECT   15   13   16   17
+CONECT   16   10   15
+CONECT   17   15   18   19
+CONECT   18   17
+CONECT   19   17
+CONECT   20    8   21   22
+CONECT   21    5   20
+CONECT   22   20
+CONECT   23    7
+END

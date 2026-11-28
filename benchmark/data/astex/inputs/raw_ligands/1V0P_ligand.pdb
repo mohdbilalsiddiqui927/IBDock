@@ -1,0 +1,65 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-09-03T11:55:26Z
+CRYST1  222.640   44.361   63.762  90.00 103.19  90.00 C2         
+HETATM    1  N1  PVB B1287      30.446  29.119  -5.008  1.00 45.97           N  
+HETATM    2  C9  PVB B1287      25.936  29.361  -2.426  1.00 46.82           C  
+HETATM    3  N9  PVB B1287      26.804  30.001  -3.461  1.00 45.66           N  
+HETATM    4  C4  PVB B1287      28.000  29.617  -3.903  1.00 46.17           C  
+HETATM    5  N3  PVB B1287      28.780  28.492  -3.462  1.00 46.45           N  
+HETATM    6  C2  PVB B1287      29.975  28.287  -4.044  1.00 47.22           C  
+HETATM    7  C6  PVB B1287      29.773  30.216  -5.456  1.00 47.88           C  
+HETATM    8  C5  PVB B1287      28.513  30.525  -4.931  1.00 45.70           C  
+HETATM    9  N7  PVB B1287      27.577  31.458  -5.070  1.00 43.86           N  
+HETATM   10  C8  PVB B1287      26.556  31.129  -4.183  1.00 45.32           C  
+HETATM   11  N6  PVB B1287      30.328  31.012  -6.410  1.00 51.51           N  
+HETATM   12  C1A PVB B1287      31.452  30.640  -7.057  1.00 54.66           C  
+HETATM   13  C2A PVB B1287      31.349  30.393  -8.431  1.00 56.82           C  
+HETATM   14  C3A PVB B1287      32.472  30.011  -9.171  1.00 58.19           C  
+HETATM   15  C4A PVB B1287      33.706  29.851  -8.524  1.00 58.38           C  
+HETATM   16  C5A PVB B1287      33.828  30.105  -7.058  1.00 57.18           C  
+HETATM   17 CL1  PVB B1287      35.147  29.952  -6.331  1.00 56.28          CL  
+HETATM   18  C6A PVB B1287      32.674  30.502  -6.368  1.00 55.84           C  
+HETATM   19  CX  PVB B1287      34.885  29.430  -9.339  1.00 59.42           C  
+HETATM   20  OX1 PVB B1287      34.925  29.827 -10.524  1.00 58.85           O  
+HETATM   21  OX2 PVB B1287      35.765  28.706  -8.802  1.00 61.22           O1-
+HETATM   22  N2  PVB B1287      30.697  27.218  -3.648  1.00 50.33           N  
+HETATM   23  C12 PVB B1287      32.059  27.039  -4.104  1.00 52.71           C  
+HETATM   24  C13 PVB B1287      32.429  25.543  -4.073  1.00 55.18           C  
+HETATM   25  C16 PVB B1287      31.613  24.760  -5.102  1.00 55.83           C  
+HETATM   26  C14 PVB B1287      32.250  24.894  -2.698  1.00 56.97           C  
+HETATM   27  C15 PVB B1287      32.940  28.047  -3.331  1.00 52.47           C  
+HETATM   28  O1  PVB B1287      33.819  27.440  -2.408  1.00 51.98           O  
+HETATM   29  C11 PVB B1287      25.714  27.864  -2.678  1.00 46.01           C  
+HETATM   30  C10 PVB B1287      26.509  29.604  -1.036  1.00 47.21           C  
+TER      31      PVB B1287 
+CONECT    1    6    7
+CONECT    2    3   29   30
+CONECT    3    2    4   10
+CONECT    4    3    5    8
+CONECT    5    4    6
+CONECT    6    1    5   22
+CONECT    7    1    8   11
+CONECT    8    4    7    9
+CONECT    9    8   10
+CONECT   10    3    9
+CONECT   11    7   12
+CONECT   12   11   13   18
+CONECT   13   12   14
+CONECT   14   13   15
+CONECT   15   14   16   19
+CONECT   16   15   17   18
+CONECT   17   16
+CONECT   18   12   16
+CONECT   19   15   20   21
+CONECT   20   19
+CONECT   21   19
+CONECT   22    6   23
+CONECT   23   22   24   27
+CONECT   24   23   25   26
+CONECT   25   24
+CONECT   26   24
+CONECT   27   23   28
+CONECT   28   27
+CONECT   29    2
+CONECT   30    2
+END

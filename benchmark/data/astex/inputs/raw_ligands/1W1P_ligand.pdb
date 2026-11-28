@@ -1,0 +1,27 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-24T10:47:19Z
+CRYST1   56.070  103.906  186.439  90.00  90.00  90.00 P212121    
+HETATM    1  OP  GIO A1518      15.987  43.650 101.185  1.00 34.41           O  
+HETATM    2  CP  GIO A1518      16.946  43.523 101.946  1.00 31.98           C  
+HETATM    3  CAP GIO A1518      17.308  44.634 102.936  1.00 31.12           C  
+HETATM    4  CBP GIO A1518      17.065  46.015 102.323  1.00 28.37           C  
+HETATM    5  CGP GIO A1518      17.891  46.871 103.287  1.00 29.65           C  
+HETATM    6  CDP GIO A1518      19.218  46.108 103.330  1.00 28.98           C  
+HETATM    7  NP  GIO A1518      18.757  44.708 103.182  1.00 29.39           N  
+HETATM    8  C   GIO A1518      19.513  43.529 103.150  1.00 29.91           C  
+HETATM    9  O   GIO A1518      20.724  43.579 103.354  1.00 30.26           O  
+HETATM   10  CA  GIO A1518      18.851  42.178 102.862  1.00 30.98           C  
+HETATM   11  N   GIO A1518      17.732  42.364 101.909  1.00 31.60           N  
+TER      12      GIO A1518 
+CONECT    1    2
+CONECT    2    1    3   11
+CONECT    3    2    4    7
+CONECT    4    3    5
+CONECT    5    4    6
+CONECT    6    5    7
+CONECT    7    3    6    8
+CONECT    8    7    9   10
+CONECT    9    8
+CONECT   10    8   11
+CONECT   11    2   10
+END

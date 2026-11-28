@@ -1,0 +1,65 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-23T11:24:04Z
+CRYST1   70.693   71.479   72.802  90.00 100.53  90.00 C2         
+HETATM    1  O21 FSN H 501      16.695 -12.816  22.729  1.00 18.19           O  
+HETATM    2  C20 FSN H 501      17.409 -12.545  21.780  1.00 19.63           C  
+HETATM    3  N19 FSN H 501      18.531 -13.329  21.430  1.00 20.80           N  
+HETATM    4  C23 FSN H 501      18.867 -14.543  22.173  1.00 21.85           C  
+HETATM    5  C24 FSN H 501      19.788 -14.211  23.315  1.00 22.66           C  
+HETATM    6  C32 FSN H 501      19.251 -14.080  24.610  1.00 22.71           C  
+HETATM    7  C31 FSN H 501      20.106 -13.806  25.677  1.00 22.99           C  
+HETATM    8  C30 FSN H 501      21.475 -13.667  25.413  1.00 24.46           C  
+HETATM    9  F29 FSN H 501      22.247 -13.424  26.487  1.00 26.15           F  
+HETATM   10  C26 FSN H 501      22.058 -13.774  24.142  1.00 23.89           C  
+HETATM   11  C25 FSN H 501      21.174 -14.052  23.069  1.00 24.26           C  
+HETATM   12  C17 FSN H 501      19.064 -12.906  20.178  1.00 21.88           C  
+HETATM   13  O18 FSN H 501      20.042 -13.392  19.632  1.00 25.28           O  
+HETATM   14  C16 FSN H 501      18.245 -11.812  19.663  1.00 20.79           C  
+HETATM   15  C15 FSN H 501      17.217 -12.198  18.600  1.00 20.70           C  
+HETATM   16  N11 FSN H 501      15.799 -12.440  19.140  1.00 19.59           N  
+HETATM   17  C12 FSN H 501      14.969 -11.997  17.983  1.00 19.71           C  
+HETATM   18  C13 FSN H 501      15.891 -12.193  16.736  1.00 20.42           C  
+HETATM   19  C14 FSN H 501      17.251 -11.672  17.223  1.00 20.94           C  
+HETATM   20  C10 FSN H 501      15.863 -11.337  20.194  1.00 18.51           C  
+HETATM   21  C7  FSN H 501      14.670 -11.204  21.092  1.00 16.28           C  
+HETATM   22  C8  FSN H 501      13.928 -12.350  21.361  1.00 16.45           C  
+HETATM   23  C9  FSN H 501      12.851 -12.291  22.235  1.00 16.32           C  
+HETATM   24  C4  FSN H 501      12.524 -11.044  22.837  1.00 14.63           C  
+HETATM   25  C5  FSN H 501      13.270  -9.890  22.573  1.00 14.27           C  
+HETATM   26  C6  FSN H 501      14.356  -9.961  21.695  1.00 15.63           C  
+HETATM   27  C3  FSN H 501      11.383 -11.001  23.737  1.00 14.19           C  
+HETATM   28  N1  FSN H 501      10.552 -12.064  23.887  1.00 14.01           N  
+HETATM   29  N2  FSN H 501      11.079  -9.910  24.485  1.00 12.96           N1+
+HETATM   30  C22 FSN H 501      17.247 -11.443  20.807  1.00 19.37           C  
+TER      31      FSN H 501 
+CONECT    1    2
+CONECT    2    1    3   30
+CONECT    3    2    4   12
+CONECT    4    3    5
+CONECT    5    4    6   11
+CONECT    6    5    7
+CONECT    7    6    8
+CONECT    8    7    9   10
+CONECT    9    8
+CONECT   10    8   11
+CONECT   11    5   10
+CONECT   12    3   13   14
+CONECT   13   12
+CONECT   14   12   15   30
+CONECT   15   14   16   19
+CONECT   16   15   17   20
+CONECT   17   16   18
+CONECT   18   17   19
+CONECT   19   15   18
+CONECT   20   16   21   30
+CONECT   21   20   22   26
+CONECT   22   21   23
+CONECT   23   22   24
+CONECT   24   23   25   27
+CONECT   25   24   26
+CONECT   26   21   25
+CONECT   27   24   28   29
+CONECT   28   27
+CONECT   29   27
+CONECT   30    2   14   20
+END

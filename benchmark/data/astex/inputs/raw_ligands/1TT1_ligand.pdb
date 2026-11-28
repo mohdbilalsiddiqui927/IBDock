@@ -1,0 +1,35 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-23T23:11:42Z
+CRYST1   46.682  106.228   57.665  90.00 101.38  90.00 P21        
+HETATM    1  N   KAI A 998       2.169   0.504  24.198  1.00  9.82           N  
+HETATM    2  CD  KAI A 998       0.889   0.004  24.885  1.00  7.74           C  
+HETATM    3  CD1 KAI A 998      -0.975  -0.087  27.182  1.00  9.48           C  
+HETATM    4  CD2 KAI A 998       0.702  -0.288  28.952  1.00  9.21           C  
+HETATM    5  CA  KAI A 998       3.187   0.701  25.216  1.00 10.15           C  
+HETATM    6  CB  KAI A 998       2.436   0.921  26.505  1.00  9.96           C  
+HETATM    7  CB1 KAI A 998       1.805   2.382  26.735  1.00  9.19           C  
+HETATM    8  CG  KAI A 998       1.362  -0.119  26.407  1.00 10.80           C  
+HETATM    9  CG1 KAI A 998       2.853   3.378  27.249  1.00  9.42           C  
+HETATM   10  CG2 KAI A 998       0.261  -0.162  27.543  1.00 10.54           C  
+HETATM   11  C   KAI A 998       4.255  -0.459  25.263  1.00 11.54           C  
+HETATM   12  O   KAI A 998       4.349  -1.140  24.218  1.00 10.29           O  
+HETATM   13  OD1 KAI A 998       2.478   4.559  27.259  1.00 11.23           O  
+HETATM   14  OD2 KAI A 998       3.975   2.961  27.613  1.00 10.22           O1-
+HETATM   15  OXT KAI A 998       4.932  -0.565  26.331  1.00 11.11           O1-
+TER      16      KAI A 998 
+CONECT    1    2    5
+CONECT    2    1    8
+CONECT    3   10
+CONECT    4   10
+CONECT    5    1    6   11
+CONECT    6    5    7    8
+CONECT    7    6    9
+CONECT    8    2    6   10
+CONECT    9    7   13   14
+CONECT   10    3    4    8
+CONECT   11    5   12   15
+CONECT   12   11
+CONECT   13    9
+CONECT   14    9
+CONECT   15   11
+END

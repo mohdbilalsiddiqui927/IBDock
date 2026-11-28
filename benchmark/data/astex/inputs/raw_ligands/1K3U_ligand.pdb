@@ -1,0 +1,47 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-21T14:57:11Z
+CRYST1  182.409   59.718   67.177  90.00  94.52  90.00 C2         
+HETATM    1  OD2 IAD A 801      45.223  28.288   9.308  1.00 17.93           O  
+HETATM    2  CG  IAD A 801      45.857  29.094  10.167  1.00 18.74           C  
+HETATM    3  OD1 IAD A 801      46.151  30.331   9.870  1.00 20.69           O  
+HETATM    4  CB  IAD A 801      46.203  28.553  11.569  1.00 17.86           C  
+HETATM    5  CA  IAD A 801      47.641  27.931  11.521  1.00 17.24           C  
+HETATM    6  C   IAD A 801      48.505  28.579  10.443  1.00 18.38           C  
+HETATM    7  O   IAD A 801      49.241  29.661  10.756  1.00 18.25           O  
+HETATM    8  O1  IAD A 801      48.562  28.039   9.297  1.00 19.23           O  
+HETATM    9  N   IAD A 801      48.321  28.178  12.798  1.00 19.86           N  
+HETATM   10  C11 IAD A 801      47.819  27.716  14.025  1.00 18.71           C  
+HETATM   11  O11 IAD A 801      46.819  27.024  14.088  1.00 19.03           O  
+HETATM   12  C10 IAD A 801      48.635  28.062  15.267  1.00 20.28           C  
+HETATM   13  C3  IAD A 801      50.002  27.379  15.176  1.00 17.91           C  
+HETATM   14  C2  IAD A 801      51.255  28.014  15.299  1.00 16.84           C  
+HETATM   15  N1  IAD A 801      52.218  27.015  15.178  1.00 17.53           N  
+HETATM   16  C9  IAD A 801      50.210  25.988  15.042  1.00 15.68           C  
+HETATM   17  C4  IAD A 801      49.327  24.911  14.969  1.00 14.92           C  
+HETATM   18  C8  IAD A 801      51.591  25.788  15.016  1.00 18.19           C  
+HETATM   19  C7  IAD A 801      52.103  24.493  14.891  1.00 18.89           C  
+HETATM   20  C6  IAD A 801      51.235  23.421  14.796  1.00 16.61           C  
+HETATM   21  C5  IAD A 801      49.865  23.637  14.829  1.00 16.43           C  
+TER      22      IAD A 801 
+CONECT    1    2
+CONECT    2    1    3    4
+CONECT    3    2
+CONECT    4    2    5
+CONECT    5    4    6    9
+CONECT    6    5    7    8
+CONECT    7    6
+CONECT    8    6
+CONECT    9    5   10
+CONECT   10    9   11   12
+CONECT   11   10
+CONECT   12   10   13
+CONECT   13   12   14   16
+CONECT   14   13   15
+CONECT   15   14   18
+CONECT   16   13   17   18
+CONECT   17   16   21
+CONECT   18   15   16   19
+CONECT   19   18   20
+CONECT   20   19   21
+CONECT   21   17   20
+END

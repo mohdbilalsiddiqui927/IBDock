@@ -1,0 +1,39 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-23T11:58:25Z
+CRYST1   98.147  203.859  223.599  90.00  90.00  90.00 I222       
+HETATM    1  C1  BFL A 701      25.376  33.890 202.181  1.00 53.72           C  
+HETATM    2  C2  BFL A 701      25.416  36.199 197.449  1.00 51.44           C  
+HETATM    3  C3  BFL A 701      26.398  36.793 198.285  1.00 51.88           C  
+HETATM    4  C4  BFL A 701      26.721  36.203 199.546  1.00 52.02           C  
+HETATM    5  C5  BFL A 701      27.245  32.380 205.149  1.00 55.96           C  
+HETATM    6  C6  BFL A 701      27.422  30.907 204.817  1.00 57.02           C  
+HETATM    7  C7  BFL A 701      28.412  32.998 205.944  1.00 55.69           C  
+HETATM    8  C8  BFL A 701      25.649  33.266 203.406  1.00 54.46           C  
+HETATM    9  C9  BFL A 701      26.994  33.086 203.791  1.00 55.22           C  
+HETATM   10  C10 BFL A 701      28.057  33.542 202.933  1.00 54.44           C  
+HETATM   11  C11 BFL A 701      27.772  34.177 201.688  1.00 53.96           C  
+HETATM   12  C12 BFL A 701      26.387  34.363 201.281  1.00 53.41           C  
+HETATM   13  C13 BFL A 701      26.048  35.012 199.963  1.00 52.61           C  
+HETATM   14  C14 BFL A 701      25.041  34.413 199.100  1.00 52.08           C  
+HETATM   15  C15 BFL A 701      24.747  35.034 197.846  1.00 51.85           C  
+HETATM   16  O1  BFL A 701      28.396  30.445 204.274  1.00 57.46           O  
+HETATM   17  O2  BFL A 701      26.415  30.185 205.177  1.00 58.39           O1-
+TER      18      BFL A 701 
+CONECT    1    8   12
+CONECT    2    3   15
+CONECT    3    2    4
+CONECT    4    3   13
+CONECT    5    6    7    9
+CONECT    6    5   16   17
+CONECT    7    5
+CONECT    8    1    9
+CONECT    9    5    8   10
+CONECT   10    9   11
+CONECT   11   10   12
+CONECT   12    1   11   13
+CONECT   13    4   12   14
+CONECT   14   13   15
+CONECT   15    2   14
+CONECT   16    6
+CONECT   17    6
+END

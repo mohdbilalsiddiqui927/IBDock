@@ -1,0 +1,29 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-23T11:31:04Z
+CRYST1   64.050   64.050  251.060  90.00  90.00  90.00 P43212     
+HETATM    1  N1  NCT A 440      14.530  10.959  39.396  1.00 18.02           N  
+HETATM    2  C1  NCT A 440      14.848  11.534  40.556  1.00 18.02           C  
+HETATM    3  C2  NCT A 440      15.983  12.295  40.734  1.00 18.02           C  
+HETATM    4  C3  NCT A 440      16.825  12.449  39.638  1.00 18.02           C  
+HETATM    5  C4  NCT A 440      16.523  11.839  38.434  1.00 18.02           C  
+HETATM    6  C5  NCT A 440      15.352  11.105  38.352  1.00 18.02           C  
+HETATM    7  N2  NCT A 440      17.641  13.401  42.234  1.00 18.02           N  
+HETATM    8  C6  NCT A 440      16.270  12.952  42.061  1.00 18.02           C  
+HETATM    9  C7  NCT A 440      15.467  14.258  42.221  1.00 18.02           C  
+HETATM   10  C8  NCT A 440      16.281  15.092  43.220  1.00 18.02           C  
+HETATM   11  C9  NCT A 440      17.637  14.351  43.335  1.00 18.02           C  
+HETATM   12  C10 NCT A 440      18.632  12.352  42.357  1.00 18.02           C  
+TER      13      NCT A 440 
+CONECT    1    2    6
+CONECT    2    1    3
+CONECT    3    2    4    8
+CONECT    4    3    5
+CONECT    5    4    6
+CONECT    6    1    5
+CONECT    7    8   11   12
+CONECT    8    3    7    9
+CONECT    9    8   10
+CONECT   10    9   11
+CONECT   11    7   10
+CONECT   12    7
+END

@@ -1,0 +1,33 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-19T01:34:31Z
+CRYST1   94.350   94.350  187.700  90.00  90.00  90.00 P43212     
+HETATM    1  C4  SKF A3001      28.348  46.037  16.783  1.00 42.86           C  
+HETATM    2  C5  SKF A3001      27.899  45.532  15.570  1.00 42.72           C  
+HETATM    3  C6  SKF A3001      27.822  44.147  15.385  1.00 42.42           C  
+HETATM    4  C7  SKF A3001      28.193  43.286  16.410  1.00 42.63           C  
+HETATM    5  S   SKF A3001      27.261  43.490  13.847  1.00 38.93           S  
+HETATM    6  C8  SKF A3001      28.642  43.790  17.616  1.00 42.59           C  
+HETATM    7  C9  SKF A3001      28.720  45.174  17.807  1.00 42.62           C  
+HETATM    8  O1  SKF A3001      27.485  44.430  12.770  1.00 40.90           O  
+HETATM    9  O2  SKF A3001      25.866  43.133  13.873  1.00 39.59           O  
+HETATM   10  N   SKF A3001      28.105  42.187  13.573  1.00 38.62           N  
+HETATM   11  C1  SKF A3001      28.965  42.843  18.744  1.00 40.91           C  
+HETATM   12  C2  SKF A3001      29.211  44.848  20.194  1.00 43.20           C  
+HETATM   13  C3  SKF A3001      29.488  45.705  18.978  1.00 42.30           C  
+HETATM   14  N1  SKF A3001      29.700  43.483  19.860  1.00 41.72           N  
+TER      15      SKF A3001 
+CONECT    1    2    7
+CONECT    2    1    3
+CONECT    3    2    4    5
+CONECT    4    3    6
+CONECT    5    3    8    9   10
+CONECT    6    4    7   11
+CONECT    7    1    6   13
+CONECT    8    5
+CONECT    9    5
+CONECT   10    5
+CONECT   11    6   14
+CONECT   12   13   14
+CONECT   13    7   12
+CONECT   14   11   12
+END

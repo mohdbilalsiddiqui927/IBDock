@@ -1,0 +1,31 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-23T10:57:23Z
+CRYST1   82.129   94.696  104.843  64.71  85.51  75.61 P1         
+HETATM    1  N   DTY A1370      30.677  -3.370  50.516  1.00 32.91           N  
+HETATM    2  CA  DTY A1370      31.378  -3.131  49.255  1.00 33.55           C  
+HETATM    3  C   DTY A1370      31.967  -4.405  48.694  1.00 34.67           C  
+HETATM    4  O   DTY A1370      32.017  -5.492  49.338  1.00 34.43           O  
+HETATM    5  CB  DTY A1370      32.489  -2.116  49.526  1.00 34.77           C  
+HETATM    6  CG  DTY A1370      32.030  -0.715  49.883  1.00 33.39           C  
+HETATM    7  CD1 DTY A1370      32.293  -0.224  51.125  1.00 34.08           C  
+HETATM    8  CD2 DTY A1370      31.317   0.057  48.973  1.00 32.18           C  
+HETATM    9  CE1 DTY A1370      31.857   1.032  51.446  1.00 28.51           C  
+HETATM   10  CE2 DTY A1370      30.907   1.342  49.273  1.00 29.07           C  
+HETATM   11  CZ  DTY A1370      31.205   1.827  50.541  1.00 32.79           C  
+HETATM   12  OH  DTY A1370      30.815   2.979  50.918  1.00 34.12           O  
+HETATM   13  OXT DTY A1370      32.372  -4.316  47.537  1.00 34.97           O  
+TER      14      DTY A1370 
+CONECT    1    2
+CONECT    2    1    3    5
+CONECT    3    2    4   13
+CONECT    4    3
+CONECT    5    2    6
+CONECT    6    5    7    8
+CONECT    7    6    9
+CONECT    8    6   10
+CONECT    9    7   11
+CONECT   10    8   11
+CONECT   11    9   10   12
+CONECT   12   11
+CONECT   13    3
+END

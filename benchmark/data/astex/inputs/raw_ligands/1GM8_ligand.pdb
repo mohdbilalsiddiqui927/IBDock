@@ -1,0 +1,53 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-24T12:22:07Z
+CRYST1   51.200  131.200   63.900  90.00 105.80  90.00 P21        
+HETATM    1  O8  SOX B1559      11.793  -2.156   2.053  1.00 25.78           O  
+HETATM    2  C7  SOX B1559      12.837  -2.680   2.363  1.00 27.54           C  
+HETATM    3  N4  SOX B1559      13.150  -3.979   2.779  1.00 27.60           N  
+HETATM    4  C3  SOX B1559      12.353  -5.008   3.379  1.00 31.69           C  
+HETATM    5  C11 SOX B1559      12.106  -6.204   2.448  1.00 36.94           C  
+HETATM    6  O13 SOX B1559      12.488  -6.283   1.321  1.00 35.30           O  
+HETATM    7  O12 SOX B1559      11.418  -7.167   3.126  1.00 38.90           O  
+HETATM    8  C2  SOX B1559      13.147  -5.364   4.656  1.00 30.65           C  
+HETATM    9  C10 SOX B1559      14.077  -6.600   4.516  1.00 29.73           C  
+HETATM   10  C9  SOX B1559      12.241  -5.641   5.874  1.00 32.06           C  
+HETATM   11  S1  SOX B1559      14.141  -3.869   5.003  1.00 28.26           S  
+HETATM   12  C5  SOX B1559      14.455  -3.558   3.247  1.00 29.58           C  
+HETATM   13  C6  SOX B1559      14.256  -2.194   2.560  1.00 26.99           C  
+HETATM   14  N14 SOX B1559      14.318  -0.986   3.333  1.00 25.77           N  
+HETATM   15  C15 SOX B1559      14.989   0.120   2.931  1.00 24.34           C  
+HETATM   16  O16 SOX B1559      15.665   0.313   1.923  1.00 23.76           O  
+HETATM   17  C17 SOX B1559      14.900   1.282   3.920  1.00 19.18           C  
+HETATM   18  C18 SOX B1559      16.301   1.799   4.224  1.00 23.15           C  
+HETATM   19  C19 SOX B1559      16.827   2.921   3.601  1.00 17.53           C  
+HETATM   20  C20 SOX B1559      18.065   3.431   4.005  1.00 25.68           C  
+HETATM   21  C21 SOX B1559      18.815   2.757   4.980  1.00 23.67           C  
+HETATM   22  C22 SOX B1559      18.316   1.602   5.591  1.00 21.62           C  
+HETATM   23  C23 SOX B1559      17.049   1.158   5.214  1.00 21.67           C  
+HETATM   24  O5  SOX B1559      13.282  -2.709   5.338  1.00 29.69           O  
+TER      25      SOX B1559 
+CONECT    1    2
+CONECT    2    1    3   13
+CONECT    3    2    4   12
+CONECT    4    3    5    8
+CONECT    5    4    6    7
+CONECT    6    5
+CONECT    7    5
+CONECT    8    4    9   10   11
+CONECT    9    8
+CONECT   10    8
+CONECT   11    8   12   24
+CONECT   12    3   11   13
+CONECT   13    2   12   14
+CONECT   14   13   15
+CONECT   15   14   16   17
+CONECT   16   15
+CONECT   17   15   18
+CONECT   18   17   19   23
+CONECT   19   18   20
+CONECT   20   19   21
+CONECT   21   20   22
+CONECT   22   21   23
+CONECT   23   18   22
+CONECT   24   11
+END

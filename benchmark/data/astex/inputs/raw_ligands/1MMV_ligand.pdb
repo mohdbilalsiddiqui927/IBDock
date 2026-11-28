@@ -1,0 +1,35 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-22T00:07:09Z
+CRYST1   51.590  110.360  164.860  90.00  90.00  90.00 P212121    
+HETATM    1  N   3AR A1785       9.484  -1.174  26.202  1.00 27.31           N  
+HETATM    2  CA  3AR A1785       9.066  -1.530  24.844  1.00 26.15           C  
+HETATM    3  C   3AR A1785       8.915  -3.040  24.704  1.00 27.57           C  
+HETATM    4  O   3AR A1785       9.286  -3.817  25.589  1.00 25.27           O  
+HETATM    5  CB  3AR A1785      10.113  -0.980  23.836  1.00 25.05           C  
+HETATM    6  CG  3AR A1785      10.105   0.564  23.644  1.00 24.25           C  
+HETATM    7  CD  3AR A1785      11.238   1.292  24.388  1.00 30.56           C  
+HETATM    8  NE  3AR A1785      12.471   0.445  24.412  1.00 25.30           N  
+HETATM    9  CZ  3AR A1785      13.570   0.645  23.683  1.00 27.65           C  
+HETATM   10  NH1 3AR A1785      13.718   1.644  22.828  1.00 22.12           N  
+HETATM   11  NH2 3AR A1785      14.542  -0.209  23.846  1.00 23.73           N  
+HETATM   12  C1  3AR A1785      14.499   1.422  21.588  1.00 23.47           C  
+HETATM   13  C2  3AR A1785      14.168   2.530  20.560  1.00 24.10           C  
+HETATM   14  C3  3AR A1785      12.788   2.274  19.935  1.00 22.80           C  
+HETATM   15  OXT 3AR A1785       8.406  -3.446  23.646  1.00 27.00           O1-
+TER      16      3AR A1785 
+CONECT    1    2
+CONECT    2    1    3    5
+CONECT    3    2    4   15
+CONECT    4    3
+CONECT    5    2    6
+CONECT    6    5    7
+CONECT    7    6    8
+CONECT    8    7    9
+CONECT    9    8   10   11
+CONECT   10    9   12
+CONECT   11    9
+CONECT   12   10   13
+CONECT   13   12   14
+CONECT   14   13
+CONECT   15    3
+END

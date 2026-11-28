@@ -1,0 +1,59 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-23T10:38:51Z
+CRYST1   42.918  105.315   55.988  90.00  98.19  90.00 P21        
+HETATM    1  O9  PFA A 462      17.223   5.255   6.139  1.00 17.72           O  
+HETATM    2  C14 PFA A 462      18.023   4.377   6.268  1.00 17.29           C  
+HETATM    3  N6  PFA A 462      17.977   3.356   7.189  1.00 17.11           N  
+HETATM    4  C10 PFA A 462      18.947   2.397   7.246  1.00 14.56           C  
+HETATM    5  O8  PFA A 462      18.955   1.489   8.047  1.00 16.66           O  
+HETATM    6  N5  PFA A 462      19.023   4.410   5.400  1.00 17.00           N  
+HETATM    7  N3  PFA A 462      20.032   3.413   5.406  1.00 16.79           N  
+HETATM    8  C17 PFA A 462      20.019   2.446   6.252  1.00 11.13           C  
+HETATM    9  C4  PFA A 462      19.299   5.407   4.443  1.00 15.11           C  
+HETATM   10  C5  PFA A 462      20.493   6.176   4.753  1.00 16.98           C  
+HETATM   11  C6  PFA A 462      20.859   7.233   3.877  1.00 16.48           C  
+HETATM   12  C7  PFA A 462      22.040   8.059   4.115  1.00 15.65           C  
+HETATM   13  C3  PFA A 462      18.553   5.719   3.321  1.00 13.85           C  
+HETATM   14  C2  PFA A 462      18.956   6.702   2.397  1.00 14.62           C  
+HETATM   15  C19 PFA A 462      18.088   7.020   1.162  1.00 11.58           C  
+HETATM   16  C1  PFA A 462      20.103   7.482   2.696  1.00 15.13           C  
+HETATM   17  O20 PFA A 462      20.380   8.504   1.813  1.00 15.24           O  
+HETATM   18  C21 PFA A 462      21.419   8.339   0.910  1.00 18.50           C  
+HETATM   19  C31 PFA A 462      21.680   7.075   0.261  1.00 10.96           C  
+HETATM   20  C22 PFA A 462      22.220   9.512   0.664  1.00 16.75           C  
+HETATM   21  C24 PFA A 462      23.295   9.425  -0.257  1.00 19.54           C  
+HETATM   22  C25 PFA A 462      24.211  10.646  -0.504  1.00 19.88           C  
+HETATM   23  C8  PFA A 462      23.293  11.889  -0.716  1.00 18.22           C  
+HETATM   24  C9  PFA A 462      25.097  10.780   0.760  1.00 18.20           C  
+HETATM   25  C26 PFA A 462      23.583   8.175  -0.855  1.00 14.31           C  
+HETATM   26  C29 PFA A 462      22.756   7.045  -0.637  1.00 12.55           C  
+HETATM   27  O27 PFA A 462      24.637   8.036  -1.731  1.00 18.31           O  
+TER      28      PFA A 462 
+CONECT    1    2
+CONECT    2    1    3    6
+CONECT    3    2    4
+CONECT    4    3    5    8
+CONECT    5    4
+CONECT    6    2    7    9
+CONECT    7    6    8
+CONECT    8    4    7
+CONECT    9    6   10   13
+CONECT   10    9   11
+CONECT   11   10   12   16
+CONECT   12   11
+CONECT   13    9   14
+CONECT   14   13   15   16
+CONECT   15   14
+CONECT   16   11   14   17
+CONECT   17   16   18
+CONECT   18   17   19   20
+CONECT   19   18   26
+CONECT   20   18   21
+CONECT   21   20   22   25
+CONECT   22   21   23   24
+CONECT   23   22
+CONECT   24   22
+CONECT   25   21   26   27
+CONECT   26   19   25
+CONECT   27   25
+END

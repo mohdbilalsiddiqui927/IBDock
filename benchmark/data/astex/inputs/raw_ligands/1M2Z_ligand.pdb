@@ -1,0 +1,63 @@
+REMARK   BIOVIA PDB file
+REMARK   Created:  2026-07-21T16:28:23Z
+CRYST1  125.843  125.843   85.976  90.00  90.00 120.00 P61        
+HETATM    1  C1  DEX A 301      30.815   6.838   9.638  1.00 48.51           C  
+HETATM    2  C2  DEX A 301      31.079   7.573   8.564  1.00 52.21           C  
+HETATM    3  C3  DEX A 301      32.350   8.367   8.549  1.00 52.65           C  
+HETATM    4  C4  DEX A 301      33.192   8.384   9.790  1.00 52.89           C  
+HETATM    5  C5  DEX A 301      32.860   7.626  10.832  1.00 49.39           C  
+HETATM    6  C6  DEX A 301      33.745   7.708  12.040  1.00 50.57           C  
+HETATM    7  C7  DEX A 301      32.899   8.024  13.270  1.00 50.81           C  
+HETATM    8  C8  DEX A 301      31.654   7.150  13.384  1.00 52.67           C  
+HETATM    9  C9  DEX A 301      30.826   7.061  12.102  1.00 52.26           C  
+HETATM   10  C10 DEX A 301      31.665   6.714  10.871  1.00 50.56           C  
+HETATM   11  C11 DEX A 301      29.493   6.326  12.237  1.00 52.50           C  
+HETATM   12  C12 DEX A 301      28.728   6.570  13.534  1.00 51.68           C  
+HETATM   13  C13 DEX A 301      29.626   6.477  14.767  1.00 53.52           C  
+HETATM   14  C14 DEX A 301      30.783   7.462  14.598  1.00 52.23           C  
+HETATM   15  C15 DEX A 301      31.393   7.632  15.986  1.00 52.48           C  
+HETATM   16  C16 DEX A 301      30.203   7.463  16.926  1.00 54.26           C  
+HETATM   17  C17 DEX A 301      29.023   7.053  16.048  1.00 54.63           C  
+HETATM   18  C18 DEX A 301      30.065   5.031  14.989  1.00 53.14           C  
+HETATM   19  C19 DEX A 301      32.183   5.278  10.861  1.00 50.98           C  
+HETATM   20  C20 DEX A 301      28.053   6.117  16.752  1.00 56.39           C  
+HETATM   21  C21 DEX A 301      26.546   6.302  16.691  1.00 58.34           C  
+HETATM   22  C22 DEX A 301      30.004   8.708  17.784  1.00 56.70           C  
+HETATM   23  F1  DEX A 301      30.406   8.341  11.891  1.00 55.35           F  
+HETATM   24  O1  DEX A 301      32.690   8.985   7.543  1.00 62.72           O  
+HETATM   25  O2  DEX A 301      29.706   4.924  12.158  1.00 53.45           O  
+HETATM   26  O3  DEX A 301      28.301   8.239  15.748  1.00 53.91           O  
+HETATM   27  O4  DEX A 301      28.471   5.155  17.393  1.00 62.63           O  
+HETATM   28  O5  DEX A 301      25.930   5.111  16.225  1.00 59.88           O  
+HETATM   29  H14 DEX A 301      30.375   8.454  14.332  1.00 52.79           H  
+TER      30      DEX A 301 
+CONECT    1    2   10
+CONECT    2    1    3
+CONECT    3    2    4   24
+CONECT    4    3    5
+CONECT    5    4    6   10
+CONECT    6    5    7
+CONECT    7    6    8
+CONECT    8    7    9   14
+CONECT    9    8   10   11   23
+CONECT   10    1    5    9   19
+CONECT   11    9   12   25
+CONECT   12   11   13
+CONECT   13   12   14   17   18
+CONECT   14    8   13   15   29
+CONECT   15   14   16
+CONECT   16   15   17   22
+CONECT   17   13   16   20   26
+CONECT   18   13
+CONECT   19   10
+CONECT   20   17   21   27
+CONECT   21   20   28
+CONECT   22   16
+CONECT   23    9
+CONECT   24    3
+CONECT   25   11
+CONECT   26   17
+CONECT   27   20
+CONECT   28   21
+CONECT   29   14
+END
