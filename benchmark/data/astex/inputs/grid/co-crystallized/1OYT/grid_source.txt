@@ -1,0 +1,3 @@
+method = co-crystallised ligand
+ligand_selection = Manual
+ligands = FSN H:501
