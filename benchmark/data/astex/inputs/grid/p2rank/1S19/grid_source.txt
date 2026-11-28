@@ -1,0 +1,3 @@
+method = P2Rank pocket prediction
+ligand_selection = Automatic
+ligands = MC9
