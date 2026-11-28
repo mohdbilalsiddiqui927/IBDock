@@ -1,0 +1,3 @@
+method = fpocket pocket prediction
+ligand_selection = Automatic
+ligands = FSN
