@@ -1,9 +1,0 @@
-target,strategy,n,t1,bp,site
-MAPK1,blind,14,1,1,4
-MAPK1,cocryst,14,1,1,2
-MAPK1,fpocket,14,1,1,5
-MAPK1,p2rank,14,1,1,3
-PPARG,blind,36,1,2,4
-PPARG,cocryst,36,0,0,7
-PPARG,fpocket,36,2,3,4
-PPARG,p2rank,36,2,3,5

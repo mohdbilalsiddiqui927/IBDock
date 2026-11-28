@@ -1,5 +1,0 @@
-kinase,pdb_for_docking,imatinib_activity,value,assay_type,source,chembl_document,status
-ABL1,1IEP,IC50,38 nM,biochemical (v-Abl),Zimmermann et al. Bioorg Med Chem Lett 1997 (ChEMBL doc CHEMBL1130562); same value in J Med Chem 2005 (CHEMBL1140446),CHEMBL1130562,verified in ChEMBL export; confirm paper title/DOI before citing
-KIT,1T46,IC50,100 nM,biochemical (recombinant c-Kit wild type baculovirus),J Med Chem 2005 (CHEMBL1141098; CHEMBL1140446) - NOT Druker 1996,CHEMBL1141098,verified in ChEMBL export; cell-based 46-97 nM (MO7e CHEMBL1150317; GIST882 CHEMBL1250538)
-SRC,2SRC,IC50,>100 uM,biochemical,Zimmermann et al. Bioorg Med Chem Lett 1997 (CHEMBL1130562); J Med Chem 2005 (CHEMBL1140446),CHEMBL1130562,verified in ChEMBL export (all 7 ChEMBL SRC IC50 are '>' relations)
-EGFR,1M17,IC50,>100 uM,biochemical,Zimmermann et al. Bioorg Med Chem Lett 1997 (CHEMBL1130562),CHEMBL1130562,verified in ChEMBL export; ignore outlier 0.11 nM (Eur J Med Chem 2022 CHEMBL5214926)
